@@ -13,7 +13,7 @@ namespace ExtraSnapPointsMadeEasy
     {
         public const string ModName = "ExtraSnapPointsMadeEasy";
         public const string ModGuid = "searica.valheim.ExtraSnapPointsMadeEasy";
-        public const string ModVersion = "0.0.1";
+        public const string ModVersion = "0.0.2";
 
         public static HashSet<string> skip_transform_pieces = new HashSet<string>()
         {

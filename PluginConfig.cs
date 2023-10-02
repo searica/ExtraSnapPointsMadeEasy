@@ -33,10 +33,12 @@ namespace ExtraSnapPointsMadeEasy
                 ResetSnapsOnNewPiece = config.Bind(name, "ResetSnapsOnNewPiece", false,
                     "Controls if the selected snap point is reset for each placement, default to not reset. This means your selections carry over between placements.");
 
-                Debug.Log($"Loaded settings!\n" +
+                Log.LogInfo(
+                    $"Loaded settings!\n" +
                     $"EnableManualSnap: {EnableManualSnap.Value}\n" +
                     $"IterateSourceSnapPoints:{IterateSourceSnapPoints.Value}\n" +
-                    $"IterateTargetSnapPoints:{IterateTargetSnapPoints.Value}");
+                    $"IterateTargetSnapPoints:{IterateTargetSnapPoints.Value}"
+                );
             }
         }
     }

@@ -161,7 +161,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 }
 
                 // avoid duplicating snap points or adding bad ones
-                if (skip_transform || Plugin.skip_transform_pieces.Contains(piece.name)) {
+                if (skip_transform || Plugin.SkipLocalCenterSnapPoint.Contains(piece.name)) {
                     return points;
                 }
 

@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\TheUser\\Documents\\Projects\\ValheimMods\\ExtraSnapPointsMadeEasy\\ExtraSnapPointsMadeEasy.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\TheUser\\Documents\\Projects\\ValheimMods\\ExtraSnapPointsMadeEasy\\ExtraSnapPointsMadeEasy.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\TheUser\\Documents\\Projects\\ValheimMods\\ExtraSnapPointsMadeEasy\\ExtraSnapPointsMadeEasy.csproj",
+        "projectName": "ExtraSnapPointsMadeEasy",
+        "projectPath": "C:\\Users\\TheUser\\Documents\\Projects\\ValheimMods\\ExtraSnapPointsMadeEasy\\ExtraSnapPointsMadeEasy.csproj",
+        "packagesPath": "C:\\Users\\TheUser\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\TheUser\\Documents\\Projects\\ValheimMods\\ExtraSnapPointsMadeEasy\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\TheUser\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net481"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net481": {
+            "targetAlias": "net481",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net481": {
+          "targetAlias": "net481",
+          "dependencies": {
+            "Microsoft.CSharp": {
+              "target": "Package",
+              "version": "[4.7.0, )"
+            },
+            "System.Data.DataSetExtensions": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

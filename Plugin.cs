@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
 
-
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
 namespace ExtraSnapPointsMadeEasy
 {
-    [BepInPlugin(ModGuid, ModName, ModVersion)]
+    [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string ModName = "ExtraSnapPointsMadeEasy";
-        public const string ModGuid = "searica.valheim.ExtraSnapPointsMadeEasy";
-        public const string ModVersion = "0.0.2";
+        public const string PluginName = "ExtraSnapPointsMadeEasy";
+        internal const string Author = "Searica";
+        public const string PluginGuid = $"{Author}.Valheim.{PluginName}";
+        public const string PluginVersion = "0.0.3";
 
-        public static HashSet<string> skip_transform_pieces = new HashSet<string>()
+        public static HashSet<string> SkipLocalCenterSnapPoint = new()
         {
             "piece_chest_private",
             "piece_chest",
@@ -47,13 +47,15 @@ namespace ExtraSnapPointsMadeEasy
             Log.Init(Logger);
             PluginConfig.Init(Config);
 
-            _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: ModGuid);
+            _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: PluginGuid);
         }
 
         public void OnDestroy()
         {
             _harmony?.UnpatchSelf();
         }
+
+        // iterate over piece tables to get all existing pieces
 
         public static void AddExtraSnapPoints()
         {
@@ -207,7 +209,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Torches */
-            List<string> torches = new List<string>() { 
+            List<string> torches = new() { 
                 "piece_groundtorch_wood",
                 "piece_groundtorch",
                 "piece_groundtorch_green",
@@ -287,7 +289,7 @@ namespace ExtraSnapPointsMadeEasy
                 }
             );
 
-            List<string> rugs = new List<string>()
+            List<string> rugs = new()
             {
                 "rug_deer",
                 "rug_wolf",
@@ -307,7 +309,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Thrones, Chairs, Benches */
-            List<string> chairs = new List<string>() {
+            List<string> chairs = new() {
                 "piece_throne01", // (Raven Throne)
                 "piece_throne02", // (Stone Throne)
                 "piece_blackmarble_throne",
@@ -326,7 +328,7 @@ namespace ExtraSnapPointsMadeEasy
                );
             }
 
-            List<string> benches = new List<string>() {
+            List<string> benches = new() {
                 "piece_bench01",
                 "piece_blackmarble_bench",
                 "piece_logbench01", // sitting log
@@ -347,7 +349,7 @@ namespace ExtraSnapPointsMadeEasy
 
             /* Banners */
             // Banners are about 1.25m wide up top
-            List<string> banners = new List<string>()
+            List<string> banners = new()
             {
                 "piece_banner01", // (black)
                 "piece_banner02", // (blue)
@@ -410,7 +412,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Workbench */
-            List<string> workbench_pieces = new List<string>()
+            List<string> workbench_pieces = new()
             {
                 "piece_workbench",
                 "piece_workbench_ext1", // (Chopping block)
@@ -457,7 +459,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Forge */
-            List<string> forge_pieces = new List<string>()
+            List<string> forge_pieces = new()
             {
                 "forge", // (Forge)	
                 "forge_ext1", // (Forge bellows)
@@ -474,7 +476,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Black Forge */
-            List<string> blackforge_pieces = new List<string>()
+            List<string> blackforge_pieces = new()
             {
                 "blackforge", // galdr table
                 "blackforge_ext1", // cooler
@@ -487,7 +489,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Galdr Table */
-            List<string> galdr_pieces = new List<string>()
+            List<string> galdr_pieces = new()
             {
                 "piece_magetable", // galdr table
                 "piece_magetable_ext", // rune table
@@ -499,7 +501,7 @@ namespace ExtraSnapPointsMadeEasy
             }
 
             /* Cooking Pieces */
-            List<string> cooking_pieces = new List<string>()
+            List<string> cooking_pieces = new()
             {
                 "piece_cauldron",
                 "cauldron_ext5_mortarandpestle",
@@ -566,7 +568,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Fires */
-            List<string> fires = new List<string>()
+            List<string> fires = new()
             {
                 "hearth", // already has snappoints but not a center one
                 "fire_pit", // (campfire)
@@ -598,7 +600,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
             /* Beams & Poles */
-            List<string> beams_n_poles = new List<string>()
+            List<string> beams_n_poles = new()
             {
                 "wood_beam", // 2m
                 "wood_beam_1", // 1m
@@ -622,7 +624,7 @@ namespace ExtraSnapPointsMadeEasy
                 SnapPointHelper.AddCenterSnapPoint(beam_or_pole);
             }
 
-            List<string> degree26 = new List<string>()  // these pieces have offset transforms
+            List<string> degree26 = new()  // these pieces have offset transforms
             {
                 "wood_beam_26",
                 "wood_log_26",  // core wood 26
@@ -641,7 +643,7 @@ namespace ExtraSnapPointsMadeEasy
             }
 
             /* Roof Tiles */
-            List<string> roof26_tiles = new List<string>()
+            List<string> roof26_tiles = new()
             {
                 "wood_roof",
                 "darkwood_roof",
@@ -661,7 +663,7 @@ namespace ExtraSnapPointsMadeEasy
                 );
             }
 
-            List<string> roof45_tiles = new List<string>()
+            List<string> roof45_tiles = new()
             {
                 "wood_roof_45",
                 "darkwood_roof_45",
@@ -681,7 +683,7 @@ namespace ExtraSnapPointsMadeEasy
                 );
             }
 
-            List<string> roof26_ridge = new List<string>()
+            List<string> roof26_ridge = new()
             {
                 "wood_roof_top",
                 "darkwood_roof_top",
@@ -699,7 +701,7 @@ namespace ExtraSnapPointsMadeEasy
                 );
             }
 
-            List<string> roof45_ridge = new List<string>()
+            List<string> roof45_ridge = new()
             {
                 "wood_roof_top_45",
                 "darkwood_roof_top_45",
@@ -720,7 +722,7 @@ namespace ExtraSnapPointsMadeEasy
 
             /* Walls */
             // Fix this section so they snap to the center of the diagonal beam piece
-            List<string> wall_roofs_26 = new List<string>()
+            List<string> wall_roofs_26 = new()
             {
                 "wood_wall_roof", // 26 degrees
                 "wood_wall_roof_upsidedown", // 26 degrees
@@ -736,7 +738,7 @@ namespace ExtraSnapPointsMadeEasy
                 );
             }
 
-            List<string> wall_roofs_45 = new List<string>()
+            List<string> wall_roofs_45 = new()
             {
                 "wood_wall_roof_45", 
                 "wood_wall_roof_45_upsidedown", 
@@ -818,7 +820,7 @@ namespace ExtraSnapPointsMadeEasy
             );
 
             /* Misc */
-            List<string> misc_pieces = new List<string>()
+            List<string> misc_pieces = new()
             {
                 "charcoal_kiln",
                 "incinerator", // (obliterator)

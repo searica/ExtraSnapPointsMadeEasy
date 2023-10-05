@@ -2,7 +2,7 @@
 This is a quality of life building mod for Valheim.
 
 ## Acknowledgements
-This mod was inspired by Snap Points Made Easy by MathiasDecrock and FenceSnap by MSchmoecker and parts of the code are based on those mods.
+This mod was inspired by Snap Points Made Easy which is originally by yardik and FenceSnap by MSchmoecker and parts of the code are based on those mods.
 
 ## Features
 - Adds custom snap points to most vanilla build pieces in the game that did not have them.

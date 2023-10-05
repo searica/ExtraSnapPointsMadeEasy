@@ -19,6 +19,7 @@
 		<TargetFramework>net481</TargetFramework>
 		<OutputType>Library</OutputType>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

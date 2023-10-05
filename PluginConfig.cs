@@ -73,6 +73,7 @@ namespace ExtraSnapPointsMadeEasy
             Log.LogInfo(
                 $"Loaded settings!\n" +
                 $"EnableManualSnap: {EnableManualSnap.Value}\n" +
+                $"EnableManualClosestSnap: {EnableManualClosestSnap.Value}\n" +
                 $"IterateSourceSnapPoints:{IterateSourceSnapPoints.Value}\n" +
                 $"IterateTargetSnapPoints:{IterateTargetSnapPoints.Value}"
             );

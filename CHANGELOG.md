@@ -1,3 +1,6 @@
+## Version 1.0.2
+- Add snap points to new build piece.
+
 ## Version 1.0.1
 - Update for patch 0.217.22
 

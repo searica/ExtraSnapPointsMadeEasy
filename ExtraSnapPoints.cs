@@ -559,6 +559,7 @@ namespace ExtraSnapPointsMadeEasy
                     );
                     break;
                 case "piece_brazierfloor01": // standing brazier
+                case "piece_brazierfloor02": // blue standing brazier
                     SnapPointHelper.AddSnapPoints(
                        prefab.name,
                        new[] {

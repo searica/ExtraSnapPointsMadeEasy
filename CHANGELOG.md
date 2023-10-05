@@ -1,3 +1,6 @@
+## Version 1.0.1
+- Update for patch 0.217.22
+
 ## Version 1.0.0
 Feature complete release. 
 - Added snap points to all build pieces with the option to enable/disable snap points on a piece by piece basis.

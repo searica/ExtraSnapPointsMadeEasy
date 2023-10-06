@@ -29,6 +29,7 @@ namespace ExtraSnapPointsMadeEasy
         public static void Init(ConfigFile config)
         {
             configFile = config;
+            configFile.SaveOnConfigSet = false;
         }
 
         public static void SetUp()
@@ -69,6 +70,7 @@ namespace ExtraSnapPointsMadeEasy
                 "This means your selections carry over between placements."
             );
 
+            Save();
 
             Log.LogInfo(
                 $"Loaded settings!\n" +
@@ -77,6 +79,11 @@ namespace ExtraSnapPointsMadeEasy
                 $"IterateSourceSnapPoints:{IterateSourceSnapPoints.Value}\n" +
                 $"IterateTargetSnapPoints:{IterateTargetSnapPoints.Value}"
             );
+        }
+
+        public static void Save()
+        {
+            configFile.Save();
         }
     }
 }

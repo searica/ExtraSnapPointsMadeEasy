@@ -14,10 +14,12 @@ namespace ExtraSnapPointsMadeEasy
         public static void AddExtraSnapPoints()
         {
             Log.LogInfo("AddExtraSnapPoints()");
-            Resources.FindObjectsOfTypeAll<PieceTable>()
-                .SelectMany(pieceTable => pieceTable.m_pieces)
-                .ToList()
-                .ForEach(AddSnapPoints);
+            var pieces = Resources.FindObjectsOfTypeAll<PieceTable>().SelectMany(pieceTable => pieceTable.m_pieces).ToList();
+            foreach (var piece in pieces)
+            {
+                AddSnapPoints(piece);
+            }
+            PluginConfig.Save();
         }
 
         private static bool SkipPrefab(GameObject prefab)

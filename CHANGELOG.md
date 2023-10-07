@@ -1,3 +1,7 @@
+## Version 1.0.3
+- Speed up inital load time slightly.
+- Add prefabs from MoreVanillaBuildPrefabs that will be ignored.
+
 ## Version 1.0.2
 - Add snap points to new build piece.
 

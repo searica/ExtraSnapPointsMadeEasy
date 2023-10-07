@@ -824,6 +824,10 @@ namespace ExtraSnapPointsMadeEasy
                     );
                     break;
                 default:
+                    if (Plugin.SkipLocalCenterSnapPoint.Contains( prefab.name ))
+                    {
+                        return;
+                    }
                     // Add SnapPoint to Local Center if there is not already one present there
                     Transform transform = prefab.GetComponent<Piece>().transform;
                     for (var index = 0; index < transform.childCount; ++index)

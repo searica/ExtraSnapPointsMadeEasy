@@ -13,7 +13,7 @@ namespace ExtraSnapPointsMadeEasy
     {
         public static void AddCenterSnapPoint(string name)
         {
-            SnapPointHelper.AddSnapPoints(
+            AddSnapPoints(
                 name,
                 new Vector3[]
                 {
@@ -63,7 +63,7 @@ namespace ExtraSnapPointsMadeEasy
 
         private static void CreateSnapPoint(Vector3 pos, Transform parent)
         {
-            GameObject snappoint = new GameObject("_snappoint");
+            GameObject snappoint = new("_snappoint");
             snappoint.transform.parent = parent;
             snappoint.transform.localPosition = pos;
             snappoint.tag = "snappoint";

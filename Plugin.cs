@@ -31,6 +31,8 @@ namespace ExtraSnapPointsMadeEasy
             PluginConfig.SetUp();
 
             _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: PluginGuid);
+
+            PluginConfig.SetupWatcher();
         }
 
         public void OnDestroy()

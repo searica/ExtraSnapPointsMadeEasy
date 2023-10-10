@@ -1,4 +1,6 @@
-﻿using BepInEx.Configuration;
+﻿using BepInEx;
+using BepInEx.Configuration;
+using System.IO;
 using UnityEngine;
 
 
@@ -7,6 +9,8 @@ namespace ExtraSnapPointsMadeEasy
     public class PluginConfig
     {
         private static ConfigFile configFile = null;
+        private static readonly string ConfigFileName = Plugin.PluginGuid + ".cfg";
+        private static readonly string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
         private const string MainSectionName = "\u200BGlobal";
         public static ConfigEntry<KeyCode> EnableManualSnap { get; private set; }
@@ -36,7 +40,7 @@ namespace ExtraSnapPointsMadeEasy
         {
             EnableManualSnap = BindConfig(
                 MainSectionName,
-                "EnableManualSnap", 
+                "EnableManualSnap",
                 KeyCode.LeftAlt,
                 "This key will enable or disable manual snapping mode."
             );
@@ -50,21 +54,21 @@ namespace ExtraSnapPointsMadeEasy
 
             IterateSourceSnapPoints = BindConfig(
                 MainSectionName,
-                "IterateSourceSnapPoints", 
+                "IterateSourceSnapPoints",
                 KeyCode.LeftControl,
                 "This key will cycle through the snap points on the piece you are placing."
             );
 
             IterateTargetSnapPoints = BindConfig(
                 MainSectionName,
-                "IterateTargetSnapPoints", 
+                "IterateTargetSnapPoints",
                 KeyCode.LeftShift,
                 "This key will cycle through the snap points on the piece you are attaching to."
             );
 
             ResetSnapsOnNewPiece = BindConfig(
                 MainSectionName,
-                "ResetSnapsOnNewPiece", 
+                "ResetSnapsOnNewPiece",
                 false,
                 "Controls if the selected snap point is reset for each placement, default to not reset. " +
                 "This means your selections carry over between placements."
@@ -85,5 +89,32 @@ namespace ExtraSnapPointsMadeEasy
         {
             configFile.Save();
         }
+
+        internal static void SetupWatcher()
+        {
+            FileSystemWatcher watcher = new(Paths.ConfigPath, ConfigFileName);
+            watcher.Changed += ReadConfigValues;
+            watcher.Created += ReadConfigValues;
+            watcher.Renamed += ReadConfigValues;
+            watcher.IncludeSubdirectories = true;
+            watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private static void ReadConfigValues(object sender, FileSystemEventArgs e)
+        {
+            if (!File.Exists(ConfigFileFullPath)) return;
+            try
+            {
+                Log.LogInfo("ReadConfigValues called");
+                configFile.Reload();
+            }
+            catch
+            {
+                Log.LogError($"There was an issue loading your {ConfigFileName}");
+                Log.LogError("Please check your config entries for spelling and format!");
+            }
+        }
+
     }
 }

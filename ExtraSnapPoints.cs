@@ -72,7 +72,7 @@ namespace ExtraSnapPointsMadeEasy
             // skip prefabs that are not build pieces
             if (SkipPrefab(prefab))
             {
-                Log.LogInfo($"Skipping: {prefab.name}");
+                Log.LogDebug($"Skipping: {prefab.name}");
                 return;
             }
 
@@ -824,7 +824,7 @@ namespace ExtraSnapPointsMadeEasy
                     );
                     break;
                 default:
-                    if (Plugin.SkipLocalCenterSnapPoint.Contains( prefab.name ))
+                    if (Plugin.SkipLocalCenterSnapPoint.Contains(prefab.name))
                     {
                         return;
                     }

@@ -1,3 +1,6 @@
+## Version 1.0.4
+- Add built-in config file watcher to ensure changes made in-game are not lost.
+
 ## Version 1.0.3
 - Speed up inital load time slightly.
 - Add prefabs from MoreVanillaBuildPrefabs that will be ignored.

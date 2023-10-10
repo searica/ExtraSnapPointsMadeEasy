@@ -1,10 +1,7 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
 using HarmonyLib;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Reflection;
-using System.Linq;
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
 namespace ExtraSnapPointsMadeEasy
@@ -15,7 +12,7 @@ namespace ExtraSnapPointsMadeEasy
         public const string PluginName = "ExtraSnapPointsMadeEasy";
         internal const string Author = "Searica";
         public const string PluginGuid = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.0.3";
+        public const string PluginVersion = "1.0.4";
 
         public static HashSet<string> SkipLocalCenterSnapPoint = new()
         {
@@ -37,6 +34,7 @@ namespace ExtraSnapPointsMadeEasy
 
         public void OnDestroy()
         {
+            PluginConfig.Save();
             _harmony?.UnpatchSelf();
         }
     }

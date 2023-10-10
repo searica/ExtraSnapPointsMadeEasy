@@ -47,4 +47,6 @@ Github: https://github.com/searica/ExtraSnapPointsMadeEasy
 My mods will always be free to use but if you feel like saying thanks you can tip/donate here: https://ko-fi.com/searica
 
 ### Contributions
-You are welcome to open issues on the Github repository to provide suggestions, feature requests (such as extra snap points for specific pieces), compatibility issues, and bug reports. I'm a grad student and have a lot of personal responsibilities on top of that so I can't promise I will respond quickly, but I do intend to maintain and improve the mod in my free time.
+If you would like to provide suggestions, make feature requests, or reports bugs and compatability issues you can either open an issue on the Github repository or tag me (@searica) with a message on the [Odin Plus discord](https://discord.gg/mbkPcvu9ax).
+
+I'm a grad student and have a lot of personal responsibilities on top of that so I can't promise I will respond quickly, but I do intend to maintain and improve the mod in my free time.

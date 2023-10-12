@@ -1,3 +1,6 @@
+## Version 1.0.5
+- Fixed null excpetion error caused when in manual snap mode and placing pieces that have no snap points.
+
 ## Version 1.0.4
 - Add built-in config file watcher to ensure changes made in-game are not lost.
 

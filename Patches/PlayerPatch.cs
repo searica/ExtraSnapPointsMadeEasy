@@ -29,19 +29,19 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 {SnapMode.ManualClosest, "Snap Mode: Manual (Closest)"}
             };
 
-        internal static SnapMode snapMode; 
+        internal static SnapMode snapMode;
 
         [HarmonyReversePatch]
         [HarmonyPatch(nameof(Player.PieceRayTest))]
         public static bool Call_PieceRayTest(
-            object instance, 
-            out Vector3 point, 
+            object instance,
+            out Vector3 point,
             out Vector3 normal,
-            out Piece piece, 
-            out Heightmap heightmap, 
-            out Collider waterSurface, 
+            out Piece piece,
+            out Heightmap heightmap,
+            out Collider waterSurface,
             bool water
-        ) 
+        )
         => throw new NotImplementedException();
 
 
@@ -130,6 +130,11 @@ namespace ExtraSnapPointsMadeEasy.Patches
             var sourceSnapPoints = GetSnapPoints(sourcePiece.transform);
             var targetSnapPoints = GetSnapPoints(currentTargetParent);
 
+            if (sourceSnapPoints.Count == 0 || targetSnapPoints.Count == 0)
+            {
+                return;
+            }
+
             if (currentSourceSnap >= sourceSnapPoints.Count)
             {
                 currentSourceSnap = 0;
@@ -169,7 +174,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 default:
                     return;
             }
-            
+
             // adjust placement ghost position based on the differrence between a and b
             __instance.m_placementGhost.transform.position += b.position - a.position;
         }
@@ -202,4 +207,4 @@ namespace ExtraSnapPointsMadeEasy.Patches
             return points;
         }
     }
-} 
+}

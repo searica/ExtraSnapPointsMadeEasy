@@ -181,7 +181,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Chests */
                 case "piece_chest_wood":
                     SnapPointHelper.AddSnapPoints(
-                       "piece_chest_wood",
+                       prefab.name,
                        new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                             new Vector3(0.8f, -0.01f, 0.37f),
@@ -197,7 +197,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_chest":
                     SnapPointHelper.AddSnapPoints(
-                        "piece_chest", // (Reinforced Chest)
+                        prefab.name, // (Reinforced Chest)
                         new[] {
                     new Vector3(0.0f, -0.01f, 0.0f),
                     new Vector3(0.9f, -0.01f, 0.47f),

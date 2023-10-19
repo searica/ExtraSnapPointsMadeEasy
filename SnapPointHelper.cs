@@ -11,10 +11,10 @@ namespace ExtraSnapPointsMadeEasy
 {
     public class SnapPointHelper
     {
-        public static void AddCenterSnapPoint(string name)
+        public static void AddCenterSnapPoint(GameObject gameObject)
         {
             AddSnapPoints(
-                name,
+                gameObject,
                 new Vector3[]
                 {
                     new Vector3(0.0f, 0.0f, 0.0f),
@@ -23,25 +23,25 @@ namespace ExtraSnapPointsMadeEasy
         }
 
         public static void AddSnapPoints(
-            string name,
+            GameObject gameObject,
             IEnumerable<Vector3> points,
             bool fixPiece = false,
             bool fixZClipping = false
         )
         {
-            GameObject target = ZNetScene.instance.GetPrefab(name);
+            GameObject target = ZNetScene.instance.GetPrefab(gameObject.name);
 
             if (!target)
             {
                 Log.LogWarning(
-                    $"Prefab {name} not found. Cannot add snappoints"
+                    $"Prefab {gameObject.name} not found. Cannot add snappoints"
                 );
                 return;
             }
 
             if (fixPiece)
             {
-                FixPiece(name);
+                FixPiece(gameObject);
             }
 
             float z = 0f;
@@ -71,17 +71,15 @@ namespace ExtraSnapPointsMadeEasy
         }
 
 
-        public static void FixPiece(string name)
+        public static void FixPiece(GameObject gameObject)
         {
-            GameObject target = ZNetScene.instance.GetPrefab(name);
-
-            if (!target)
+            if (!gameObject)
             {
-                Log.LogWarning($"Prefab {name} not found. Cannot fix piece");
+                Log.LogWarning($"Prefab is null. Cannot fix piece");
                 return;
             }
 
-            foreach (Collider collider in target.GetComponentsInChildren<Collider>())
+            foreach (Collider collider in gameObject.GetComponentsInChildren<Collider>())
             {
                 collider.gameObject.layer = LayerMask.NameToLayer("piece");
             }

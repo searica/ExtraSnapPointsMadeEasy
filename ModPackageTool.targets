@@ -1,59 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="CreateMdbFile" BeforeTargets="CopyDLLToPlugins" Condition="'$(Configuration)' == 'Debug'">
-    <PropertyGroup>
-      <Pdb2MdbPath Condition="!Exists('$(Pdb2MdbPath)')">$(SolutionDir)pdb2mdb.exe</Pdb2MdbPath>
-    </PropertyGroup>
-    <Message Text="Creating the mdb debug file" Importance="high" Condition="Exists('$(Pdb2MdbPath)')"/>
-    <Delete Files="$(TargetPath).mdb" />
-    <Exec Command="$(Pdb2MdbPath) $(TargetPath)" Condition="Exists('$(Pdb2MdbPath)')"/>
-    <Message Text="Creation succeeded" Importance="high" Condition="'$(MSBuildLastTaskResult)' == 'True' AND Exists('$(TargetPath).mdb')"/>
-  </Target>
-  <Target Name="CopyDLLToPlugins" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-    <Message Text="Copying DLL file to plugins" Importance="high"/>
-    <PropertyGroup>
-      <PluginsPath Condition="!Exists('$(PluginsPath)')">$(GamePath)\BepInEx\plugins</PluginsPath>
-    </PropertyGroup>
-    <MakeDir Directories="$(PluginsPath)\$(AssemblyName)" />
-    <Message Text="Copying $(TargetFileName) to $(PluginsPath)\$(AssemblyName)" Importance="high" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginsPath)\$(AssemblyName)" />
-    <Message Text="Copying $(TargetFileName).mdb to $(PluginsPath)\$(AssemblyName)" Importance="high" Condition="Exists('$(TargetPath).mdb')" />
-    <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(PluginsPath)\$(AssemblyName)" Condition="Exists('$(TargetPath).mdb')" />
-    <Message Text="Copying $(AssemblyName).pdb to $(PluginsPath)\$(AssemblyName)" Importance="high" Condition="Exists('$(TargetDir)$(AssemblyName).pdb')" />
-    <Copy SourceFiles="$(TargetDir)$(AssemblyName).pdb" DestinationFolder="$(PluginsPath)\$(AssemblyName)" Condition="Exists('$(TargetDir)$(AssemblyName).pdb')" />
-    <Message Text="Copy succeeded" Importance="high"/>
-  </Target>
-  <Target Name="CreateNexusPackage" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
-    <Message Text="Creating Nexus package" Importance="high"/>
-    <MakeDir Directories="$(ProjectDir)Publish\Nexus" />
-    <Message Text="Copying $(TargetFileName) to $(ProjectDir)Publish\Nexus" Importance="high" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)\Publish\Nexus" />
-    <Message Text="Compressing..." Importance="high" />
-    <Exec Command="powershell.exe -Command &quot;Compress-Archive -Path &apos;$(ProjectDir)Publish\Nexus\*&apos; -DestinationPath &apos;$(ProjectDir)Publish\Nexus\$(AssemblyName).zip&apos;&quot; -Force" Condition="'$(OS)' == 'Windows_NT'" />
-    <Message Text="Nexus package created" Importance="high"/>
-  </Target>
-  <Target Name="CreateThunderStorePackage" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
-	  <Message Text="Creating ThunderStore package" Importance="high"/>
-	  <MakeDir Directories="$(ProjectDir)Publish\ThunderStore" />
-	  <Message Text="Copying $(TargetFileName) to $(ProjectDir)Publish\ThunderStore" Importance="high" />
+	<PropertyGroup>
+		<PackageDir>$(ProjectDir)Package</PackageDir>
+		<PublishDir>$(PojectDir)Publish</PublishDir>
+	</PropertyGroup>
+	<Target Name="CreateMdbFile" BeforeTargets="CopyDLLToPlugins" Condition="'$(Configuration)' == 'Debug'">
+		<Message Text="Creating the mdb debug file" Importance="high" Condition="Exists('$(Pdb2MdbPath)')" />
+		<Delete Files="$(TargetPath).mdb" />
+		<Exec Command="$(Pdb2MdbPath) $(TargetPath)" Condition="Exists('$(Pdb2MdbPath)')" />
+		<Message Text="Creation succeeded" Importance="high" Condition="'$(MSBuildLastTaskResult)' == 'True' AND Exists('$(TargetPath).mdb')" />
+	</Target>
 
-	  <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)\Publish\ThunderStore" />
-	  <Message Text="Copying $(ProjectDir)README.md to $(ProjectDir)Publish\ThunderStore" Importance="high" Condition="Exists('$(ProjectDir)README.md')"/>
-	  <Copy SourceFiles="$(ProjectDir)README.md" DestinationFolder="$(ProjectDir)\Publish\ThunderStore" Condition="Exists('$(ProjectDir)README.md')"/>
-	  <Message Text="Copying $(SolutionDir)README.md to $(ProjectDir)Publish\ThunderStore" Importance="high" Condition="Exists('$(SolutionDir)README.md') AND !Exists('$(ProjectDir)README.md')"/>
-	  <Copy SourceFiles="$(SolutionDir)README.md" DestinationFolder="$(ProjectDir)\Publish\ThunderStore" Condition="Exists('$(SolutionDir)README.md') AND !Exists('$(ProjectDir)README.md')"/>
+	<Target Name="CopyDLLToPlugins" AfterTargets="$(AfterTargets)" Condition="'$(Configuration)' == 'Debug'">
+		<Message Text="Copying DLL file to plugins" Importance="high" />
+		<MakeDir Directories="$(MOD_DEPLOYPATH)\$(AssemblyName)" />
+		<Message Text="Copying $(TargetFileName) to $(MOD_DEPLOYPATH)\$(AssemblyName)" Importance="high" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MOD_DEPLOYPATH)\$(AssemblyName)" />
+		<Message Text="Copying $(TargetFileName).mdb to $(MOD_DEPLOYPATH)\$(AssemblyName)" Importance="high" Condition="Exists('$(TargetPath).mdb')" />
+		<Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(MOD_DEPLOYPATH)\$(AssemblyName)" Condition="Exists('$(TargetPath).mdb')" />
+		<Message Text="Copying $(AssemblyName).pdb to $(MOD_DEPLOYPATH)\$(AssemblyName)" Importance="high" Condition="Exists('$(TargetDir)$(AssemblyName).pdb')" />
+		<Copy SourceFiles="$(TargetDir)$(AssemblyName).pdb" DestinationFolder="$(MOD_DEPLOYPATH)\$(AssemblyName)" Condition="Exists('$(TargetDir)$(AssemblyName).pdb')" />
+		<Message Text="Copy succeeded" Importance="high" />
+	</Target>
 
-	  <Message Text="Copying $(ProjectDir)CHANGELOG.md to $(ProjectDir)Publish\ThunderStore" Importance="high" Condition="Exists('$(ProjectDir)CHANGELOG.md')"/>
-	  <Copy SourceFiles="$(ProjectDir)CHANGELOG.md" DestinationFolder="$(ProjectDir)\Publish\ThunderStore" Condition="Exists('$(ProjectDir)CHANGELOG.md')"/>
-	  <Message Text="Copying $(SolutionDir)CHANGELOG.md to $(ProjectDir)Publish\ThunderStore" Importance="high" Condition="Exists('$(SolutionDir)CHANGELOG.md') AND !Exists('$(ProjectDir)CHANGELOG.md')"/>
-	  <Copy SourceFiles="$(SolutionDir)CHANGELOG.md" DestinationFolder="$(ProjectDir)\Publish\ThunderStore" Condition="Exists('$(SolutionDir)CHANGELOG.md') AND !Exists('$(ProjectDir)CHANGELOG.md')"/>
+	<Target Name="CreateNexusPackage" AfterTargets="$(AfterTargets)" Condition="'$(Configuration)' == 'Release'">
+		<Message Text="Creating Nexus package" Importance="high" />
+		<MakeDir Directories="$(PublishDir)\Nexus" />
+		<Message Text="Copying $(TargetFileName) to $(PublishDir)\Nexus" Importance="high" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PublishDir)\Nexus" />
+		<Message Text="Compressing..." Importance="high" />
+		<Exec Command="powershell.exe -Command &quot;Compress-Archive -Path &apos;$(PublishDir)\Nexus\*&apos; -DestinationPath &apos;$(PublishDir)\Nexus\$(AssemblyName).zip&apos;&quot; -Force" Condition="'$(OS)' == 'Windows_NT'" />
+		<Message Text="Nexus package created" Importance="high" />
+	</Target>
 
-	  <Message Text="Copying $(ProjectDir)manifest.json to $(ProjectDir)Publish\ThunderStore" Importance="high" Condition="Exists('$(ProjectDir)manifest.json')"/>
-	  <Copy SourceFiles="$(ProjectDir)manifest.json" DestinationFolder="$(ProjectDir)\Publish\ThunderStore" Condition="Exists('$(ProjectDir)manifest.json')"/>
-	  <Message Text="Copying $(SolutionDir)manifest.json to $(ProjectDir)Publish\ThunderStore" Importance="high" Condition="Exists('$(SolutionDir)manifest.json') AND !Exists('$(ProjectDir)manifest.json')"/>
-	  <Copy SourceFiles="$(SolutionDir)manifest.json" DestinationFolder="$(ProjectDir)\Publish\ThunderStore" Condition="Exists('$(SolutionDir)manifest.json') AND !Exists('$(ProjectDir)manifest.json')"/>
-	  <Message Text="Compressing..." Importance="high" />
-	  <Exec Command="powershell.exe -Command &quot;Compress-Archive -Path &apos;$(ProjectDir)Publish\ThunderStore\*&apos; -DestinationPath &apos;$(ProjectDir)Publish\ThunderStore\$(AssemblyName).zip&apos;&quot; -Force" Condition="'$(OS)' == 'Windows_NT'" />
-	  <Message Text="ThunderStore package created" Importance="high"/>
-  </Target>
+	<Target Name="CreateThunderStorePackage" AfterTargets="$(AfterTargets)" Condition="'$(Configuration)' == 'Release'">
+		<Message Text="Creating ThunderStore package" Importance="high" />
+		<MakeDir Directories="$(PublishDir)\ThunderStore" />
+
+		<Message Text="Copying $(TargetFileName) to $(PublishDir)\ThunderStore" Importance="high" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PublishDir)\ThunderStore" />
+
+		<Message Text="Copying $(ProjectDir)README.md to $(PublishDir)\ThunderStore" Importance="high" Condition="Exists('$(ProjectDir)README.md')" />
+		<Copy SourceFiles="$(ProjectDir)README.md" DestinationFolder="$(PublishDir)\ThunderStore" Condition="Exists('$(ProjectDir)README.md')" />
+
+		<Message Text="Copying $(SolutionDir)README.md to $(PublishDir)\ThunderStore" Importance="high" Condition="Exists('$(SolutionDir)README.md') AND !Exists('$(ProjectDir)README.md')" />
+		<Copy SourceFiles="$(SolutionDir)README.md" DestinationFolder="$(PublishDir)\ThunderStore" Condition="Exists('$(SolutionDir)README.md') AND !Exists('$(ProjectDir)README.md')" />
+
+		<Message Text="Copying $(PackageDir)CHANGELOG.md to $(PublishDir)\ThunderStore" Importance="high" Condition="Exists('$(PackageDir)\CHANGELOG.md')" />
+		<Copy SourceFiles="$(PackageDir)\CHANGELOG.md" DestinationFolder="$(PublishDir)\ThunderStore" Condition="Exists('$(PackageDir)\CHANGELOG.md')" />
+
+		<Message Text="Copying $(SolutionDir)CHANGELOG.md to $(PublishDir)\ThunderStore" Importance="high" Condition="Exists('$(SolutionDir)CHANGELOG.md') AND !Exists('$(PackageDir)\CHANGELOG.md')" />
+		<Copy SourceFiles="$(SolutionDir)CHANGELOG.md" DestinationFolder="$(PublishDir)\ThunderStore" Condition="Exists('$(SolutionDir)CHANGELOG.md') AND !Exists('$(PackageDir)\CHANGELOG.md')" />
+
+		<Message Text="Copying $(PackageDir)\manifest.json to $(PublishDir)\ThunderStore" Importance="high" Condition="Exists('$(PackageDir)\manifest.json')" />
+		<Copy SourceFiles="$(PackageDir)\manifest.json" DestinationFolder="$(PublishDir)\ThunderStore" Condition="Exists('$(PackageDir)\manifest.json')" />
+
+		<Message Text="Copying $(SolutionDir)manifest.json to $(PublishDir)\ThunderStore" Importance="high" Condition="Exists('$(SolutionDir)manifest.json') AND !Exists('$(PackageDir)\manifest.json')" />
+		<Copy SourceFiles="$(SolutionDir)manifest.json" DestinationFolder="$(PublishDir)\ThunderStore" Condition="Exists('$(SolutionDir)manifest.json') AND !Exists('$(PackageDir)\manifest.json')" />
+
+		<Message Text="Copying $(PackageDir)\icon.png to $(PublishDir)\ThunderStore" Importance="high" Condition="Exists('$(PackageDir)\icon.png') AND !Exists('$(PackageDir)\icon.png')" />
+		<Copy SourceFiles="$(PackageDir)\icon.png" DestinationFolder="$(PublishDir)\ThunderStore" Condition="Exists('$(PackageDir)\icon.png')" />
+
+		<Message Text="Compressing..." Importance="high" />
+		<Exec Command="powershell.exe -Command &quot;Compress-Archive -Path &apos;$(PublishDir)\ThunderStore\*&apos; -DestinationPath &apos;$(PublishDir)\ThunderStore\$(AssemblyName).zip&apos;&quot; -Force" Condition="'$(OS)' == 'Windows_NT'" />
+
+		<Message Text="ThunderStore package created" Importance="high" />
+	</Target>
 </Project>

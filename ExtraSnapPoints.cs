@@ -1,9 +1,5 @@
 ﻿using BepInEx.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ExtraSnapPointsMadeEasy
@@ -97,7 +93,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Fences */
                 case "wood_fence":
                     SnapPointHelper.AddSnapPoints(
-                       prefab.name,
+                       prefab,
                        new[]
                        {
                             new Vector3(+1f, -0.2f, 0f),
@@ -121,7 +117,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_sharpstakes":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[]
                         {
                             new Vector3(1.12f, -0.2f, 0f),
@@ -137,7 +133,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_dvergr_sharpstakes":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(-0.5f, -0.5f, 2f),
                             new Vector3(-0.5f, -0.5f, -2f),
@@ -155,7 +151,7 @@ namespace ExtraSnapPointsMadeEasy
                 // TODO: Change these snap points to reduce clipping
                 case "itemstandh":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // itemstandh (horizontal)
+                        prefab, // itemstandh (horizontal)
                         new[] {
                             new Vector3 (0f, 0f, 0f),
                             new Vector3 (0.1f, 0f, 0f),
@@ -167,7 +163,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "itemstand":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // itemstand (vertical)
+                        prefab, // itemstand (vertical)
                         new[] {
                             new Vector3 (0f, 0f, 0f),
                             new Vector3 (0.22f, 0f, 0f),
@@ -181,7 +177,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Chests */
                 case "piece_chest_wood":
                     SnapPointHelper.AddSnapPoints(
-                       prefab.name,
+                       prefab,
                        new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                             new Vector3(0.8f, -0.01f, 0.37f),
@@ -197,7 +193,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_chest":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // (Reinforced Chest)
+                        prefab, // (Reinforced Chest)
                         new[] {
                     new Vector3(0.0f, -0.01f, 0.0f),
                     new Vector3(0.9f, -0.01f, 0.47f),
@@ -213,7 +209,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_chest_private":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[]
                         {
                     new Vector3(0.0f, -0.01f, 0.0f),
@@ -231,7 +227,7 @@ namespace ExtraSnapPointsMadeEasy
 
                 case "piece_chest_blackmetal":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.5f),
@@ -253,7 +249,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "piece_groundtorch_blue":
                 case "piece_groundtorch_mist":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(0.0f, -0.7f, 0.0f),
@@ -262,7 +258,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_walltorch":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // (sconce)
+                        prefab, // (sconce)
                         new[] {
                             new Vector3(-0.2f, 0.0f, 0.0f), // black marble snap
                             new Vector3(-0.25f, 0.0f, 0.0f), // stone snap
@@ -275,7 +271,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Furniture */
                 case "sign":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(0.0f, 0.0f, -0.05f), // marble & stone
@@ -285,7 +281,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "ArmorStand":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, -0.1f, 0.0f),
                             new Vector3(0.5f, -0.1f, 0.0f),
@@ -298,7 +294,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Rugs & Carpets */
                 case "jute_carpet":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // (red jute carpet)
+                        prefab, // (red jute carpet)
                         new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                             new Vector3(2.0f, -0.01f, -1.25f),
@@ -310,7 +306,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "rug_fur":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // (lox rug)
+                        prefab, // (lox rug)
                         new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                             new Vector3(1.25f, -0.01f, -2.0f),
@@ -325,7 +321,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "rug_hare": // (scale rug)
                 case "jute_carpet_blue": // (round blue jute carpet)
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                         }
@@ -341,7 +337,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "piece_chair02": // (finewood chair)
                 case "piece_chair03": // (darkwood chair)
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                         }
@@ -351,7 +347,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "piece_blackmarble_bench":
                 case "piece_logbench01": // sitting log
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(-1.0f, 0.0f, 0.0f),
@@ -376,7 +372,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "piece_banner11": // (white)
                 case "piece_cloth_hanging_door": // (red jute curtain)
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(0.136f, 0.0f, 0.0f), // stone walls
@@ -389,7 +385,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Blue Jute Hangings */
                 case "piece_cloth_hanging_door_blue2":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // (Blue Jute Curtain) TODO
+                        prefab, // (Blue Jute Curtain) TODO
                         new[] {
                             new Vector3(0.0f, 1.5f, 0.0f),
                             new Vector3(0.0f, 1.5f, 2.0f),
@@ -407,7 +403,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_cloth_hanging_door_blue":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // (Blue Jute Drape)
+                        prefab, // (Blue Jute Drape)
                         new[] {
                             new Vector3(0.0f, 4.0f, 0.0f), // center
                             new Vector3(0.16f, 4.0f, 0.0f),
@@ -422,11 +418,11 @@ namespace ExtraSnapPointsMadeEasy
                 /* Workbench */
                 case "piece_workbench":
                 case "piece_workbench_ext1": // (Chopping block)
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
                 case "piece_workbench_ext2": // (Tanning rack)
                     SnapPointHelper.AddSnapPoints(
-                       prefab.name,
+                       prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.0f),
@@ -438,7 +434,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_workbench_ext3": // (Adze)
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.0f),
@@ -449,7 +445,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "piece_workbench_ext4":  // (Tool shelf)
                     // TODO: may need to switch the sign of the z component
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, -0.1f),
                             new Vector3(1.0f, 0.0f, -0.1f),
@@ -467,32 +463,32 @@ namespace ExtraSnapPointsMadeEasy
                 case "forge_ext4": // (Smith's anvil)
                 case "forge_ext5": // (Forge cooler) 
                 case "forge_ext6": // (Forge toolrack)
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
 
                 /* Black Forge */
                 case "blackforge": // galdr table
                 case "blackforge_ext1": // cooler
                 case "blackforge_ext2_vise": // vice
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
 
                 /* Galdr Table */
                 case "piece_magetable": // galdr table
                 case "piece_magetable_ext": // rune table
                 case "piece_magetable_ext2": // candles
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
 
                 /* Cooking Pieces */
                 case "piece_cauldron":
                 case "cauldron_ext5_mortarandpestle":
                 case "fermenter":
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
                 case "cauldron_ext1_spice":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             // new Vector3(0.0f, 0.75f, 0.0f),
                             new Vector3(0.0f, 1.25f, 0.0f),
@@ -501,7 +497,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "cauldron_ext3_butchertable":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(0.5f, 0.0f, -0.5f),
@@ -513,7 +509,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "cauldron_ext4_pots":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.0f),
@@ -525,7 +521,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_cookingstation":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(-1.0f, 0.0f, 0.0f),
@@ -535,7 +531,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_cookingstation_iron":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(-2.0f, 0.0f, 0.0f),
@@ -549,11 +545,11 @@ namespace ExtraSnapPointsMadeEasy
                 case "fire_pit": // (campfire)
                 case "fire_pit_iron": // hildir campfire
                 case "bonfire":
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
                 case "piece_brazierceiling01": // (Hanging Brazier)
                     SnapPointHelper.AddSnapPoints(
-                       prefab.name,
+                       prefab,
                        new[] {
                             new Vector3(0.0f, 2.0f, 0.0f),
                             new Vector3(0.0f, 1.5f, 0.0f),
@@ -563,7 +559,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "piece_brazierfloor01": // standing brazier
                 case "piece_brazierfloor02": // blue standing brazier
                     SnapPointHelper.AddSnapPoints(
-                       prefab.name,
+                       prefab,
                        new[] {
                             new Vector3(0.0f, -1.0f, 0.0f),
                             new Vector3(0.0f, 0.0f, 0.0f),
@@ -588,7 +584,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "darkwood_pole": // 2m
                 case "darkwood_pole4": // 4m
                 case "darkwood_beam_45":
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
                 // these pieces have offset transforms
                 case "wood_beam_26":
@@ -596,7 +592,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "darkwood_beam_26":
                 case "darkwood_beam4x4": // 4m horizontal beam
                     SnapPointHelper.AddSnapPoints(
-                            prefab.name,
+                            prefab,
                             new[] {
                                 new Vector3(0.0f, 0.5f, 0.0f), // add "center" point
                             }
@@ -607,7 +603,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "wood_roof":
                 case "darkwood_roof":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.5f, 0.0f), // center
                             new Vector3(0.0f, 0.0f, 1.0f), // Bottom mid edge
@@ -620,7 +616,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "wood_roof_45":
                 case "darkwood_roof_45":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f), // center
                             new Vector3(0.0f, -1.0f, 1.0f), // bottom mid edge
@@ -633,7 +629,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "wood_roof_top":
                 case "darkwood_roof_top":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 1.0f),  // side mid edge
                             new Vector3(0.0f, 0.0f, -1.0f),  // side mid edge
@@ -644,7 +640,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "wood_roof_top_45":
                 case "darkwood_roof_top_45":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 1.0f),  // side mid edge
                             new Vector3(0.0f, 0.0f, -1.0f),  // side mid edge
@@ -658,7 +654,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "wood_wall_roof": // 26 degrees
                 case "wood_wall_roof_upsidedown": // 26 degrees
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.5f, 0.0f),
                         }
@@ -667,7 +663,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "wood_wall_roof_45":
                 case "wood_wall_roof_45_upsidedown":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 1.0f, 0.0f),
                         }
@@ -677,7 +673,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Beds */
                 case "bed":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(0.5f, 0.0f, -1.5f),
@@ -689,7 +685,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_bed02":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, -1.5f),
@@ -703,7 +699,7 @@ namespace ExtraSnapPointsMadeEasy
                 /* Tables */
                 case "piece_table":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(-1.0f, 0.0f, 0.0f),
@@ -713,7 +709,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_blackmarble_table":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(-1.0f, 0.0f, 0.0f),
@@ -723,7 +719,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_table_round": // round table
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                         }
@@ -731,7 +727,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_table_oak": // long heavy table
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(-2.0f, 0.0f, 0.0f),
@@ -753,11 +749,11 @@ namespace ExtraSnapPointsMadeEasy
                 case "guard_stone": // ward
                 case "piece_turret": // ballista
                 case "piece_beehive":
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
                 case "piece_barber":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // wisp fountain
+                        prefab, // wisp fountain
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, -0.75f),
@@ -769,7 +765,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "piece_wisplure":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name, // wisp fountain
+                        prefab, // wisp fountain
                         new[] {
                             new Vector3(0.0f, -0.05f, 0.0f),
                         }
@@ -777,7 +773,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "eitrrefinery":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(2.75f, 0.0f, -1.0f),
@@ -789,7 +785,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "windmill":
                     SnapPointHelper.AddSnapPoints(
-                       prefab.name,
+                       prefab,
                         new[] {
                             new Vector3(0.0f, -0.005f, 0.0f),
                             new Vector3(2.0f, -0.005f, -2.0f),
@@ -801,7 +797,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "smelter":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, -1.0f),
@@ -813,7 +809,7 @@ namespace ExtraSnapPointsMadeEasy
                     break;
                 case "blastfurnace":
                     SnapPointHelper.AddSnapPoints(
-                        prefab.name,
+                        prefab,
                         new[] {
                             new Vector3(0.0f, 0.0f, 0.0f),
                             new Vector3(2.0f, 0.0f, -1.25f),
@@ -841,7 +837,7 @@ namespace ExtraSnapPointsMadeEasy
                             }
                         }
                     }
-                    SnapPointHelper.AddCenterSnapPoint(prefab.name);
+                    SnapPointHelper.AddCenterSnapPoint(prefab);
                     break;
             }
         }

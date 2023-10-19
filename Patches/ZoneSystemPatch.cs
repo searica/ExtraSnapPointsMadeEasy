@@ -5,7 +5,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
     [HarmonyPatch(typeof(ZoneSystem))]
     internal class ZoneSystemPatch
     {
-        [HarmonyPrefix]
+        [HarmonyPostfix]
         [HarmonyPatch(nameof(ZoneSystem.Start))]
         public static void Start()
         {

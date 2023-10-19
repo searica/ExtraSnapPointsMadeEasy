@@ -12,7 +12,7 @@ namespace ExtraSnapPointsMadeEasy
         public const string PluginName = "ExtraSnapPointsMadeEasy";
         internal const string Author = "Searica";
         public const string PluginGuid = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.0.5";
+        public const string PluginVersion = "1.0.6";
 
         public static HashSet<string> SkipLocalCenterSnapPoint = new()
         {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<AfterTargets>Build</AfterTargets>
+		<Pdb2MdbPath Condition="!Exists('$(Pdb2MdbPath)')">$(ProjectDir)\libraries\Debug\pdb2mdb.exe</Pdb2MdbPath>
+
+		<!-- Needs to be your path to the base Valheim folder -->
+		<VALHEIM_INSTALL Condition="!Exists('$(VALHEIM_INSTALL)')">c:\Program Files (x86)\Steam\steamapps\common\Valheim</VALHEIM_INSTALL>
+
+		<!-- This is the folder where your build gets copied to when using the post-build automations -->
+		<r2ModManPath>$(AppData)\r2modmanPlus-local\Valheim\profiles</r2ModManPath>
+		<BepInExPath>$(r2ModManPath)\Mod-Debug\BepInEx</BepInExPath>
+		<MOD_DEPLOYPATH>$(r2ModManPath)\Mod-Debug\BepInEx\plugins</MOD_DEPLOYPATH>
+	</PropertyGroup>
+</Project>

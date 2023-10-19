@@ -3,7 +3,6 @@ using BepInEx.Configuration;
 using System.IO;
 using UnityEngine;
 
-
 namespace ExtraSnapPointsMadeEasy
 {
     public class PluginConfig
@@ -28,7 +27,6 @@ namespace ExtraSnapPointsMadeEasy
         internal static ConfigEntry<T> BindConfig<T>(string group, string name, T value, string description) => BindConfig(group, name, value, new ConfigDescription(description));
 
         internal static readonly AcceptableValueList<bool> AcceptableToggleValuesList = new(new bool[] { true, false });
-
 
         public static void Init(ConfigFile config)
         {
@@ -107,7 +105,10 @@ namespace ExtraSnapPointsMadeEasy
             try
             {
                 Log.LogInfo("ReadConfigValues called");
+                var saveOnConfig = configFile.SaveOnConfigSet;
+                configFile.SaveOnConfigSet = false;
                 configFile.Reload();
+                configFile.SaveOnConfigSet = saveOnConfig;
             }
             catch
             {
@@ -115,6 +116,5 @@ namespace ExtraSnapPointsMadeEasy
                 Log.LogError("Please check your config entries for spelling and format!");
             }
         }
-
     }
 }

@@ -210,10 +210,12 @@ namespace ExtraSnapPointsMadeEasy
                 for (int j = i + 1; j < snapPoints.Count; j++)
                 {
                     var snap2 = snapPoints[j];
-                    pts.Add(
-                        (snap1.transform.localPosition
-                        + snap2.transform.localPosition) / 2
-                    );
+                    var newPt = (snap1.transform.localPosition
+                        + snap2.transform.localPosition) / 2;
+                    if (newPt != centerPoint)
+                    {
+                        pts.Add(newPt);
+                    }
                 }
             }
             AddSnapPoints(gameObject, pts);
@@ -240,10 +242,12 @@ namespace ExtraSnapPointsMadeEasy
                 for (int j = i + 1; j < snapPoints.Count; j++)
                 {
                     var snap2 = snapPoints[j];
-                    pts.Add(
-                        (snap1.transform.localPosition
-                        + snap2.transform.localPosition) / 2
-                    );
+                    var newPt = (snap1.transform.localPosition
+                        + snap2.transform.localPosition) / 2;
+                    if (newPt != centerPoint)
+                    {
+                        pts.Add(newPt);
+                    }
                 }
             }
             AddSnapPoints(gameObject, pts);

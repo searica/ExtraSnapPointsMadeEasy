@@ -588,6 +588,15 @@ namespace ExtraSnapPointsMadeEasy
                     break;
 
                 /* Beams & Poles */
+                case "wood_pole_log_4": // core wood pole 4m
+                case "wood_pole_log": // core wood pole 2m
+                case "wood_log_45": // core wood 45
+                case "wood_wall_log": // core wood beam 2m
+                case "wood_wall_log_4x0.5": // core wood beam 4m
+                    // these don't count as lines
+                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    break;
+
                 case "wood_beam": // 2m
                 case "wood_beam_1": // 1m
                 case "wood_beam_45":
@@ -595,11 +604,6 @@ namespace ExtraSnapPointsMadeEasy
                 case "wood_pole2": // 2m
                 case "woodiron_beam":
                 case "woodiron_pole":
-                case "wood_pole_log_4": // core wood pole 4m
-                case "wood_pole_log": // core wood pole 2m
-                case "wood_log_45": // core wood 45
-                case "wood_wall_log": // core wood beam 2m
-                case "wood_wall_log_4x0.5": // core wood beam 4m
                 case "darkwood_beam": // 2m
                 case "darkwood_pole": // 2m
                 case "darkwood_pole4": // 4m

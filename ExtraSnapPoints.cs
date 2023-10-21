@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,21 +7,37 @@ namespace ExtraSnapPointsMadeEasy
 {
     internal class ExtraSnapPoints
     {
+        public static HashSet<string> DoNotAddSnapPoints = new()
+        {
+            "dvergrprops_hooknchain",
+            "piece_dvergr_spiralstair",
+            "piece_dvergr_spiralstair_right",
+            "wood_wall_roof_top_45",
+            "wood_wall_roof_top"
+        };
+
+        private static bool HasInitialized = false;
+
         // iterate over piece tables to get all existing pieces
         public static void AddExtraSnapPoints()
         {
-            Log.LogInfo("AddExtraSnapPoints()");
+            if (HasInitialized)
+            {
+                return;
+            }
+            Log.LogInfo("Adding extra snap points");
             var pieces = Resources.FindObjectsOfTypeAll<PieceTable>().SelectMany(pieceTable => pieceTable.m_pieces).ToList();
             foreach (var piece in pieces)
             {
                 AddSnapPoints(piece);
             }
+            HasInitialized = true;
             PluginConfig.Save();
         }
 
         private static bool SkipPrefab(GameObject prefab)
         {
-            if (Plugin.DoNotAddSnapPoints.Contains(prefab.name))
+            if (DoNotAddSnapPoints.Contains(prefab.name))
             {
                 return true;
             }
@@ -588,13 +605,22 @@ namespace ExtraSnapPointsMadeEasy
                     break;
 
                 /* Beams & Poles */
+                // Core wood logs have 4 snap points by default
                 case "wood_pole_log_4": // core wood pole 4m
                 case "wood_pole_log": // core wood pole 2m
                 case "wood_log_45": // core wood 45
                 case "wood_wall_log": // core wood beam 2m
                 case "wood_wall_log_4x0.5": // core wood beam 4m
-                    // these don't count as lines
                     SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    break;
+
+                case "wood_log_26":  // core wood 26
+                    SnapPointHelper.AddSnapPoints(
+                            prefab,
+                            new[] {
+                                new Vector3(0.0f, 0.5f, 0.0f), // add "center" point
+                            }
+                        );
                     break;
 
                 case "wood_beam": // 2m
@@ -609,7 +635,6 @@ namespace ExtraSnapPointsMadeEasy
                 case "darkwood_pole4": // 4m
                 case "darkwood_beam_45":
                 case "wood_beam_26":
-                case "wood_log_26":  // core wood 26
                 case "darkwood_beam_26":
                 case "darkwood_beam4x4": // 4m horizontal beam
                     if (SnapPointHelper.IsLine(prefab))
@@ -623,10 +648,7 @@ namespace ExtraSnapPointsMadeEasy
                 case "darkwood_roof":
                 case "wood_roof_45":
                 case "darkwood_roof_45":
-                    if (SnapPointHelper.IsSquare(prefab))
-                    {
-                        SnapPointHelper.AddSnapPointsToSquare(prefab);
-                    }
+                    SnapPointHelper.AddSnapPointsToSquare(prefab);
                     break;
 
                 case "wood_roof_top":

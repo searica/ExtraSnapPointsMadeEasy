@@ -14,13 +14,6 @@ namespace ExtraSnapPointsMadeEasy
         public const string PluginGuid = $"{Author}.Valheim.{PluginName}";
         public const string PluginVersion = "1.1.0";
 
-        public static HashSet<string> DoNotAddSnapPoints = new()
-        {
-            "dvergrprops_hooknchain",
-            "piece_dvergr_spiralstair",
-            "piece_dvergr_spiralstair_right"
-        };
-
         private Harmony _harmony;
 
         private void Awake()

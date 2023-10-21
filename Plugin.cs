@@ -12,14 +12,16 @@ namespace ExtraSnapPointsMadeEasy
         public const string PluginName = "ExtraSnapPointsMadeEasy";
         internal const string Author = "Searica";
         public const string PluginGuid = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.0.6";
+        public const string PluginVersion = "1.1.0";
 
-        public static HashSet<string> SkipLocalCenterSnapPoint = new()
+        public static HashSet<string> DoNotAddSnapPoints = new()
         {
             "dvergrprops_hooknchain",
+            "piece_dvergr_spiralstair",
+            "piece_dvergr_spiralstair_right"
         };
 
-        Harmony _harmony;
+        private Harmony _harmony;
 
         private void Awake()
         {

@@ -44,41 +44,40 @@ namespace ExtraSnapPointsMadeEasy.Patches
         )
         => throw new NotImplementedException();
 
-
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.UpdatePlacementGhost))]
         private static void UpdatePlacementGhostPostfix(Player __instance)
         {
-            SnapMode prevSnapMode = PlayerPatch.snapMode;
+            SnapMode prevSnapMode = snapMode;
             if (Input.GetKeyDown(PluginConfig.EnableManualSnap.Value))
             {
-                if (PlayerPatch.snapMode == SnapMode.Manual)
+                if (snapMode == SnapMode.Manual)
                 {
-                    PlayerPatch.snapMode = SnapMode.Auto;
+                    snapMode = SnapMode.Auto;
                 }
                 else
                 {
-                    PlayerPatch.snapMode = SnapMode.Manual;
+                    snapMode = SnapMode.Manual;
                 }
             }
             else if (Input.GetKeyDown(PluginConfig.EnableManualClosestSnap.Value))
             {
-                if (PlayerPatch.snapMode == SnapMode.ManualClosest)
+                if (snapMode == SnapMode.ManualClosest)
                 {
-                    PlayerPatch.snapMode = SnapMode.Auto;
+                    snapMode = SnapMode.Auto;
                 }
                 else
                 {
-                    PlayerPatch.snapMode = SnapMode.ManualClosest;
+                    snapMode = SnapMode.ManualClosest;
                 }
             }
 
-            if (prevSnapMode != PlayerPatch.snapMode)
+            if (prevSnapMode != snapMode)
             {
-                __instance.Message(MessageHud.MessageType.Center, SnapModeMsg[PlayerPatch.snapMode]);
+                __instance.Message(MessageHud.MessageType.Center, SnapModeMsg[snapMode]);
             }
 
-            if (__instance.m_placementGhost == null || PlayerPatch.snapMode == SnapMode.Auto)
+            if (__instance.m_placementGhost == null || snapMode == SnapMode.Auto)
             {
                 return;
             }
@@ -127,8 +126,8 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 currentTargetSnap++;
             }
 
-            var sourceSnapPoints = GetSnapPoints(sourcePiece.transform);
-            var targetSnapPoints = GetSnapPoints(currentTargetParent);
+            var sourceSnapPoints = SnapPointHelper.GetSnapPoints(sourcePiece.transform);
+            var targetSnapPoints = SnapPointHelper.GetSnapPoints(currentTargetParent);
 
             if (sourceSnapPoints.Count == 0 || targetSnapPoints.Count == 0)
             {
@@ -162,6 +161,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 case SnapMode.Manual:
                     b = targetSnapPoints[currentTargetSnap];
                     break;
+
                 case SnapMode.ManualClosest:
                     if (Player.m_localPlayer.m_placementMarkerInstance == null)
                     {
@@ -171,6 +171,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
                             (Transform snapPoint) => Vector3.Distance(Player.m_localPlayer.m_placementMarkerInstance.transform.position, snapPoint.position)
                         ).First();
                     break;
+
                 default:
                     return;
             }
@@ -185,26 +186,6 @@ namespace ExtraSnapPointsMadeEasy.Patches
             var water = component1.m_waterPiece || component1.m_noInWater;
             Call_PieceRayTest(player, out Vector3 point, out Vector3 normal, out Piece piece, out Heightmap heightmap, out Collider waterSurface, water);
             return piece;
-        }
-
-        public static List<Transform> GetSnapPoints(Transform piece)
-        {
-            List<Transform> points = new();
-
-            if (piece == null)
-            {
-                return points;
-            }
-
-            for (var index = 0; index < piece.childCount; ++index)
-            {
-                var child = piece.GetChild(index);
-                if (child.CompareTag("snappoint"))
-                {
-                    points.Add(child);
-                }
-            }
-            return points;
         }
     }
 }

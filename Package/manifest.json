@@ -1,7 +1,7 @@
 {
   "name": "Extra_Snap_Points_Made_Easy",
   "author": "Searica",
-  "version_number": "1.0.6",
+  "version_number": "1.1.0",
   "website_url": "https://github.com/searica/ExtraSnapPointsMadeEasy",
   "description": "Quality of life building mod that adds snap points to most vanilla pieces and allow you to manually select snap points for the piece you are placing and the piece you are snapping to.",
   "dependencies": [

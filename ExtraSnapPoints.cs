@@ -7,13 +7,13 @@ namespace ExtraSnapPointsMadeEasy
 {
     internal class ExtraSnapPoints
     {
-        public static HashSet<string> DoNotAddSnapPoints = new()
+        private static readonly HashSet<string> DoNotAddSnapPoints = new()
         {
             "dvergrprops_hooknchain",
             "piece_dvergr_spiralstair",
             "piece_dvergr_spiralstair_right",
-            "wood_wall_roof_top_45",
-            "wood_wall_roof_top"
+            //"wood_wall_roof_top_45", // cross piece
+            //"wood_wall_roof_top"     // cross piece
         };
 
         private static bool HasInitialized = false;
@@ -29,7 +29,7 @@ namespace ExtraSnapPointsMadeEasy
             var pieces = Resources.FindObjectsOfTypeAll<PieceTable>().SelectMany(pieceTable => pieceTable.m_pieces).ToList();
             foreach (var piece in pieces)
             {
-                AddSnapPoints(piece);
+                AddExtraSnapPoints(piece);
             }
             HasInitialized = true;
             PluginConfig.Save();
@@ -84,7 +84,7 @@ namespace ExtraSnapPointsMadeEasy
             return false;
         }
 
-        private static void AddSnapPoints(GameObject prefab)
+        private static void AddExtraSnapPoints(GameObject prefab)
         {
             // skip prefabs that are not build pieces
             if (SkipPrefab(prefab))
@@ -99,7 +99,7 @@ namespace ExtraSnapPointsMadeEasy
                 prefab.name,
                 true,
                 new ConfigDescription(
-                    "Set to True to enable snap points for this prefab.",
+                    "Set to True to enable snap points for this prefab (Requires Restart).",
                     PluginConfig.AcceptableToggleValuesList
                 )
             );
@@ -269,20 +269,6 @@ namespace ExtraSnapPointsMadeEasy
                     break;
 
                 /* Torches */
-                case "piece_groundtorch_wood":
-                case "piece_groundtorch":
-                case "piece_groundtorch_green":
-                case "piece_groundtorch_blue":
-                case "piece_groundtorch_mist":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
-                        new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
-                            new Vector3(0.0f, -0.7f, 0.0f),
-                        }
-                    );
-                    break;
-
                 case "piece_walltorch":
                     SnapPointHelper.AddSnapPoints(
                         prefab, // (sconce)
@@ -472,7 +458,6 @@ namespace ExtraSnapPointsMadeEasy
                     break;
 
                 case "piece_workbench_ext4":  // (Tool shelf)
-                    // TODO: may need to switch the sign of the z component
                     SnapPointHelper.AddSnapPoints(
                         prefab,
                         new[] {
@@ -583,27 +568,6 @@ namespace ExtraSnapPointsMadeEasy
                     SnapPointHelper.AddLocalCenterSnapPoint(prefab);
                     break;
 
-                case "piece_brazierceiling01": // (Hanging Brazier)
-                    SnapPointHelper.AddSnapPoints(
-                       prefab,
-                       new[] {
-                            new Vector3(0.0f, 2.0f, 0.0f),
-                            new Vector3(0.0f, 1.5f, 0.0f),
-                       }
-                    );
-                    break;
-
-                case "piece_brazierfloor01": // standing brazier
-                case "piece_brazierfloor02": // blue standing brazier
-                    SnapPointHelper.AddSnapPoints(
-                       prefab,
-                       new[] {
-                            new Vector3(0.0f, -1.0f, 0.0f),
-                            new Vector3(0.0f, 0.0f, 0.0f),
-                       }
-                    );
-                    break;
-
                 /* Beams & Poles */
                 // Core wood logs have 4 snap points by default
                 case "wood_pole_log_4": // core wood pole 4m
@@ -623,40 +587,8 @@ namespace ExtraSnapPointsMadeEasy
                         );
                     break;
 
-                case "wood_beam": // 2m
-                case "wood_beam_1": // 1m
-                case "wood_beam_45":
-                case "wood_pole": // 1m
-                case "wood_pole2": // 2m
-                case "woodiron_beam":
-                case "woodiron_pole":
-                case "darkwood_beam": // 2m
-                case "darkwood_pole": // 2m
-                case "darkwood_pole4": // 4m
-                case "darkwood_beam_45":
-                case "wood_beam_26":
-                case "darkwood_beam_26":
-                case "darkwood_beam4x4": // 4m horizontal beam
-                    if (SnapPointHelper.IsLine(prefab))
-                    {
-                        SnapPointHelper.AddSnapPointToLine(prefab);
-                    }
-                    break;
 
                 /* Roof Tiles */
-                case "wood_roof":
-                case "darkwood_roof":
-                case "wood_roof_45":
-                case "darkwood_roof_45":
-                    Log.LogInfo(prefab.name);
-                    foreach (var sn in SnapPointHelper.GetSnapPoints(prefab.transform))
-                    {
-                        Log.LogInfo(sn.localPosition);
-                    }
-                    SnapPointHelper.IsSquare(prefab);
-                    SnapPointHelper.AddSnapPointsToSquare(prefab);
-                    break;
-
                 case "wood_roof_top":
                 case "darkwood_roof_top":
                     SnapPointHelper.AddSnapPoints(
@@ -853,9 +785,46 @@ namespace ExtraSnapPointsMadeEasy
                     break;
 
                 default:
-                    if (SnapPointHelper.IsPoint(prefab))
+                    if (SnapPointHelper.IsPoint(prefab) || SnapPointHelper.IsCross(prefab))
                     {
                         return;
+                    }
+                    if (SnapPointHelper.IsCeilingBrazier(prefab)
+                        && SnapPointHelper.HasNoSnapPoints(prefab))
+                    {
+                        // (Hanging Brazier)
+                        SnapPointHelper.AddSnapPoints(
+                           prefab,
+                           new[] {
+                            new Vector3(0.0f, 2.0f, 0.0f),
+                            new Vector3(0.0f, 1.5f, 0.0f),
+                           }
+                        );
+                    }
+                    else if (SnapPointHelper.IsFloorBrazier(prefab)
+                        && SnapPointHelper.HasNoSnapPoints(prefab))
+                    {
+                        // standing brazier, blue standing brazier, mountainkit, etc.
+                        SnapPointHelper.AddSnapPoints(
+                           prefab,
+                           new[] {
+                                new Vector3(0.0f, -1.0f, 0.0f),
+                                new Vector3(0.0f, 0.0f, 0.0f),
+                           }
+                        );
+                    }
+                    else if (SnapPointHelper.IsTorch(prefab)
+                        && SnapPointHelper.HasNoSnapPoints(prefab))
+                    {
+                        // piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green,
+                        // piece_groundtorch_blue, piece_groundtorch_mist, etc.
+                        SnapPointHelper.AddSnapPoints(
+                            prefab,
+                            new[] {
+                            new Vector3(0.0f, 0.0f, 0.0f),
+                            new Vector3(0.0f, -0.7f, 0.0f),
+                            }
+                        );
                     }
                     else if (SnapPointHelper.IsLine(prefab))
                     {
@@ -865,7 +834,7 @@ namespace ExtraSnapPointsMadeEasy
                     {
                         SnapPointHelper.AddSnapPointsToTriangle(prefab);
                     }
-                    else if (SnapPointHelper.IsSquare(prefab))
+                    else if (SnapPointHelper.IsRectangle(prefab))
                     {
                         SnapPointHelper.AddSnapPointsToSquare(prefab);
                     }

@@ -146,14 +146,17 @@ namespace ExtraSnapPointsMadeEasy
         {
             if (snapPoint.x != minimums.x && snapPoint.x != maximums.x)
             {
+                Log.LogInfo("x");
                 return false;
             }
             if (snapPoint.y != minimums.y && snapPoint.y != maximums.y)
             {
+                Log.LogInfo("y");
                 return false;
             }
             if (snapPoint.z != minimums.z && snapPoint.z != maximums.z)
             {
+                Log.LogInfo("z");
                 return false;
             }
             return true;

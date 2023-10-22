@@ -648,6 +648,12 @@ namespace ExtraSnapPointsMadeEasy
                 case "darkwood_roof":
                 case "wood_roof_45":
                 case "darkwood_roof_45":
+                    Log.LogInfo(prefab.name);
+                    foreach (var sn in SnapPointHelper.GetSnapPoints(prefab.transform))
+                    {
+                        Log.LogInfo(sn.localPosition);
+                    }
+                    SnapPointHelper.IsSquare(prefab);
                     SnapPointHelper.AddSnapPointsToSquare(prefab);
                     break;
 

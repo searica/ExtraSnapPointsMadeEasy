@@ -13,6 +13,73 @@ namespace ExtraSnapPointsMadeEasy
     internal class SnapPointHelper
     {
         private const float Tolerance = 1e-6f;
+
+        private static readonly HashSet<string> Torches = new()
+        {
+            "piece_groundtorch_mist",
+            "dverger_demister",
+            "dverger_demister_large"
+        };
+
+        internal static bool HasNoSnapPoints(GameObject gameObject)
+        {
+            return GetSnapPoints(gameObject.transform).Count == 0;
+        }
+
+        /// <summary>
+        ///     Checks if game object is a floor braizer.
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <returns></returns>
+        internal static bool IsFloorBrazier(GameObject prefab)
+        {
+            return prefab.name.Contains("brazier") && !prefab.name.Contains("ceiling");
+        }
+
+        /// <summary>
+        ///     Checks if game object is a ceiling brazier.
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <returns></returns>
+        internal static bool IsCeilingBrazier(GameObject prefab)
+        {
+            return prefab.name.Contains("brazier") && prefab.name.Contains("ceiling");
+        }
+
+        /// <summary>
+        ///     Checks if game object is a torch.
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <returns></returns>
+        internal static bool IsTorch(GameObject prefab)
+        {
+            if (Torches.Contains(prefab.name))
+            {
+                return true;
+            }
+            if (prefab.name.ToLower().Contains("torch"))
+            {
+                return true;
+            }
+            if (prefab.transform.FindDeepChild("fx_Torch_Basic") != null)
+            {
+                return true;
+            }
+            if (prefab.transform.FindDeepChild("fx_Torch_Blue") != null)
+            {
+                return true;
+            }
+            if (prefab.transform.FindDeepChild("fx_Torch_Green") != null)
+            {
+                return true;
+            }
+            if (prefab.transform.FindDeepChild("demister_ball (1)") != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         ///     Checks equality using both relative and absolute tolerance.
         /// </summary>
@@ -83,6 +150,35 @@ namespace ExtraSnapPointsMadeEasy
             if (gameObject == null) { return false; }
             var snapPoints = GetSnapPoints(gameObject.transform);
             return snapPoints.Count == 8 && EverySnapPointLiesOnExtremums(snapPoints);
+        }
+
+        /// <summary>
+        ///     Check if build piece is a cross shape with 
+        ///     4 corner snap points and one interior snap points.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
+        internal static bool IsCross(GameObject gameObject)
+        {
+            if (gameObject == null) { return false; }
+            var snapPoints = GetSnapPoints(gameObject.transform);
+
+            if (snapPoints.Count != 5)
+            {
+                return false;
+            }
+
+            var minimums = SolveMinimumsOf(snapPoints);
+            var maximums = SolveMaximumsOf(snapPoints);
+            int interiorPointCount = 0;
+            foreach (var snapNode in snapPoints)
+            {
+                if (!LiesOnExtremums(snapNode.localPosition, minimums, maximums))
+                {
+                    interiorPointCount++;
+                }
+            }
+            return interiorPointCount == 1;
         }
 
         internal static List<Transform> GetSnapPoints(Transform pieceTransform)

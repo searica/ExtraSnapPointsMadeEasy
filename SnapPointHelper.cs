@@ -19,6 +19,11 @@ namespace ExtraSnapPointsMadeEasy
             return snapPoints.Count == 1;
         }
 
+        /// <summary>
+        ///     Check if piece has 2 snap points that form a line.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
         internal static bool IsLine(GameObject gameObject)
         {
             if (gameObject == null) { return false; }
@@ -26,6 +31,11 @@ namespace ExtraSnapPointsMadeEasy
             return snapPoints.Count == 2 && EverySnapPointLiesOnExtremums(snapPoints);
         }
 
+        /// <summary>
+        ///     Check if piece has 3 snap points that form a triangle.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
         internal static bool IsTriangle(GameObject gameObject)
         {
             if (gameObject == null) { return false; }
@@ -33,13 +43,23 @@ namespace ExtraSnapPointsMadeEasy
             return snapPoints.Count == 3 && EverySnapPointLiesOnExtremums(snapPoints);
         }
 
-        internal static bool IsSquare(GameObject gameObject)
+        /// <summary>
+        ///     Check if piece has 4 snap points that form a rectangle.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
+        internal static bool IsRectangle(GameObject gameObject)
         {
             if (gameObject == null) { return false; }
             var snapPoints = GetSnapPoints(gameObject.transform);
             return snapPoints.Count == 4 && EverySnapPointLiesOnExtremums(snapPoints);
         }
 
+        /// <summary>
+        ///     Check if piece have 8 snap points that form a cube.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
         internal static bool IsCube(GameObject gameObject)
         {
             if (gameObject == null) { return false; }

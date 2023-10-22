@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /* In Unity
@@ -280,17 +279,14 @@ namespace ExtraSnapPointsMadeEasy
         {
             if (!Equals(snapPoint.x, minimums.x) && !Equals(snapPoint.x, maximums.x))
             {
-                Log.LogInfo("x");
                 return false;
             }
             if (!Equals(snapPoint.y, minimums.y) && !Equals(snapPoint.y, maximums.y))
             {
-                Log.LogInfo("y");
                 return false;
             }
             if (!Equals(snapPoint.z, minimums.z) && !Equals(snapPoint.z, maximums.z))
             {
-                Log.LogInfo("z");
                 return false;
             }
             return true;

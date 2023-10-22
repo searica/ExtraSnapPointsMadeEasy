@@ -12,6 +12,24 @@ namespace ExtraSnapPointsMadeEasy
 {
     internal class SnapPointHelper
     {
+        private const float Tolerance = 1e-6f;
+        /// <summary>
+        ///     Checks equality using both relative and absolute tolerance.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private static bool Equals(float x, float y)
+        {
+            var diff = Mathf.Abs(x - y);
+            return diff <= Tolerance || diff <= Mathf.Max(Mathf.Abs(x), Mathf.Abs(y)) * Tolerance;
+        }
+
+        /// <summary>
+        ///     Check if piece has a single snap point.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
         internal static bool IsPoint(GameObject gameObject)
         {
             if (gameObject == null) { return false; }
@@ -164,17 +182,17 @@ namespace ExtraSnapPointsMadeEasy
             Vector3 maximums
         )
         {
-            if (snapPoint.x != minimums.x && snapPoint.x != maximums.x)
+            if (!Equals(snapPoint.x, minimums.x) && !Equals(snapPoint.x, maximums.x))
             {
                 Log.LogInfo("x");
                 return false;
             }
-            if (snapPoint.y != minimums.y && snapPoint.y != maximums.y)
+            if (!Equals(snapPoint.y, minimums.y) && !Equals(snapPoint.y, maximums.y))
             {
                 Log.LogInfo("y");
                 return false;
             }
-            if (snapPoint.z != minimums.z && snapPoint.z != maximums.z)
+            if (!Equals(snapPoint.z, minimums.z) && !Equals(snapPoint.z, maximums.z))
             {
                 Log.LogInfo("z");
                 return false;

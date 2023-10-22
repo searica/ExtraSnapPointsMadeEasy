@@ -12,7 +12,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         [HarmonyPatch(nameof(ZoneSystem.Start))]
         public static void Start()
         {
-            if (ZNetScene.instance == null)
+            if (!ZNetScene.instance)
             {
                 return;
             }

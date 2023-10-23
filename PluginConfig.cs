@@ -8,7 +8,7 @@ namespace ExtraSnapPointsMadeEasy
     public class PluginConfig
     {
         private static ConfigFile configFile = null;
-        private static readonly string ConfigFileName = Plugin.PluginGuid + ".cfg";
+        private static readonly string ConfigFileName = ExtraSnapPointsMadeEasy.PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
         private const string MainSectionName = "\u200BGlobal";
@@ -17,6 +17,7 @@ namespace ExtraSnapPointsMadeEasy
         public static ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
         public static ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
         public static ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
+        public static ConfigEntry<bool> DisableExtraSnapPoints { get; private set; }
 
         internal static ConfigEntry<T> BindConfig<T>(string group, string name, T value, ConfigDescription description)
         {
@@ -70,6 +71,13 @@ namespace ExtraSnapPointsMadeEasy
                 false,
                 "Controls if the selected snap point is reset for each placement, default to not reset. " +
                 "This means your selections carry over between placements."
+            );
+
+            DisableExtraSnapPoints = BindConfig(
+                MainSectionName,
+                "DisableExtraSnapPoints",
+                false,
+                "Globally disable all extra snap points. (Requires Restart)"
             );
 
             Save();

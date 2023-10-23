@@ -17,66 +17,12 @@ namespace ExtraSnapPointsMadeEasy
         {
             "piece_groundtorch_mist",
             "dverger_demister",
-            "dverger_demister_large"
+            "dverger_demister_large",
         };
 
         internal static bool HasNoSnapPoints(GameObject gameObject)
         {
             return GetSnapPoints(gameObject.transform).Count == 0;
-        }
-
-        /// <summary>
-        ///     Checks if game object is a floor braizer.
-        /// </summary>
-        /// <param name="prefab"></param>
-        /// <returns></returns>
-        internal static bool IsFloorBrazier(GameObject prefab)
-        {
-            return prefab.name.Contains("brazier") && !prefab.name.Contains("ceiling");
-        }
-
-        /// <summary>
-        ///     Checks if game object is a ceiling brazier.
-        /// </summary>
-        /// <param name="prefab"></param>
-        /// <returns></returns>
-        internal static bool IsCeilingBrazier(GameObject prefab)
-        {
-            return prefab.name.Contains("brazier") && prefab.name.Contains("ceiling");
-        }
-
-        /// <summary>
-        ///     Checks if game object is a torch.
-        /// </summary>
-        /// <param name="prefab"></param>
-        /// <returns></returns>
-        internal static bool IsTorch(GameObject prefab)
-        {
-            if (Torches.Contains(prefab.name))
-            {
-                return true;
-            }
-            if (prefab.name.ToLower().Contains("torch"))
-            {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("fx_Torch_Basic") != null)
-            {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("fx_Torch_Blue") != null)
-            {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("fx_Torch_Green") != null)
-            {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("demister_ball (1)") != null)
-            {
-                return true;
-            }
-            return false;
         }
 
         /// <summary>
@@ -140,7 +86,7 @@ namespace ExtraSnapPointsMadeEasy
             if (snapPoints.Count != 4 || !EverySnapPointLiesOnExtremums(snapPoints))
             {
                 return false;
-        }
+            }
             // check if all four points lie on the same plane
             var vec0_1 = snapPoints[1].localPosition - snapPoints[0].localPosition;
             var vec0_2 = snapPoints[2].localPosition - snapPoints[0].localPosition;
@@ -161,7 +107,7 @@ namespace ExtraSnapPointsMadeEasy
         }
 
         /// <summary>
-        ///     Check if build piece is a cross shape with 
+        ///     Check if build piece is a cross shape with
         ///     4 corner snap points and one interior snap points.
         /// </summary>
         /// <param name="gameObject"></param>
@@ -272,7 +218,7 @@ namespace ExtraSnapPointsMadeEasy
             if (prefab.transform.FindDeepChild("fx_Torch_Green") != null)
             {
                 return true;
-                }
+            }
             if (prefab.transform.FindDeepChild("demister_ball (1)") != null)
             {
                 return true;
@@ -392,6 +338,48 @@ namespace ExtraSnapPointsMadeEasy
             return true;
         }
 
+        /// <summary>
+        ///     Check if a snap point lies on the mid point
+        ///     of an edge of the bounding box defined by
+        ///     minumums and maximums.
+        /// </summary>
+        /// <param name="snapPoint"></param>
+        /// <param name="minimums"></param>
+        /// <param name="maximums"></param>
+        /// <returns></returns>
+        private static bool LiesOnEdgeMidPoint(
+            Vector3 snapPoint,
+            Vector3 minimums,
+            Vector3 maximums
+        )
+        {
+            // two of the coordinates should be on an extreme
+            int extremusCoordinates = 0;
+            if (Equals(snapPoint.x, minimums.x) || Equals(snapPoint.x, maximums.x))
+            {
+                extremusCoordinates++;
+            }
+            if (Equals(snapPoint.y, minimums.y) || Equals(snapPoint.y, maximums.y))
+            {
+                extremusCoordinates++;
+            }
+            if (Equals(snapPoint.z, minimums.z) || Equals(snapPoint.z, maximums.z))
+            {
+                extremusCoordinates++;
+            }
+            if (extremusCoordinates != 2) { return false; }
+
+            // one should be in the center of two extremes
+            var middles = (minimums + maximums) / 2;
+            int middleCoordinates = 0;
+            if (Equals(snapPoint.x, middles.x)) { middleCoordinates++; }
+            if (Equals(snapPoint.y, middles.y)) { middleCoordinates++; }
+            if (Equals(snapPoint.z, middles.z)) { middleCoordinates++; }
+            if (middleCoordinates != 1) { return false; }
+
+            return true;
+        }
+
         internal static Vector3 GetCenterOfSnapPoints(List<Transform> snapPoints)
         {
             // compute center snap point
@@ -423,8 +411,8 @@ namespace ExtraSnapPointsMadeEasy
         }
 
         /// <summary>
-        ///     Add a snap points at the midpoint along
-        ///     each edge of the triangle and in the center of the triangle.
+        ///     Add snap points at the midpoint along each edge
+        ///     of the triangle and in the center of the triangle.
         /// </summary>
         /// <param name="gameObject"></param>
         internal static void AddSnapPointsToTriangle(GameObject gameObject)
@@ -455,8 +443,8 @@ namespace ExtraSnapPointsMadeEasy
         }
 
         /// <summary>
-        ///     Add a snap points at the midpoint along
-        ///     each edge of the triangle and in the center of the triangle.
+        ///     Add snap points at the midpoint along each edge
+        ///     of the square and in the center of the square.
         /// </summary>
         /// <param name="gameObject"></param>
         internal static void AddSnapPointsToSquare(GameObject gameObject)

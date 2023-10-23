@@ -826,6 +826,10 @@ namespace ExtraSnapPointsMadeEasy
                     {
                         SnapPointHelper.AddSnapPointsToSquare(prefab);
                     }
+                    else if (SnapPointHelper.IsRoofTop(prefab))
+                    {
+                        SnapPointHelper.AddSnapPointsToRoofTop(prefab);
+                    }
                     else
                     {
                         SnapPointHelper.AddLocalCenterSnapPoint(prefab);

@@ -487,6 +487,92 @@ namespace ExtraSnapPointsMadeEasy
         }
 
         /// <summary>
+        ///     Add snap points at the midpoint along each edge of the roof top.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        internal static void AddSnapPointsToRoofTop(GameObject gameObject)
+        {
+            var snapPoints = GetSnapPoints(gameObject.transform);
+            var minimums = SolveMinimumsOf(snapPoints);
+            var maximums = SolveMaximumsOf(snapPoints);
+            var middles = (minimums + maximums) / 2;
+
+            // Get which points are top points and ID of the axis across the front of the V shape.
+            var topPoints = new List<Vector3>();
+            int frontAxis = -1;
+            foreach (var snapPoint in snapPoints)
+            {
+                for (int i = 0; i < 3; i++) // loop through vector
+                {
+                    var coordinate = snapPoint.localPosition[i];
+                    if (!Equals(coordinate, minimums[i]) && !Equals(coordinate, maximums[i]))
+                    {
+                        if (!Equals(coordinate, middles[i]))
+                        {
+                            Log.LogError($"{gameObject.name} is not a RoofTop piece");
+                        }
+                        if (frontAxis == -1)
+                        {
+                            frontAxis = i;
+                        }
+                        else if (frontAxis != i)
+                        {
+                            Log.LogError("Invalid front axis for RoofTop");
+                        }
+                        topPoints.Add(snapPoint.localPosition);
+                    }
+                }
+            }
+            if (topPoints.Count != 2)
+            {
+                Log.LogError($"{gameObject.name} is not a RoofTop piece");
+            }
+
+            // Get ID of axis along the roof ridge
+            var ridgeVec = (topPoints[1].normalized - topPoints[0].normalized).normalized;
+            int ridgeAxis = -1;
+            for (var i = 0; i < 3; i++)
+            {
+                if (!Equals(ridgeVec[i], 0.0f))
+                {
+                    if (ridgeAxis == -1)
+                    {
+                        ridgeAxis = i;
+                    }
+                    else if (ridgeAxis != i)
+                    {
+                        Log.LogError("Invalid ridge axis for RoofTop");
+                    }
+                }
+            }
+
+            // Get ID of the axis up/down the V shape
+            var vertAxis = 3 - ridgeAxis - frontAxis;
+
+            // Compute top mid-point
+            var topCenter = (topPoints[0] + topPoints[1]) / 2;
+
+            // Compute side mid-point
+            var mid1 = new Vector3();
+            mid1[frontAxis] = minimums[frontAxis];
+            mid1[ridgeAxis] = middles[ridgeAxis];
+            if (Equals(topPoints[0][vertAxis], maximums[vertAxis]))
+            {
+                mid1[vertAxis] = minimums[vertAxis];
+            }
+            else
+            {
+                mid1[vertAxis] = maximums[vertAxis];
+            }
+
+            // Compute side midpoint
+            var mid2 = mid1;
+            mid2[frontAxis] = maximums[frontAxis];
+
+            AddSnapPoints(gameObject, new[] { topCenter, mid1, mid2 });
+        }
+
+        /// <summary>
         ///     Adds a snap point to the local center of
         ///     GameObject if there is not already one there.
         /// </summary>

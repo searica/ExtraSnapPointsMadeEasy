@@ -569,22 +569,10 @@ namespace ExtraSnapPointsMadeEasy
                     break;
 
                 /* Beams & Poles */
-                // Core wood logs have 4 snap points by default
-                case "wood_pole_log_4": // core wood pole 4m
-                case "wood_pole_log": // core wood pole 2m
-                case "wood_log_45": // core wood 45
+                // Core wood log walls have 4 snap points by default
                 case "wood_wall_log": // core wood beam 2m
                 case "wood_wall_log_4x0.5": // core wood beam 4m
                     SnapPointHelper.AddLocalCenterSnapPoint(prefab);
-                    break;
-
-                case "wood_log_26":  // core wood 26
-                    SnapPointHelper.AddSnapPoints(
-                            prefab,
-                            new[] {
-                                new Vector3(0.0f, 0.5f, 0.0f), // add "center" point
-                            }
-                        );
                     break;
 
 

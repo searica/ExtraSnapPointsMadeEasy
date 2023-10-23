@@ -136,7 +136,16 @@ namespace ExtraSnapPointsMadeEasy
         {
             if (gameObject == null) { return false; }
             var snapPoints = GetSnapPoints(gameObject.transform);
-            return snapPoints.Count == 4 && EverySnapPointLiesOnExtremums(snapPoints);
+            // must have 4 points that lie on extremes
+            if (snapPoints.Count != 4 || !EverySnapPointLiesOnExtremums(snapPoints))
+            {
+                return false;
+        }
+            // check if all four points lie on the same plane
+            var vec0_1 = snapPoints[1].localPosition - snapPoints[0].localPosition;
+            var vec0_2 = snapPoints[2].localPosition - snapPoints[0].localPosition;
+            var vec0_3 = snapPoints[3].localPosition - snapPoints[0].localPosition;
+            return Equals(Vector3.Dot(vec0_3, Vector3.Cross(vec0_2, vec0_1)), 0.0f);
         }
 
         /// <summary>

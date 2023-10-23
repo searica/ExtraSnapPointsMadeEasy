@@ -273,8 +273,11 @@ namespace ExtraSnapPointsMadeEasy
             {
                 return true;
                 }
+            if (prefab.transform.FindDeepChild("demister_ball (1)") != null)
+            {
+                return true;
             }
-            return interiorPointCount == 1;
+            return false;
         }
 
         internal static List<Transform> GetSnapPoints(Transform pieceTransform)

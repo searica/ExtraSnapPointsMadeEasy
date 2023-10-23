@@ -176,14 +176,102 @@ namespace ExtraSnapPointsMadeEasy
                 return false;
             }
 
+            // Should have 4 extremus points and 1 center point
+            var centerPoint = GetCenterOfSnapPoints(snapPoints);
             var minimums = SolveMinimumsOf(snapPoints);
             var maximums = SolveMaximumsOf(snapPoints);
-            int interiorPointCount = 0;
+            int extremusPointCount = 0;
+            int centerPointCount = 0;
             foreach (var snapNode in snapPoints)
             {
                 if (!LiesOnExtremums(snapNode.localPosition, minimums, maximums))
                 {
-                    interiorPointCount++;
+                    if (snapNode.localPosition == centerPoint) { centerPointCount++; }
+                }
+                else
+                {
+                    extremusPointCount++;
+                }
+            }
+            return extremusPointCount == 4 && centerPointCount == 1;
+        }
+
+        /// <summary>
+        ///     Checks if game object is top piece for roof.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
+        internal static bool IsRoofTop(GameObject gameObject)
+        {
+            if (gameObject == null) { return false; }
+            var snapPoints = GetSnapPoints(gameObject.transform);
+            if (snapPoints.Count != 6) return false;
+
+            // needs 6 points. 4 should lie on an extremus and 2 on edge mid-points
+            var minimums = SolveMinimumsOf(snapPoints);
+            var maximums = SolveMaximumsOf(snapPoints);
+            int extremusPointCount = 0;
+            int midEdgePointCount = 0;
+            foreach (var snapNode in snapPoints)
+            {
+                if (LiesOnExtremums(snapNode.localPosition, minimums, maximums))
+                {
+                    extremusPointCount++;
+                }
+                if (LiesOnEdgeMidPoint(snapNode.localPosition, minimums, maximums))
+                {
+                    midEdgePointCount++;
+                }
+            }
+            return extremusPointCount == 4 && midEdgePointCount == 2;
+        }
+
+        /// <summary>
+        ///     Checks if game object is a floor braizer.
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <returns></returns>
+        internal static bool IsFloorBrazier(GameObject prefab)
+        {
+            return prefab.name.Contains("brazier") && !prefab.name.Contains("ceiling");
+        }
+
+        /// <summary>
+        ///     Checks if game object is a ceiling brazier.
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <returns></returns>
+        internal static bool IsCeilingBrazier(GameObject prefab)
+        {
+            return prefab.name.Contains("brazier") && prefab.name.Contains("ceiling");
+        }
+
+        /// <summary>
+        ///     Checks if game object is a torch.
+        /// </summary>
+        /// <param name="prefab"></param>
+        /// <returns></returns>
+        internal static bool IsTorch(GameObject prefab)
+        {
+            if (Torches.Contains(prefab.name))
+            {
+                return true;
+            }
+            if (prefab.name.ToLower().Contains("torch"))
+            {
+                return true;
+            }
+            if (prefab.transform.FindDeepChild("fx_Torch_Basic") != null)
+            {
+                return true;
+            }
+            if (prefab.transform.FindDeepChild("fx_Torch_Blue") != null)
+            {
+                return true;
+            }
+            if (prefab.transform.FindDeepChild("fx_Torch_Green") != null)
+            {
+                return true;
                 }
             }
             return interiorPointCount == 1;

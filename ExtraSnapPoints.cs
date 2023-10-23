@@ -16,9 +16,11 @@ namespace ExtraSnapPointsMadeEasy
             "Cart",
         };
 
+        private static Dictionary<string, List<Transform>> DefaultSnapClones = new();
+
         private static bool HasInitialized = false;
 
-        // iterate over piece tables to get all existing pieces
+        // iterate over prefab tables to get all existing prefabPieces
         public static void AddExtraSnapPoints()
         {
             if (HasInitialized)
@@ -31,13 +33,22 @@ namespace ExtraSnapPointsMadeEasy
                 return;
             }
             Log.LogInfo("Adding extra snap points");
-            var pieces = Resources.FindObjectsOfTypeAll<PieceTable>().SelectMany(pieceTable => pieceTable.m_pieces).ToList();
-            foreach (var piece in pieces)
+            var prefabPieces = FindPrefabPieces();
+
+            foreach (var prefab in prefabPieces)
             {
-                AddExtraSnapPoints(piece);
+                AddExtraSnapPoints(prefab);
             }
             HasInitialized = true;
             PluginConfig.Save();
+        }
+
+        internal static List<GameObject> FindPrefabPieces()
+        {
+            return Resources.FindObjectsOfTypeAll<PieceTable>()
+                .SelectMany(pieceTable => pieceTable.m_pieces)
+                .Where(piecePrefab => !SkipPrefab(piecePrefab))
+                .ToList();
         }
 
         private static bool SkipPrefab(GameObject prefab)
@@ -92,13 +103,6 @@ namespace ExtraSnapPointsMadeEasy
 
         private static void AddExtraSnapPoints(GameObject prefab)
         {
-            // skip prefabs that are not build pieces
-            if (SkipPrefab(prefab))
-            {
-                Log.LogDebug($"Skipping: {prefab.name}");
-                return;
-            }
-
             // Check config for this prefab
             ConfigEntry<bool> prefab_config = PluginConfig.BindConfig(
                 "SnapPoints",

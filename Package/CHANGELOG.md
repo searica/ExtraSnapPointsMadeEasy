@@ -5,6 +5,16 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.1.0</td>
+			<td align="left">
+				<ul>
+					<li>Altered internal function of mod to automatically infer the type of build piece and add snap points accordingly.</li>
+					<li>Improved interactions with MoreVanillaBuildPrefabs and other mods that add build pieces.</li>
+					<li>Added option to disable adding extra snap points to all pieces at once.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.0.6</td>
 			<td align="left">
 				<ul>
@@ -33,7 +43,7 @@
 			<td align="center">1.0.3</td>
 			<td align="left">
 				<ul>
-					<li>Speed up inital load time slightly.li>
+					<li>Speed up inital load time slightly.</li>
 					<li>Added prefabs from MoreVanillaBuildPrefabs that will be ignored.</li>
 				</ul>
 			</td>

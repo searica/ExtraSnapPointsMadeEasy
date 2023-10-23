@@ -7,7 +7,7 @@ using System.Reflection;
 namespace ExtraSnapPointsMadeEasy
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    public class Plugin : BaseUnityPlugin
+    public class ExtraSnapPointsMadeEasy : BaseUnityPlugin
     {
         public const string PluginName = "ExtraSnapPointsMadeEasy";
         internal const string Author = "Searica";

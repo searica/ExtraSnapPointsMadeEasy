@@ -12,11 +12,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         [HarmonyPatch(nameof(ZoneSystem.Start))]
         public static void Start()
         {
-            if (!ZNetScene.instance)
-            {
-                return;
-            }
-            ExtraSnapPoints.AddExtraSnapPoints();
+            ExtraSnapPoints.AddExtraSnapPoints("Adding extra snap points");
         }
     }
 }

@@ -1,12 +1,19 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
+using System;
+using BepInEx.Bootstrap;
+using Jotunn.Managers;
+using System.Reflection;
 
 namespace ExtraSnapPointsMadeEasy
 {
     public class PluginConfig
     {
+        private static BaseUnityPlugin configurationManager;
+
         private static ConfigFile configFile = null;
         private static readonly string ConfigFileName = ExtraSnapPointsMadeEasy.PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
@@ -18,6 +25,10 @@ namespace ExtraSnapPointsMadeEasy
         public static ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
         public static ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
         public static ConfigEntry<bool> DisableExtraSnapPoints { get; private set; }
+
+        internal static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
+
+        internal static bool UpdateExtraSnapPoints { get; set; } = false;
 
         internal static ConfigEntry<T> BindConfig<T>(string group, string name, T value, ConfigDescription description)
         {
@@ -79,16 +90,41 @@ namespace ExtraSnapPointsMadeEasy
                 false,
                 "Globally disable all extra snap points. (Requires Restart)"
             );
+            DisableExtraSnapPoints.SettingChanged += SnapSettingChanged;
 
             Save();
 
-            Log.LogInfo(
-                $"Loaded settings!\n" +
-                $"\t - EnableManualSnap: {EnableManualSnap.Value}\n" +
-                $"\t - EnableManualClosestSnap: {EnableManualClosestSnap.Value}\n" +
-                $"\t - IterateSourceSnapPoints: {IterateSourceSnapPoints.Value}\n" +
-                $"\t - IterateTargetSnapPoints: {IterateTargetSnapPoints.Value}"
+            //Log.LogInfo(
+            //    $"Loaded settings!\n" +
+            //    $"\t - EnableManualSnap: {EnableManualSnap.Value}\n" +
+            //    $"\t - EnableManualClosestSnap: {EnableManualClosestSnap.Value}\n" +
+            //    $"\t - IterateSourceSnapPoints: {IterateSourceSnapPoints.Value}\n" +
+            //    $"\t - IterateTargetSnapPoints: {IterateTargetSnapPoints.Value}"
+            //);
+        }
+
+        internal static ConfigEntry<bool> LoadConfig(GameObject gameObject)
+        {
+            ConfigEntry<bool> prefabConfig = PluginConfig.BindConfig(
+                "SnapPoints",
+                gameObject.name,
+                true,
+                new ConfigDescription(
+                    "Set to True to enable snap points for this prefab (Requires Restart).",
+                    PluginConfig.AcceptableToggleValuesList
+                )
             );
+            prefabConfig.SettingChanged += SnapSettingChanged;
+            SnapPointSettings[gameObject.name] = prefabConfig;
+            return prefabConfig;
+        }
+
+        internal static void SnapSettingChanged(object o, EventArgs e)
+        {
+            if (!UpdateExtraSnapPoints)
+            {
+                UpdateExtraSnapPoints = true;
+            }
         }
 
         public static void Save()
@@ -112,7 +148,7 @@ namespace ExtraSnapPointsMadeEasy
             if (!File.Exists(ConfigFileFullPath)) return;
             try
             {
-                Log.LogInfo("ReadConfigValues called");
+                Log.LogInfo("Reloading config file");
                 var saveOnConfig = configFile.SaveOnConfigSet;
                 configFile.SaveOnConfigSet = false;
                 configFile.Reload();
@@ -122,6 +158,54 @@ namespace ExtraSnapPointsMadeEasy
             {
                 Log.LogError($"There was an issue loading your {ConfigFileName}");
                 Log.LogError("Please check your config entries for spelling and format!");
+            }
+            var msg = "Config settings changed after reloading config file, re-intializing";
+            ExtraSnapPoints.AddExtraSnapPoints(msg);
+        }
+
+        internal static void CheckForConfigManager()
+        {
+            if (GUIManager.IsHeadless())
+            {
+                return;
+            }
+
+            if (
+                Chainloader.PluginInfos.TryGetValue(
+                    "com.bepis.bepinex.configurationmanager",
+                    out PluginInfo configManagerInfo
+                )
+                && configManagerInfo.Instance
+            )
+            {
+                configurationManager = configManagerInfo.Instance;
+                Log.LogDebug("Configuration manager found, hooking DisplayingWindowChanged");
+
+                EventInfo eventinfo = configurationManager.GetType()
+                    .GetEvent("DisplayingWindowChanged");
+
+                if (eventinfo != null)
+                {
+                    Action<object, object> local = new(OnConfigManagerDisplayingWindowChanged);
+                    Delegate converted = Delegate.CreateDelegate(
+                        eventinfo.EventHandlerType,
+                        local.Target,
+                        local.Method
+                    );
+                    eventinfo.AddEventHandler(configurationManager, converted);
+                }
+            }
+        }
+
+        private static void OnConfigManagerDisplayingWindowChanged(object sender, object e)
+        {
+            PropertyInfo pi = configurationManager.GetType().GetProperty("DisplayingWindow");
+            bool cmActive = (bool)pi.GetValue(configurationManager, null);
+
+            if (!cmActive)
+            {
+                var msg = "Config settings changed via in-game manager, re-intializing";
+                ExtraSnapPoints.AddExtraSnapPoints(msg);
             }
         }
     }

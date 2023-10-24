@@ -9,6 +9,7 @@
 			<td align="left">
 				<ul>
 					<li>Altered internal function of mod to automatically infer the type of build piece and add snap points accordingly.</li>
+					<li>Re-wrote mod to dynamically update to config changes while in-game.</li>
 					<li>Improved interactions with MoreVanillaBuildPrefabs and other mods that add build pieces.</li>
 					<li>Added option to disable adding extra snap points to all pieces at once.</li>
 				</ul>

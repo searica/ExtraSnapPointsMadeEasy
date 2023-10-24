@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using HarmonyLib;
-using System.Collections.Generic;
 using System.Reflection;
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
@@ -28,10 +27,21 @@ namespace ExtraSnapPointsMadeEasy
             PluginConfig.CheckForConfigManager();
         }
 
-        public void OnDestroy()
+        private void OnDestroy()
         {
             PluginConfig.Save();
             _harmony?.UnpatchSelf();
+        }
+
+        /// <summary>
+        ///     Public API so other mods can rescan piece tables and add 
+        ///     extra snap points after dynamically adding/removing pieces 
+        ///     from piece tables.
+        /// </summary>
+        /// <param name="msg"></param>
+        public static void ReInitExtraSnapPoints(string msg)
+        {
+            ExtraSnapPoints.AddExtraSnapPoints(msg, true);
         }
     }
 }

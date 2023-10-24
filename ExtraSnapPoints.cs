@@ -1,6 +1,4 @@
-﻿using BepInEx.Configuration;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,26 +15,66 @@ namespace ExtraSnapPointsMadeEasy
             "Cart",
         };
 
-        private static Dictionary<string, List<GameObject>> DefaultSnapClones = new();
+        /// <summary>
+        ///     List of prefabs that extra snap points have been added to.
+        /// </summary>
+        private static readonly List<GameObject> AlteredPrefabs = new();
 
+        /// <summary>
+        ///     Default number of snap points for each prefab before adding extras.
+        /// </summary>
+        private static readonly Dictionary<string, int> DefaultNumSnapPoints = new();
 
         // iterate over prefab tables to get all existing prefabPieces
-        internal static void AddExtraSnapPoints(string msg)
+        internal static void AddExtraSnapPoints(string msg, bool forceUpdate = false)
         {
-            // If loading into game world and prefabs have not been added
+            // Avoid updating before world and prefabs are loaded.
             if (!ZNetScene.instance || SceneManager.GetActiveScene() == null
                 || SceneManager.GetActiveScene().name != "main")
             {
                 return;
             }
+
+            // Only update if needed.
+            if (!PluginConfig.UpdateExtraSnapPoints && !forceUpdate)
+            {
+                return;
+            }
+
+            var watch = new System.Diagnostics.Stopwatch();
+            if (PluginConfig.IsVerbosityMedium)
+            {
+                watch.Start();
+            }
+
             Log.LogInfo(msg);
             var prefabPieces = FindPrefabPieces();
             InitSnapDefaults(prefabPieces);
-            ResetSnapPoints(prefabPieces);
+
+            if (AlteredPrefabs.Count > 0)
+            {
+                RemoveExtraSnapPoints(AlteredPrefabs);
+                AlteredPrefabs.Clear();
+            }
+
             foreach (var prefab in prefabPieces)
             {
-                AddSnapPoints(prefab);
+                if (AddSnapPoints(prefab))
+                {
+                    AlteredPrefabs.Add(prefab);
+                }
             }
+
+            if (PluginConfig.IsVerbosityMedium)
+            {
+                watch.Stop();
+                Log.LogInfo($"Time to add snap points: {watch.ElapsedMilliseconds} ms");
+            }
+            else
+            {
+                Log.LogInfo("Adding snap points complete");
+            }
+
             PluginConfig.UpdateExtraSnapPoints = false;
         }
 
@@ -52,50 +90,28 @@ namespace ExtraSnapPointsMadeEasy
         {
             foreach (var prefab in prefabs)
             {
-                if (!DefaultSnapClones.ContainsKey(prefab.name))
+                if (!DefaultNumSnapPoints.ContainsKey(prefab.name))
                 {
                     var snapPoints = SnapPointHelper.GetSnapPoints(prefab.transform);
-                    var clones = new List<GameObject>();
-                    foreach (var snapPoint in snapPoints)
-                    {
-                        clones.Add(DeepCopy(snapPoint.gameObject));
-                    }
-                    DefaultSnapClones.Add(prefab.name, clones);
+                    DefaultNumSnapPoints.Add(prefab.name, snapPoints.Count);
                 }
             }
         }
 
-        private static GameObject DeepCopy(GameObject obj)
-        {
-            // set the object to be inactive to avoid Null Ref Exceptions
-            bool setActive = obj.activeSelf;
-            obj.SetActive(false);
-
-            var clone = Object.Instantiate(obj);
-
-            // set object and clone to original state
-            obj.SetActive(setActive);
-            return clone;
-        }
-
-        internal static void ResetSnapPoints(List<GameObject> prefabs)
+        internal static void RemoveExtraSnapPoints(List<GameObject> prefabs)
         {
             foreach (var prefab in prefabs)
             {
-                if (DefaultSnapClones.ContainsKey(prefab.name))
+                if (DefaultNumSnapPoints.ContainsKey(prefab.name))
                 {
-                    // destroy all snap points on prefab
+                    // destroy all extra snap points on prefab
+                    var defaultNum = DefaultNumSnapPoints[prefab.name];
                     var snapPoints = SnapPointHelper.GetSnapPoints(prefab.transform);
-                    while (snapPoints.Count > 0)
-                    {
-                        GameObject.DestroyImmediate(snapPoints.First().gameObject);
-                    }
 
-                    // attach all snap points from clones
-                    var defaultSnaps = DefaultSnapClones[prefab.name];
-                    foreach (var snapPoint in defaultSnaps)
+                    // iterate in reverse to avoid NRE
+                    for (int i = (snapPoints.Count - 1); i > (defaultNum - 1); i--)
                     {
-                        snapPoint.transform.parent = prefab.transform;
+                        GameObject.DestroyImmediate(snapPoints[i].gameObject);
                     }
                 }
             }
@@ -141,6 +157,7 @@ namespace ExtraSnapPointsMadeEasy
                 prefab.name.StartsWith("_") ||
                 prefab.name.StartsWith("OLD_") ||
                 prefab.name.EndsWith("_OLD") ||
+                prefab.name.EndsWith("OLD") ||
                 prefab.name.StartsWith("vfx_") ||
                 prefab.name.StartsWith("sfx_") ||
                 prefab.name.StartsWith("fx_")
@@ -151,12 +168,12 @@ namespace ExtraSnapPointsMadeEasy
             return false;
         }
 
-        private static void AddSnapPoints(GameObject prefab)
+        private static bool AddSnapPoints(GameObject prefab)
         {
             var prefabConfig = PluginConfig.LoadConfig(prefab);
             if (!prefabConfig.Value || PluginConfig.DisableExtraSnapPoints.Value)
             {
-                return; // skip adding snap points if not enabled
+                return false; // skip adding snap points if not enabled
             }
 
             switch (prefab.name)
@@ -791,7 +808,7 @@ namespace ExtraSnapPointsMadeEasy
                 default:
                     if (SnapPointHelper.IsPoint(prefab) || SnapPointHelper.IsCross(prefab))
                     {
-                        return;
+                        return false;
                     }
                     if (SnapPointHelper.IsCeilingBrazier(prefab)
                         && SnapPointHelper.HasNoSnapPoints(prefab))
@@ -852,6 +869,7 @@ namespace ExtraSnapPointsMadeEasy
 
                     break;
             }
+            return true;
         }
     }
 }

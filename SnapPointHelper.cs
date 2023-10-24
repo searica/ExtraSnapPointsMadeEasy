@@ -592,13 +592,9 @@ namespace ExtraSnapPointsMadeEasy
             bool fixZClipping = false
         )
         {
-            GameObject target = ZNetScene.instance.GetPrefab(gameObject.name);
-
-            if (!target)
+            if (!gameObject)
             {
-                Log.LogWarning(
-                    $"Prefab {gameObject.name} not found. Cannot add snappoints"
-                );
+                Log.LogWarning("GameObject is null. Cannot add snappoints");
                 return;
             }
 
@@ -619,7 +615,7 @@ namespace ExtraSnapPointsMadeEasy
                     z += 0.0001f;
                 }
 
-                CreateSnapPoint(pos, target.transform);
+                CreateSnapPoint(pos, gameObject.transform);
             }
         }
 

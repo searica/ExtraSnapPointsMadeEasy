@@ -2,8 +2,6 @@
 
 namespace ExtraSnapPointsMadeEasy.Patches
 {
-    // hook right when the game first starts
-    // to avoid touching pieces added by mods
     [HarmonyPatch(typeof(ZoneSystem))]
     internal class ZoneSystemPatch
     {
@@ -12,7 +10,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         [HarmonyPatch(nameof(ZoneSystem.Start))]
         public static void Start()
         {
-            ExtraSnapPoints.AddExtraSnapPoints("Adding extra snap points");
+            ExtraSnapPoints.AddExtraSnapPoints("Adding extra snap points", true);
         }
     }
 }

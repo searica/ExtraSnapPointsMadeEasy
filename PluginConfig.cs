@@ -28,17 +28,50 @@ namespace ExtraSnapPointsMadeEasy
 
         internal static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
 
+        internal static ConfigEntry<LoggerLevel> Verbosity { get; private set; }
+
+        internal enum LoggerLevel
+        {
+            Low = 0,
+            Medium = 1,
+            High = 2,
+        }
+
+        internal static LoggerLevel VerbosityLevel => Verbosity.Value;
+
+        internal static bool IsVerbosityLow => Verbosity.Value >= LoggerLevel.Low;
+        internal static bool IsVerbosityMedium => Verbosity.Value >= LoggerLevel.Medium;
+        internal static bool IsVerbosityHigh => Verbosity.Value >= LoggerLevel.High;
+
         internal static bool UpdateExtraSnapPoints { get; set; } = false;
+
+        internal static readonly AcceptableValueList<bool> AcceptableToggleValuesList = new(new bool[] { true, false });
+
+        internal static ConfigEntry<T> BindConfig<T>(
+            string section,
+            string name,
+            T value,
+            string description,
+            AcceptableValueBase acceptVals = null
+        )
+        {
+            ConfigEntry<T> configEntry = configFile.Bind(
+                section,
+                name,
+                value,
+                new ConfigDescription(
+                    description,
+                    acceptVals
+                )
+            );
+            return configEntry;
+        }
 
         internal static ConfigEntry<T> BindConfig<T>(string group, string name, T value, ConfigDescription description)
         {
             ConfigEntry<T> configEntry = configFile.Bind(group, name, value, description);
             return configEntry;
         }
-
-        internal static ConfigEntry<T> BindConfig<T>(string group, string name, T value, string description) => BindConfig(group, name, value, new ConfigDescription(description));
-
-        internal static readonly AcceptableValueList<bool> AcceptableToggleValuesList = new(new bool[] { true, false });
 
         public static void Init(ConfigFile config)
         {
@@ -80,38 +113,41 @@ namespace ExtraSnapPointsMadeEasy
                 MainSectionName,
                 "ResetSnapsOnNewPiece",
                 false,
-                "Controls if the selected snap point is reset for each placement, default to not reset. " +
-                "This means your selections carry over between placements."
+                "Controls if the selected snap point is reset for each placement, " +
+                "defaults to not reset. This means your selections carry over between placements.",
+                AcceptableToggleValuesList
             );
 
             DisableExtraSnapPoints = BindConfig(
                 MainSectionName,
                 "DisableExtraSnapPoints",
                 false,
-                "Globally disable all extra snap points. (Requires Restart)"
+                "Globally disable all extra snap points.",
+                AcceptableToggleValuesList
             );
             DisableExtraSnapPoints.SettingChanged += SnapSettingChanged;
 
-            Save();
+            Verbosity = BindConfig(
+                MainSectionName,
+                "Verbosity",
+                LoggerLevel.Low,
+                "Low will log basic information about the mod. Medium will log information that " +
+                "is useful for troubleshooting. High will log a lot of information, do not set " +
+                "it to this without good reason as it will slow down your game."
+            );
 
-            //Log.LogInfo(
-            //    $"Loaded settings!\n" +
-            //    $"\t - EnableManualSnap: {EnableManualSnap.Value}\n" +
-            //    $"\t - EnableManualClosestSnap: {EnableManualClosestSnap.Value}\n" +
-            //    $"\t - IterateSourceSnapPoints: {IterateSourceSnapPoints.Value}\n" +
-            //    $"\t - IterateTargetSnapPoints: {IterateTargetSnapPoints.Value}"
-            //);
+            Save();
         }
 
         internal static ConfigEntry<bool> LoadConfig(GameObject gameObject)
         {
-            ConfigEntry<bool> prefabConfig = PluginConfig.BindConfig(
+            ConfigEntry<bool> prefabConfig = BindConfig(
                 "SnapPoints",
                 gameObject.name,
                 true,
                 new ConfigDescription(
                     "Set to True to enable snap points for this prefab (Requires Restart).",
-                    PluginConfig.AcceptableToggleValuesList
+                    AcceptableToggleValuesList
                 )
             );
             prefabConfig.SettingChanged += SnapSettingChanged;

@@ -1,26 +1,41 @@
 # ExtraSnapPointsMadeEasy
 This is a quality of life building mod for Valheim.
 
-## Acknowledgements
-This mod was inspired by Snap Points Made Easy which is originally by yardik and FenceSnap by MSchmoecker and parts of the code are based on those mods.
-
 ## Features
-- Adds custom snap points to most vanilla build pieces in the game that did not have them.
-- Adds extra snap points to wooden beams at the halfway points.
-- Adds a snap point to the local center of all build pieces, even those added by other mods.
-- Has configuration options to enable or disable extra snap points on a piece by piece basis.
 - Allows for manual selection of snap points for both the piece you are placing and the piece you are snapping to.
 - Allows for manual selection of snap points on only the piece being placed.
 - Provides notifications of which snapping mode is active and the snap points selected.
+- Automatically determines the type of each build piece and adds extra snap points accordingly. 
+- Dynamically updates in response to configuration changes while in-game.
+- Has configuration options to enable or disable extra snap points on a piece by piece basis or to globally disable all extra snap point.
+- Built in config-file watcher.
+- Works with other mods that add build pieces.
 
-### New Snap Points
-New snap points have been added to most crafting and furniture items. Snap points on items like chests, torches, sconces, and banners. Snap points have been chosen to minimize clipping when snapping banners and sconces to walls of any material.
+## Extra Snap Points
+This mod adds extra snap points to increase precision when building. The type of each piece is automatically determined and extra snap points are added based on the type (also works with pieces added by other mods). 
 
-### Extra Snap Points
-Extra snap points at the halfway position have been added to all wooden beams and the diagonal wood wall pieces.
+**Custom Snap Points:** Many of the crafting and furniture items that were missing snap points have had custom ones added. For example chests, torches, sconces, and banners all have snap points added. The custom snap have been chosen to minimize clipping when snapping banners and sconces to walls of any material.
 
-### Local Center Snap Points
-A snap point is added to center of nearly all build pieces (including those added by mods). The exception to this is pieces that will be unssupported if snapped to their local center during placement. For pieces with support issues an alternative custom snap point is added instead.
+**Line Pieces:** If the piece has two snap points then an extra snap point is added midway between them. So all beams and poles have a snap point in the center of them.
+
+**Triangle Pieces:** If the piece has three snap points that form a triangle then snap points are added midway between each pair of points and in the center of the triangle.
+
+**Rectangle Pieces:** If the piece has four snap points that form a rectangle then snap points are added midway along each edge and in the center of the rectangle.
+
+**Roof Top Pieces:** If the piece has six snap points that form a V shape (roof top pieces) then snap points are added midway along the two bottom edges and midway along the top ridge.
+
+**Cross Pieces:** If the piece has five snap points that from a cross with snap point in the center then no extra snap points are added.
+
+**Torch Pieces:** If the piece is a torch and has no snap points then a snap point is added at the local center and another at the base of the torch.
+
+**Ship Pieces:** If the piece is a ship then no snap points are added to it.
+
+**Cart Pieces:** If the piece is a cart then no snap points are added to it. 
+
+**Other Pieces:** If a piece has no snap points then a snap point is added at the local center of the piece. If a piece has only a single snap point then no extra snap points are added.
+
+## Snapping Modes
+This mod adds two different modes of manual snapping to provide greater precision when placing pieces.
 
 ### Manual Snapping
 Press a key to toggle Manual Snapping Mode, which allows you to cycle through snap points when targeting a piece in game - without needing to point at them directly with the mouse!
@@ -47,6 +62,21 @@ Github: https://github.com/searica/ExtraSnapPointsMadeEasy
 My mods will always be free to use but if you feel like saying thanks you can tip/donate here: https://ko-fi.com/searica
 
 ### Contributions
-If you would like to provide suggestions, make feature requests, or reports bugs and compatability issues you can either open an issue on the Github repository or tag me (@searica) with a message on the [Odin Plus discord](https://discord.gg/mbkPcvu9ax).
+If you would like to provide suggestions, make feature requests, or reports bugs and compatibility issues you can either open an issue on the Github repository or tag me (@searica) with a message on the [Jotunn discord](https://discord.gg/DdUt6g7gyA) or the [Odin Plus discord](https://discord.gg/mbkPcvu9ax).
 
 I'm a grad student and have a lot of personal responsibilities on top of that so I can't promise I will respond quickly, but I do intend to maintain and improve the mod in my free time.
+
+### Credits
+This mod was inspired by Snap Points Made Easy which is originally by yardik and FenceSnap by MSchmoecker and parts of the code are based on those mods.
+
+### Shameless Self Plug (Other Mods By Me)
+If you like this mod you might like some of my other ones.
+
+#### Building Mods
+- [MoreVanillaBuildPrefabs](https://valheim.thunderstore.io/package/Searica/More_Vanilla_Build_Prefabs/)
+<!--- [Extra Snap Points Made Easy](https://valheim.thunderstore.io/package/Searica/Extra_Snap_Points_Made_Easy/)-->
+- [BuildRestrictionTweaksSync](https://valheim.thunderstore.io/package/Searica/BuildRestrictionTweaksSync/)
+
+#### Gameplay Mods
+- [FortifySkillsRedux](https://valheim.thunderstore.io/package/Searica/FortifySkillsRedux/)
+- [DodgeShortcut](https://valheim.thunderstore.io/package/Searica/DodgeShortcut/)

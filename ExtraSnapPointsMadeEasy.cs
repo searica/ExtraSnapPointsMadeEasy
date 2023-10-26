@@ -30,7 +30,7 @@ namespace ExtraSnapPointsMadeEasy
         private void OnDestroy()
         {
             PluginConfig.Save();
-            _harmony?.UnpatchSelf();
+            //_harmony?.UnpatchSelf();
         }
 
         /// <summary>

@@ -150,6 +150,29 @@ namespace ExtraSnapPointsMadeEasy
         internal static bool IsRoofTop(GameObject gameObject)
         {
             if (gameObject == null) { return false; }
+
+            bool hasRoofTag = false;
+            foreach (var collider in gameObject.GetComponentsInChildren<Collider>())
+            {
+                if (collider.CompareTag("roof"))
+                {
+                    hasRoofTag = true;
+                    break;
+                }
+            }
+            if (!hasRoofTag) { return false; }
+
+            return IsWedge3D(gameObject);
+        }
+
+        /// <summary>
+        ///     Checks if game object is top piece for roof.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
+        internal static bool IsWedge3D(GameObject gameObject)
+        {
+            if (gameObject == null) { return false; }
             var snapPoints = GetSnapPoints(gameObject.transform);
             if (snapPoints.Count != 6) return false;
 

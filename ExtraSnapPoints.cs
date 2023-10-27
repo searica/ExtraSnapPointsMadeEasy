@@ -9,10 +9,8 @@ namespace ExtraSnapPointsMadeEasy
     {
         private static readonly HashSet<string> DoNotAddSnapPoints = new()
         {
-            "dvergrprops_hooknchain",
             "piece_dvergr_spiralstair",
             "piece_dvergr_spiralstair_right",
-            "Cart",
         };
 
         /// <summary>
@@ -25,7 +23,6 @@ namespace ExtraSnapPointsMadeEasy
         /// </summary>
         private static readonly Dictionary<string, int> DefaultNumSnapPoints = new();
 
-        // iterate over prefab tables to get all existing prefabPieces
         internal static void AddExtraSnapPoints(string msg, bool forceUpdate = false)
         {
             // Avoid updating before world and prefabs are loaded.
@@ -78,6 +75,10 @@ namespace ExtraSnapPointsMadeEasy
             PluginConfig.UpdateExtraSnapPoints = false;
         }
 
+        /// <summary>
+        ///      Iterate over piece tables to get all existing prefabPieces
+        /// </summary>
+        /// <returns></returns>
         internal static List<GameObject> FindPrefabPieces()
         {
             return Resources.FindObjectsOfTypeAll<PieceTable>()
@@ -152,11 +153,11 @@ namespace ExtraSnapPointsMadeEasy
                 prefab.GetComponent("TerrainOp") != null ||
 
                 prefab.GetComponentInChildren<Ship>() != null || // ignore ships
+                prefab.GetComponentInChildren<Vagon>() != null || // ignore carts
                 prefab.GetComponent<Piece>().m_repairPiece == true ||
 
                 prefab.name.StartsWith("_") ||
                 prefab.name.StartsWith("OLD_") ||
-                prefab.name.EndsWith("_OLD") ||
                 prefab.name.EndsWith("OLD") ||
                 prefab.name.StartsWith("vfx_") ||
                 prefab.name.StartsWith("sfx_") ||

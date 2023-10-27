@@ -22,7 +22,7 @@ This mod adds extra snap points to increase precision when building. The type of
 
 **Rectangle Pieces:** If the piece has four snap points that form a rectangle then snap points are added midway along each edge and in the center of the rectangle.
 
-**Roof Top Pieces:** If the piece has six snap points that form a V shape (roof top pieces) then snap points are added midway along the two bottom edges and midway along the top ridge.
+**Roof Top Pieces:** If the piece is tagged as a "roof" piece and has six snap points that form a V shape (roof top pieces) then snap points are added midway along the two bottom edges and midway along the top ridge.
 
 **Cross Pieces:** If the piece has five snap points that from a cross with snap point in the center then no extra snap points are added.
 

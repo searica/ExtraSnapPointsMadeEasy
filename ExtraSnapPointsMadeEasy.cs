@@ -8,12 +8,10 @@ namespace ExtraSnapPointsMadeEasy
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class ExtraSnapPointsMadeEasy : BaseUnityPlugin
     {
-        public const string PluginName = "ExtraSnapPointsMadeEasy";
+        internal const string PluginName = "ExtraSnapPointsMadeEasy";
         internal const string Author = "Searica";
         public const string PluginGuid = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.1.0";
-
-        private Harmony _harmony;
+        public const string PluginVersion = "1.1.1";
 
         private void Awake()
         {
@@ -21,7 +19,7 @@ namespace ExtraSnapPointsMadeEasy
             PluginConfig.Init(Config);
             PluginConfig.SetUp();
 
-            _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: PluginGuid);
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: PluginGuid);
 
             PluginConfig.SetupWatcher();
             PluginConfig.CheckForConfigManager();
@@ -30,12 +28,11 @@ namespace ExtraSnapPointsMadeEasy
         private void OnDestroy()
         {
             PluginConfig.Save();
-            //_harmony?.UnpatchSelf();
         }
 
         /// <summary>
-        ///     Public API so other mods can rescan piece tables and add 
-        ///     extra snap points after dynamically adding/removing pieces 
+        ///     Public API so other mods can rescan piece tables and add
+        ///     extra snap points after dynamically adding/removing pieces
         ///     from piece tables.
         /// </summary>
         /// <param name="msg"></param>

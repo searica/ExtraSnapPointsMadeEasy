@@ -5,13 +5,23 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.1.1</td>
+			<td align="left">
+				<ul>
+					<li>Improved robustness of classifying pieces as RoofTop pieces. Should hopefully reduce classification errors for non-Vanilla pieces added by other mods.</li>
+					<li>Improved shutdown performance.</li>
+					<li>Improved automatic classification of torches.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.1.0</td>
 			<td align="left">
 				<ul>
 					<li>Altered internal function of mod to automatically infer the type of build piece and add snap points accordingly.</li>
 					<li>Re-wrote mod to dynamically update to config changes while in-game.</li>
 					<li>Improved interactions with MoreVanillaBuildPrefabs and other mods that add build pieces.</li>
-					<li>Added option to disable adding extra snap points to all pieces at once.</li>
+					<li>Added option to disable adding extra snap points for all pieces at once.</li>
 				</ul>
 			</td>
 		</tr>
@@ -80,4 +90,3 @@
 		</tr>
 	</tbody>
 </table>
-

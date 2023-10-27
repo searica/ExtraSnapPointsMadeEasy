@@ -226,25 +226,20 @@ namespace ExtraSnapPointsMadeEasy
             {
                 return true;
             }
-            if (prefab.name.ToLower().Contains("torch"))
+            if (
+                prefab.transform.FindDeepChild("FireWarmth") != null
+                || prefab.GetComponentInChildren<Demister>(true) != null
+                || prefab.transform.FindDeepChild("fx_Torch_Basic") != null
+                || prefab.transform.FindDeepChild("fx_Torch_Blue") != null
+                || prefab.transform.FindDeepChild("fx_Torch_Green") != null
+                || prefab.transform.FindDeepChild("demister_ball (1)") != null
+            )
             {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("fx_Torch_Basic") != null)
-            {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("fx_Torch_Blue") != null)
-            {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("fx_Torch_Green") != null)
-            {
-                return true;
-            }
-            if (prefab.transform.FindDeepChild("demister_ball (1)") != null)
-            {
-                return true;
+                var prefabName = prefab.name.ToLower();
+                if (prefabName.Contains("torch") || prefabName.Contains("demister"))
+                {
+                    return true;
+                }
             }
             return false;
         }

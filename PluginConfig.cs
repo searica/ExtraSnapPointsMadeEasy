@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using BepInEx.Bootstrap;
-using Jotunn.Managers;
 using System.Reflection;
+using UnityEngine.Rendering;
 
 namespace ExtraSnapPointsMadeEasy
 {
@@ -201,7 +201,8 @@ namespace ExtraSnapPointsMadeEasy
 
         internal static void CheckForConfigManager()
         {
-            if (GUIManager.IsHeadless())
+            // Is headless server
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
             {
                 return;
             }

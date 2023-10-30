@@ -5,6 +5,16 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.1.2</td>
+			<td align="left">
+				<ul>
+					<li>Removed accidental Jotunn dependency due to using a nuget package build file.</li>
+					<li>Improved shutdown performance.</li>
+					<li>Built against BepInEx 5.4.2202</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.1.1</td>
 			<td align="left">
 				<ul>

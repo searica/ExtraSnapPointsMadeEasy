@@ -19,13 +19,22 @@ namespace ExtraSnapPointsMadeEasy.Configs
         private static readonly string ConfigFileName = ExtraSnapPointsMadeEasy.PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
-        private const string MainSectionName = "\u200BGlobal";
+        private const string SnapModeSection = "\u200B\u200BManualSnapping";
+        private const string ExtraSnapsSection = "​\u200BExtraSnapPoints";
         public static ConfigEntry<KeyCode> EnableManualSnap { get; private set; }
         public static ConfigEntry<KeyCode> EnableManualClosestSnap { get; private set; }
         public static ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
         public static ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
         public static ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
         public static ConfigEntry<bool> DisableExtraSnapPoints { get; private set; }
+
+        public static ConfigEntry<bool> DisableLineSnapPoints { get; private set; }
+
+        public static ConfigEntry<bool> DisableTriangleSnapPoints { get; private set; }
+
+        public static ConfigEntry<bool> DisableRect2DSnapPoints { get; private set; }
+
+        public static ConfigEntry<bool> DisableRoofTopSnapPoints { get; private set; }
 
         internal static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
 
@@ -83,35 +92,35 @@ namespace ExtraSnapPointsMadeEasy.Configs
         public static void SetUp()
         {
             EnableManualSnap = BindConfig(
-                MainSectionName,
+                SnapModeSection,
                 "EnableManualSnap",
                 KeyCode.LeftAlt,
                 "This key will enable or disable manual snapping mode."
             );
 
             EnableManualClosestSnap = BindConfig(
-                MainSectionName,
+                SnapModeSection,
                 "EnableManualClosestSnap",
                 KeyCode.CapsLock,
                 "This key will enable or disable manual closest snapping mode."
             );
 
             IterateSourceSnapPoints = BindConfig(
-                MainSectionName,
+                SnapModeSection,
                 "IterateSourceSnapPoints",
                 KeyCode.LeftControl,
                 "This key will cycle through the snap points on the piece you are placing."
             );
 
             IterateTargetSnapPoints = BindConfig(
-                MainSectionName,
+                SnapModeSection,
                 "IterateTargetSnapPoints",
                 KeyCode.LeftShift,
                 "This key will cycle through the snap points on the piece you are attaching to."
             );
 
             ResetSnapsOnNewPiece = BindConfig(
-                MainSectionName,
+                SnapModeSection,
                 "ResetSnapsOnNewPiece",
                 false,
                 "Controls if the selected snap point is reset for each placement, " +
@@ -120,7 +129,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
             );
 
             DisableExtraSnapPoints = BindConfig(
-                MainSectionName,
+                ExtraSnapsSection,
                 "DisableExtraSnapPoints",
                 false,
                 "Globally disable all extra snap points.",
@@ -128,8 +137,44 @@ namespace ExtraSnapPointsMadeEasy.Configs
             );
             DisableExtraSnapPoints.SettingChanged += SnapSettingChanged;
 
+            DisableLineSnapPoints = BindConfig(
+                ExtraSnapsSection,
+                "DisableLineSnapPoints",
+                false,
+                "Disable extra snap points for all \"Line\" pieces.",
+                AcceptableToggleValuesList
+            );
+            DisableLineSnapPoints.SettingChanged += SnapSettingChanged;
+
+            DisableTriangleSnapPoints = BindConfig(
+                ExtraSnapsSection,
+                "DisableTriangleSnapPoints",
+                false,
+                "Disable extra snap points for all \"Triangle\" pieces.",
+                AcceptableToggleValuesList
+            );
+            DisableTriangleSnapPoints.SettingChanged += SnapSettingChanged;
+
+            DisableRect2DSnapPoints = BindConfig(
+                ExtraSnapsSection,
+                "DisableRect2DSnapPoints",
+                false,
+                "Disable extra snap points for all \"Rect2D\" pieces.",
+                AcceptableToggleValuesList
+            );
+            DisableRect2DSnapPoints.SettingChanged += SnapSettingChanged;
+
+            DisableRoofTopSnapPoints = BindConfig(
+               ExtraSnapsSection,
+               "DisableRoofTopSnapPoints",
+               false,
+               "Disable extra snap points for all \"Line\" pieces.",
+               AcceptableToggleValuesList
+           );
+            DisableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
+
             Verbosity = BindConfig(
-                MainSectionName,
+                "\u200B\u200B\u200BGlobal",
                 "Verbosity",
                 LoggerLevel.Low,
                 "Low will log basic information about the mod. Medium will log information that " +
@@ -242,7 +287,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
 
             if (!cmActive)
             {
-                var msg = "Config settings changed via in-game manager, re-intializing";
+                var msg = "Config settings changed, re-initializing";
                 SnapPointAdder.AddExtraSnapPoints(msg);
             }
         }

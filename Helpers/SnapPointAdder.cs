@@ -848,19 +848,19 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                             }
                         );
                     }
-                    else if (SnapPointHelper.IsLine(prefab))
+                    else if (SnapPointHelper.IsLine(prefab) && !Config.DisableLineSnapPoints.Value)
                     {
                         SnapPointHelper.AddSnapPointToLine(prefab);
                     }
-                    else if (SnapPointHelper.IsTriangle(prefab))
+                    else if (SnapPointHelper.IsTriangle(prefab) && !Config.DisableTriangleSnapPoints.Value)
                     {
                         SnapPointHelper.AddSnapPointsToTriangle(prefab);
                     }
-                    else if (SnapPointHelper.IsRectangle(prefab))
+                    else if (SnapPointHelper.IsRect2D(prefab) && !Config.DisableRect2DSnapPoints.Value)
                     {
-                        SnapPointHelper.AddSnapPointsToSquare(prefab);
+                        SnapPointHelper.AddSnapPointsToRect2D(prefab);
                     }
-                    else if (SnapPointHelper.IsRoofTop(prefab))
+                    else if (SnapPointHelper.IsRoofTop(prefab) && !Config.DisableRoofTopSnapPoints.Value)
                     {
                         SnapPointHelper.AddSnapPointsToRoofTop(prefab);
                     }

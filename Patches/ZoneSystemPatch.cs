@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using ExtraSnapPointsMadeEasy.Helpers;
+using HarmonyLib;
 
 namespace ExtraSnapPointsMadeEasy.Patches
 {
@@ -10,7 +11,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         [HarmonyPatch(nameof(ZoneSystem.Start))]
         public static void Start()
         {
-            ExtraSnapPoints.AddExtraSnapPoints("Adding extra snap points", true);
+            SnapPointAdder.AddExtraSnapPoints("Adding extra snap points", true);
         }
     }
 }

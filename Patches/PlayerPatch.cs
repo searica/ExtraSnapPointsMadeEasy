@@ -3,6 +3,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using ExtraSnapPointsMadeEasy.Helpers;
+using ExtraSnapPointsMadeEasy.Configs;
 
 namespace ExtraSnapPointsMadeEasy.Patches
 {
@@ -49,7 +51,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         private static void UpdatePlacementGhostPostfix(Player __instance)
         {
             SnapMode prevSnapMode = snapMode;
-            if (Input.GetKeyDown(PluginConfig.EnableManualSnap.Value))
+            if (Input.GetKeyDown(Config.EnableManualSnap.Value))
             {
                 if (snapMode == SnapMode.Manual)
                 {
@@ -60,7 +62,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
                     snapMode = SnapMode.Manual;
                 }
             }
-            else if (Input.GetKeyDown(PluginConfig.EnableManualClosestSnap.Value))
+            else if (Input.GetKeyDown(Config.EnableManualClosestSnap.Value))
             {
                 if (snapMode == SnapMode.ManualClosest)
                 {
@@ -96,7 +98,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (currentTargetParent != targetPiece.transform)
             {
-                if (PluginConfig.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
+                if (Config.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
                 {
                     currentTargetSnap = 0;
                 }
@@ -106,7 +108,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (currentSourceParent != sourcePiece.transform)
             {
-                if (PluginConfig.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
+                if (Config.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
                 {
                     currentSourceSnap = 0;
                 }
@@ -115,13 +117,13 @@ namespace ExtraSnapPointsMadeEasy.Patches
             }
 
             int prevSourceSnap = currentSourceSnap;
-            if (Input.GetKeyDown(PluginConfig.IterateSourceSnapPoints.Value))
+            if (Input.GetKeyDown(Config.IterateSourceSnapPoints.Value))
             {
                 currentSourceSnap++;
             }
 
             int prevTargetSnap = currentTargetSnap;
-            if (Input.GetKeyDown(PluginConfig.IterateTargetSnapPoints.Value))
+            if (Input.GetKeyDown(Config.IterateTargetSnapPoints.Value))
             {
                 currentTargetSnap++;
             }

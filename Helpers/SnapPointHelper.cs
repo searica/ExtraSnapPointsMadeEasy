@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ExtraSnapPointsMadeEasy.Extensions;
 using UnityEngine;
 
 /* In Unity
@@ -7,7 +8,7 @@ using UnityEngine;
  * Z = forward/back
  */
 
-namespace ExtraSnapPointsMadeEasy
+namespace ExtraSnapPointsMadeEasy.Helpers
 {
     internal class SnapPointHelper
     {

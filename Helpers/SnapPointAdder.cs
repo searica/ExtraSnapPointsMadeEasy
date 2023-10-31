@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ExtraSnapPointsMadeEasy.Configs;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace ExtraSnapPointsMadeEasy
+namespace ExtraSnapPointsMadeEasy.Helpers
 {
-    internal class ExtraSnapPoints
+    internal class SnapPointAdder
     {
         private static readonly HashSet<string> DoNotAddSnapPoints = new()
         {
@@ -33,13 +34,13 @@ namespace ExtraSnapPointsMadeEasy
             }
 
             // Only update if needed.
-            if (!PluginConfig.UpdateExtraSnapPoints && !forceUpdate)
+            if (!Config.UpdateExtraSnapPoints && !forceUpdate)
             {
                 return;
             }
 
             var watch = new System.Diagnostics.Stopwatch();
-            if (PluginConfig.IsVerbosityMedium)
+            if (Config.IsVerbosityMedium)
             {
                 watch.Start();
             }
@@ -62,7 +63,7 @@ namespace ExtraSnapPointsMadeEasy
                 }
             }
 
-            if (PluginConfig.IsVerbosityMedium)
+            if (Config.IsVerbosityMedium)
             {
                 watch.Stop();
                 Log.LogInfo($"Time to add snap points: {watch.ElapsedMilliseconds} ms");
@@ -72,7 +73,7 @@ namespace ExtraSnapPointsMadeEasy
                 Log.LogInfo("Adding snap points complete");
             }
 
-            PluginConfig.UpdateExtraSnapPoints = false;
+            Config.UpdateExtraSnapPoints = false;
         }
 
         /// <summary>
@@ -110,9 +111,9 @@ namespace ExtraSnapPointsMadeEasy
                     var snapPoints = SnapPointHelper.GetSnapPoints(prefab.transform);
 
                     // iterate in reverse to avoid NRE
-                    for (int i = (snapPoints.Count - 1); i > (defaultNum - 1); i--)
+                    for (int i = snapPoints.Count - 1; i > defaultNum - 1; i--)
                     {
-                        GameObject.DestroyImmediate(snapPoints[i].gameObject);
+                        Object.DestroyImmediate(snapPoints[i].gameObject);
                     }
                 }
             }
@@ -171,8 +172,8 @@ namespace ExtraSnapPointsMadeEasy
 
         private static bool AddSnapPoints(GameObject prefab)
         {
-            var prefabConfig = PluginConfig.LoadConfig(prefab);
-            if (!prefabConfig.Value || PluginConfig.DisableExtraSnapPoints.Value)
+            var prefabConfig = Config.LoadConfig(prefab);
+            if (!prefabConfig.Value || Config.DisableExtraSnapPoints.Value)
             {
                 return false; // skip adding snap points if not enabled
             }

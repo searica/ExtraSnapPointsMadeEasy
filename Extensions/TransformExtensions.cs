@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace ExtraSnapPointsMadeEasy
+namespace ExtraSnapPointsMadeEasy.Extensions
 {
     internal static class TransformExtensions
     {
@@ -27,10 +27,8 @@ namespace ExtraSnapPointsMadeEasy
                 {
                     queue.Enqueue(t);
                 }
-
             }
             return null;
         }
     }
-
 }

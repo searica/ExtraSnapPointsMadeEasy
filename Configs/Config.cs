@@ -7,10 +7,11 @@ using System;
 using BepInEx.Bootstrap;
 using System.Reflection;
 using UnityEngine.Rendering;
+using ExtraSnapPointsMadeEasy.Helpers;
 
-namespace ExtraSnapPointsMadeEasy
+namespace ExtraSnapPointsMadeEasy.Configs
 {
-    public class PluginConfig
+    public class Config
     {
         private static BaseUnityPlugin configurationManager;
 
@@ -196,7 +197,7 @@ namespace ExtraSnapPointsMadeEasy
                 Log.LogError("Please check your config entries for spelling and format!");
             }
             var msg = "Config settings changed after reloading config file, re-intializing";
-            ExtraSnapPoints.AddExtraSnapPoints(msg);
+            SnapPointAdder.AddExtraSnapPoints(msg);
         }
 
         internal static void CheckForConfigManager()
@@ -242,7 +243,7 @@ namespace ExtraSnapPointsMadeEasy
             if (!cmActive)
             {
                 var msg = "Config settings changed via in-game manager, re-intializing";
-                ExtraSnapPoints.AddExtraSnapPoints(msg);
+                SnapPointAdder.AddExtraSnapPoints(msg);
             }
         }
     }

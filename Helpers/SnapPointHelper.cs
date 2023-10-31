@@ -79,7 +79,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// </summary>
         /// <param name="gameObject"></param>
         /// <returns></returns>
-        internal static bool IsRectangle(GameObject gameObject)
+        internal static bool IsRect2D(GameObject gameObject)
         {
             if (gameObject == null) { return false; }
             var snapPoints = GetSnapPoints(gameObject.transform);
@@ -466,7 +466,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         ///     of the square and in the center of the square.
         /// </summary>
         /// <param name="gameObject"></param>
-        internal static void AddSnapPointsToSquare(GameObject gameObject)
+        internal static void AddSnapPointsToRect2D(GameObject gameObject)
         {
             var snapPoints = GetSnapPoints(gameObject.transform);
             var pts = new HashSet<Vector3>();

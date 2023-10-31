@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<NuGetPackages>$(UserProfile)\.nuget\packages</NuGetPackages>
-		<JotunnProps>$(NuGetPackages)\jotunnlib\2.14.4\build\JotunnLib.props</JotunnProps>
+		<JotunnProps>$(NuGetPackages)\jotunnlib\2.14.6\build\JotunnLib.props</JotunnProps>
 	</PropertyGroup>
 
-	<Import Project="environment.props" Condition="Exists('environment.props')" />
+	<!--<Import Project="environment.props" Condition="Exists('environment.props')" />-->
 	<Import Project="$(JotunnProps)" Condition="Exists('$(JotunnProps)')" />
 	<Import Project="ModPackageTool.targets" Condition="Exists('ModPackageTool.targets')" />
 
 	<PropertyGroup>
-		<TargetFramework>net481</TargetFramework>
+		<TargetFramework>net462</TargetFramework>
 		<OutputType>Library</OutputType>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<!--<LangVersion>latest</LangVersion>-->
@@ -74,7 +74,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="HarmonyX" Version="2.9.0" />
-		<!--<PackageReference Include="JotunnLib" Version="2.14.5" />-->
+		<!--<PackageReference Include="JotunnLib" Version="2.14.6" />-->
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="Mono.Cecil" Version="0.11.4" />
 		<PackageReference Include="MonoMod" Version="21.9.19.1" />

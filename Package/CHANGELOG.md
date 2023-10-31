@@ -5,6 +5,15 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.1.3</td>
+			<td align="left">
+				<ul>
+					<li>Add more config options.</li>
+					<li>Improved public API to automatically determine the name of the plugin calling it.</li>>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.1.2</td>
 			<td align="left">
 				<ul>

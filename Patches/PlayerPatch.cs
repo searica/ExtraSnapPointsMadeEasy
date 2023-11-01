@@ -76,7 +76,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (prevSnapMode != snapMode)
             {
-                __instance.Message(MessageHud.MessageType.Center, SnapModeMsg[snapMode]);
+                __instance.Message(Config.NotificationType.Value, SnapModeMsg[snapMode]);
             }
 
             if (__instance.m_placementGhost == null || snapMode == SnapMode.Auto)
@@ -148,12 +148,12 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (prevSourceSnap != currentSourceSnap)
             {
-                __instance.Message(MessageHud.MessageType.Center, $"Source Snap Point: {currentSourceSnap}");
+                __instance.Message(Config.NotificationType.Value, $"Source Snap Point: {currentSourceSnap}");
             }
 
             if (prevTargetSnap != currentTargetSnap && snapMode == SnapMode.Manual)
             {
-                __instance.Message(MessageHud.MessageType.Center, $"Target Snap Point: {currentTargetSnap}");
+                __instance.Message(Config.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
             }
 
             Transform a = sourceSnapPoints[currentSourceSnap];

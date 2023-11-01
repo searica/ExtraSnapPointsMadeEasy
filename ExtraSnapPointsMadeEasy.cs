@@ -43,8 +43,9 @@ namespace ExtraSnapPointsMadeEasy
         /// </summary>
         public static void ReInitExtraSnapPoints()
         {
-            var pluginInfo = BepInExUtils.GetSourceModMetadata();
-            var msg = $"{pluginInfo.Name} triggered a re-initialization, adding extra snap points";
+            //var pluginInfo = BepInExUtils.GetSourceModMetadata();
+            //var msg = $"{pluginInfo.Name} triggered a re-initialization, adding extra snap points";
+            var msg = $"External mod triggered a re-initialization, adding extra snap points";
             SnapPointAdder.AddExtraSnapPoints(msg, true);
         }
     }

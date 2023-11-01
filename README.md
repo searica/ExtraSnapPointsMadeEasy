@@ -4,10 +4,13 @@ This is a quality of life building mod for Valheim.
 ## Features
 - Allows for manual selection of snap points for both the piece you are placing and the piece you are snapping to.
 - Allows for manual selection of snap points on only the piece being placed.
-- Provides notifications of which snapping mode is active and the snap points selected.
+- Provides notifications of which snapping mode is active and the snap points selected. The location of these notifications can be set in the mod configuration.
 - Automatically determines the type of each build piece and adds extra snap points accordingly. 
-- Dynamically updates in response to configuration changes while in-game.
-- Has configuration options to enable or disable extra snap points on a piece by piece basis or to globally disable all extra snap point.
+- Dynamically updates to configuration changes while in-game.
+- Extra snap points can be enabled/disabled:
+    - For all pieces,
+    - On a piece-by-piece basis,
+    - Or by piece type.
 - Built in config-file watcher.
 - Works with other mods that add build pieces.
 
@@ -20,7 +23,7 @@ This mod adds extra snap points to increase precision when building. The type of
 
 **Triangle Pieces:** If the piece has three snap points that form a triangle then snap points are added midway between each pair of points and in the center of the triangle.
 
-**Rectangle Pieces:** If the piece has four snap points that form a rectangle then snap points are added midway along each edge and in the center of the rectangle.
+**Rect2D Pieces:** If the piece has four snap points that form a rectangle then snap points are added midway along each edge and in the center of the rectangle.
 
 **Roof Top Pieces:** If the piece is tagged as a "roof" piece and has six snap points that form a V shape (roof top pieces) then snap points are added midway along the two bottom edges and midway along the top ridge.
 

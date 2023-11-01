@@ -40,6 +40,8 @@ namespace ExtraSnapPointsMadeEasy.Configs
 
         internal static ConfigEntry<LoggerLevel> Verbosity { get; private set; }
 
+        internal static ConfigEntry<MessageHud.MessageType> NotificationType { get; private set; }
+
         internal enum LoggerLevel
         {
             Low = 0,
@@ -126,6 +128,13 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "Controls if the selected snap point is reset for each placement, " +
                 "defaults to not reset. This means your selections carry over between placements.",
                 AcceptableToggleValuesList
+            );
+
+            NotificationType = BindConfig(
+                SnapModeSection,
+                "NotificationType",
+                MessageHud.MessageType.Center,
+                "Set the type of notification for when manual snapping mode is changed or selected snap points are changed. \"Center\" will display in the center of the screen in large yellow text. \"TopLeft\" will display under the hotkey bar in small white text."
             );
 
             DisableExtraSnapPoints = BindConfig(

@@ -8,8 +8,8 @@
 			<td align="center">1.1.3</td>
 			<td align="left">
 				<ul>
-					<li>Add more config options.</li>
-					<li>Improved public API to automatically determine the name of the plugin calling it.</li>>
+					<li>Added more configuration options.</li>
+					<li>Changed public API to no longer require a string argument.</li>>
 				</ul>
 			</td>
 		</tr>

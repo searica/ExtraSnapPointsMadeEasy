@@ -178,7 +178,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
                     return;
             }
 
-            // adjust placement ghost position based on the differrence between a and b
+            // adjust placement ghost position based on the difference between a and b
             __instance.m_placementGhost.transform.position += b.position - a.position;
         }
 

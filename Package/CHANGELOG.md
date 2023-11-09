@@ -5,11 +5,20 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.2.0</td>
+			<td align="left">
+				<ul>
+					<li>Changed configuration file formatting. <b>You need to regenerate your config file</b>.</li>
+					<li>Added Grid Snap mode.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.1.3</td>
 			<td align="left">
 				<ul>
 					<li>Added more configuration options.</li>
-					<li>Changed public API to no longer require a string argument.</li>>
+					<li>Changed public API to no longer require a string argument.</li>
 				</ul>
 			</td>
 		</tr>

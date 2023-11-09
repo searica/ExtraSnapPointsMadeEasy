@@ -58,28 +58,33 @@ The default key-bindings are:
 ### Usage
 Grab a hammer and select a piece to place. Hit Left-Alt to enable Manual Snapping Mode, a notification will then appear in the center of your screen indicating whether the snapping mode is set to Auto or Manual. Point your piece at the piece you want to snap to and hit Left-Control to cycle through the snap points on the piece you're holding. Use Left-Shift to cycle through destination snap points. For example you can snap a horizontal pillar to the middle of the vertical pillar by cycling both to their midpoint snap points. While cycling through snap points you will also receive notifications indicating which snap point is currently selected on each piece. Alternatively press Caps-Lock to enable Manual (Closest) snapping mode which will snap to the closest snap point on the target piece while still allowing you to manually select the snap point of the piece you are placing.
 
+## Donations/Tips
+ My mods will always be free to use but if you feel like saying thanks you can tip/donate.
+
+  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/searica)
+
+
 ## Source Code
 Github: https://github.com/searica/ExtraSnapPointsMadeEasy
 
-## Donations/Tips
-My mods will always be free to use but if you feel like saying thanks you can tip/donate here: https://ko-fi.com/searica
-
 ### Contributions
-If you would like to provide suggestions, make feature requests, or reports bugs and compatibility issues you can either open an issue on the Github repository or tag me (@searica) with a message on the [Jotunn discord](https://discord.gg/DdUt6g7gyA) or the [Odin Plus discord](https://discord.gg/mbkPcvu9ax).
+If you would like to provide suggestions, make feature requests, or reports bugs and compatibility issues you can either open an issue on the Github repository or tag me (@searica) with a message on my discord [Searica's Mods](https://discord.gg/sFmGTBYN6n).
+<!--the [Jotunn discord](https://discord.gg/DdUt6g7gyA), or the [Odin Plus discord](https://discord.gg/mbkPcvu9ax)-->
 
 I'm a grad student and have a lot of personal responsibilities on top of that so I can't promise I will respond quickly, but I do intend to maintain and improve the mod in my free time.
 
 ### Credits
 This mod was inspired by Snap Points Made Easy which is originally by yardik and FenceSnap by MSchmoecker and parts of the code are based on those mods.
 
-### Shameless Self Plug (Other Mods By Me)
+## Shameless Self Plug (Other Mods By Me)
 If you like this mod you might like some of my other ones.
 
 #### Building Mods
 - [MoreVanillaBuildPrefabs](https://valheim.thunderstore.io/package/Searica/More_Vanilla_Build_Prefabs/)
-<!--- [Extra Snap Points Made Easy](https://valheim.thunderstore.io/package/Searica/Extra_Snap_Points_Made_Easy/)-->
 - [BuildRestrictionTweaksSync](https://valheim.thunderstore.io/package/Searica/BuildRestrictionTweaksSync/)
 
 #### Gameplay Mods
 - [FortifySkillsRedux](https://valheim.thunderstore.io/package/Searica/FortifySkillsRedux/)
 - [DodgeShortcut](https://valheim.thunderstore.io/package/Searica/DodgeShortcut/)
+- [ProjectileTweaks](https://valheim.thunderstore.io/package/Searica/ProjectileTweaks/)
+- [SkilledCarryWeight](https://valheim.thunderstore.io/package/Searica/SkilledCarryWeight/)

@@ -48,6 +48,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         };
 
         internal static GridPrecision gridPrecision;
+        private static float currentGridPrecision = GridPrecisionMap[GridPrecision.Low];
 
         [HarmonyReversePatch]
         [HarmonyPatch(nameof(Player.PieceRayTest))]
@@ -110,9 +111,17 @@ namespace ExtraSnapPointsMadeEasy.Patches
             var sourcePiece = player.m_placementGhost?.GetComponent<Piece>();
             if (sourcePiece == null) { return; }
 
+            if (Input.GetKeyDown(ConfigManager.CycleGridPrecision.Value))
+            {
+                if (gridPrecision == GridPrecision.Low) { gridPrecision = GridPrecision.High; }
+                else { gridPrecision = GridPrecision.Low; }
+                currentGridPrecision = GridPrecisionMap[gridPrecision];
+                player.Message(ConfigManager.NotificationType.Value, $"Grid Precision: {currentGridPrecision}");
+            }
+
             var currentPos = player.m_placementGhost.transform.position;
-            currentPos.x = RoundToNearest(currentPos.x, 0.5f);
-            currentPos.z = RoundToNearest(currentPos.z, 0.5f);
+            currentPos.x = RoundToNearest(currentPos.x, currentGridPrecision);
+            currentPos.z = RoundToNearest(currentPos.z, currentGridPrecision);
             player.m_placementGhost.transform.position = currentPos;
         }
 

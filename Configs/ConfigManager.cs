@@ -25,21 +25,15 @@ namespace ExtraSnapPointsMadeEasy.Configs
         private const string ExtraSnapsSection = "​\u200BExtraSnapPoints";
         public static ConfigEntry<KeyCode> EnableManualSnap { get; private set; }
         public static ConfigEntry<KeyCode> EnableManualClosestSnap { get; private set; }
-
         public static ConfigEntry<KeyCode> EnableGridSnap { get; private set; }
-
+        public static ConfigEntry<KeyCode> CycleGridPrecision { get; private set; }
         public static ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
-
         public static ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
         public static ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
         public static ConfigEntry<bool> DisableExtraSnapPoints { get; private set; }
-
         public static ConfigEntry<bool> DisableLineSnapPoints { get; private set; }
-
         public static ConfigEntry<bool> DisableTriangleSnapPoints { get; private set; }
-
         public static ConfigEntry<bool> DisableRect2DSnapPoints { get; private set; }
-
         public static ConfigEntry<bool> DisableRoofTopSnapPoints { get; private set; }
 
         internal static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
@@ -167,6 +161,14 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "ToggleSnapToGridMode",
                 KeyCode.F3,
                 "This key will enable or disable snap to grid mode.",
+                sectionPriority: 2
+            );
+
+            CycleGridPrecision = BindConfig(
+                SnapModeSection,
+                "CycleGridPrecision",
+                KeyCode.F4,
+                "This key will change the precision of the grid in when in grid mode.",
                 sectionPriority: 2
             );
 

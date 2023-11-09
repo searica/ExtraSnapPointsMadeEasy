@@ -5,7 +5,7 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
-			<td align="center">1.2.0</td>
+			<td align="center">1.2.0/1.2.1</td>
 			<td align="left">
 				<ul>
 					<li>Changed configuration file formatting. <b>You need to regenerate your config file</b>.</li>

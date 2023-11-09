@@ -4,6 +4,7 @@ This is a quality of life building mod for Valheim.
 ## Features
 - Allows for manual selection of snap points for both the piece you are placing and the piece you are snapping to.
 - Allows for manual selection of snap points on only the piece being placed.
+- Allows snapping pieces to the world grid.
 - Provides notifications of which snapping mode is active and the snap points selected. The location of these notifications can be set in the mod configuration.
 - Automatically determines the type of each build piece and adds extra snap points accordingly. 
 - Dynamically updates to configuration changes while in-game.
@@ -13,29 +14,6 @@ This is a quality of life building mod for Valheim.
     - Or by piece type.
 - Built in config-file watcher.
 - Works with other mods that add build pieces.
-
-## Extra Snap Points
-This mod adds extra snap points to increase precision when building. The type of each piece is automatically determined and extra snap points are added based on the type (also works with pieces added by other mods). 
-
-**Custom Snap Points:** Many of the crafting and furniture items that were missing snap points have had custom ones added. For example chests, torches, sconces, and banners all have snap points added. The custom snap have been chosen to minimize clipping when snapping banners and sconces to walls of any material.
-
-**Line Pieces:** If the piece has two snap points then an extra snap point is added midway between them. So all beams and poles have a snap point in the center of them.
-
-**Triangle Pieces:** If the piece has three snap points that form a triangle then snap points are added midway between each pair of points and in the center of the triangle.
-
-**Rect2D Pieces:** If the piece has four snap points that form a rectangle then snap points are added midway along each edge and in the center of the rectangle.
-
-**Roof Top Pieces:** If the piece is tagged as a "roof" piece and has six snap points that form a V shape (roof top pieces) then snap points are added midway along the two bottom edges and midway along the top ridge.
-
-**Cross Pieces:** If the piece has five snap points that from a cross with snap point in the center then no extra snap points are added.
-
-**Torch Pieces:** If the piece is a torch and has no snap points then a snap point is added at the local center and another at the base of the torch.
-
-**Ship Pieces:** If the piece is a ship then no snap points are added to it.
-
-**Cart Pieces:** If the piece is a cart then no snap points are added to it. 
-
-**Other Pieces:** If a piece has no snap points then a snap point is added at the local center of the piece. If a piece has only a single snap point then no extra snap points are added.
 
 ## Snapping Modes
 This mod adds two different modes of manual snapping to provide greater precision when placing pieces.
@@ -62,6 +40,31 @@ The default key-bindings are:
 
 ### Usage
 Grab a hammer and select a piece to place. Hit Left-Alt to enable Manual Snapping Mode, a notification will then appear in the center of your screen indicating whether the snapping mode is set to Auto or Manual. Point your piece at the piece you want to snap to and hit Left-Control to cycle through the snap points on the piece you're holding. Use Left-Shift to cycle through destination snap points. For example you can snap a horizontal pillar to the middle of the vertical pillar by cycling both to their midpoint snap points. While cycling through snap points you will also receive notifications indicating which snap point is currently selected on each piece. Alternatively press Caps-Lock to enable Manual (Closest) snapping mode which will snap to the closest snap point on the target piece while still allowing you to manually select the snap point of the piece you are placing.
+
+
+## Extra Snap Points
+This mod adds extra snap points to increase precision when building. The type of each piece is automatically determined and extra snap points are added based on the type (also works with pieces added by other mods). 
+
+**Custom Snap Points:** Many of the crafting and furniture items that were missing snap points have had custom ones added. For example chests, torches, sconces, and banners all have snap points added. The custom snap have been chosen to minimize clipping when snapping banners and sconces to walls of any material.
+
+**Line Pieces:** If the piece has two snap points then an extra snap point is added midway between them. So all beams and poles have a snap point in the center of them.
+
+**Triangle Pieces:** If the piece has three snap points that form a triangle then snap points are added midway between each pair of points and in the center of the triangle.
+
+**Rect2D Pieces:** If the piece has four snap points that form a rectangle then snap points are added midway along each edge and in the center of the rectangle.
+
+**Roof Top Pieces:** If the piece is tagged as a "roof" piece and has six snap points that form a V shape (roof top pieces) then snap points are added midway along the two bottom edges and midway along the top ridge.
+
+**Cross Pieces:** If the piece has five snap points that from a cross with snap point in the center then no extra snap points are added.
+
+**Torch Pieces:** If the piece is a torch and has no snap points then a snap point is added at the local center and another at the base of the torch.
+
+**Ship Pieces:** If the piece is a ship then no snap points are added to it.
+
+**Cart Pieces:** If the piece is a cart then no snap points are added to it. 
+
+**Other Pieces:** If a piece has no snap points then a snap point is added at the local center of the piece. If a piece has only a single snap point then no extra snap points are added.
+
 
 ## Donations/Tips
  My mods will always be free to use but if you feel like saying thanks you can tip/donate.

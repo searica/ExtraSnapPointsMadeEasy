@@ -1,7 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using ExtraSnapPointsMadeEasy.Helpers;
-using ExtraSnapPointsMadeEasy.Utils;
+using ExtraSnapPointsMadeEasy.Configs;
 using HarmonyLib;
 using System.Reflection;
 
@@ -22,18 +22,27 @@ namespace ExtraSnapPointsMadeEasy
         {
             Instance = this;
             Log.Init(Logger);
-            Configs.Config.Init(Config);
-            Configs.Config.SetUp();
+            ConfigManager.Init(Config);
+            ConfigManager.SetUp();
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: PluginGuid);
 
-            Configs.Config.SetupWatcher();
-            Configs.Config.CheckForConfigManager();
+            ConfigManager.SetupWatcher();
+            ConfigManager.CheckForConfigManager();
+            ConfigManager.OnConfigWindowClosed += () =>
+            {
+                SnapPointAdder.AddExtraSnapPoints("Config settings changed, re-initializing");
+            };
+
+            ConfigManager.OnConfigFileReloaded += () =>
+            {
+                SnapPointAdder.AddExtraSnapPoints("Config settings changed after reloading config file, re-initializing");
+            };
         }
 
         private void OnDestroy()
         {
-            Configs.Config.Save();
+            ConfigManager.Save();
         }
 
         /// <summary>

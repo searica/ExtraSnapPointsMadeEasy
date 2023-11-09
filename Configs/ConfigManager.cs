@@ -7,7 +7,6 @@ using System;
 using BepInEx.Bootstrap;
 using System.Reflection;
 using UnityEngine.Rendering;
-using ExtraSnapPointsMadeEasy.Helpers;
 using ExtraSnapPointsMadeEasy.Extensions;
 
 namespace ExtraSnapPointsMadeEasy.Configs
@@ -21,8 +20,6 @@ namespace ExtraSnapPointsMadeEasy.Configs
         private static readonly string ConfigFileName = ExtraSnapPointsMadeEasy.PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
-        private const string SnapModeSection = "\u200B\u200BManualSnapping";
-        private const string ExtraSnapsSection = "​\u200BExtraSnapPoints";
         public static ConfigEntry<KeyCode> EnableManualSnap { get; private set; }
         public static ConfigEntry<KeyCode> EnableManualClosestSnap { get; private set; }
         public static ConfigEntry<KeyCode> EnableGridSnap { get; private set; }
@@ -30,11 +27,11 @@ namespace ExtraSnapPointsMadeEasy.Configs
         public static ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
         public static ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
         public static ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
-        public static ConfigEntry<bool> DisableExtraSnapPoints { get; private set; }
-        public static ConfigEntry<bool> DisableLineSnapPoints { get; private set; }
-        public static ConfigEntry<bool> DisableTriangleSnapPoints { get; private set; }
-        public static ConfigEntry<bool> DisableRect2DSnapPoints { get; private set; }
-        public static ConfigEntry<bool> DisableRoofTopSnapPoints { get; private set; }
+        public static ConfigEntry<bool> EnableExtraSnapPoints { get; private set; }
+        public static ConfigEntry<bool> EnableLineSnapPoints { get; private set; }
+        public static ConfigEntry<bool> EnableTriangleSnapPoints { get; private set; }
+        public static ConfigEntry<bool> EnableRect2DSnapPoints { get; private set; }
+        public static ConfigEntry<bool> EnableRoofTopSnapPoints { get; private set; }
 
         internal static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
 
@@ -56,8 +53,6 @@ namespace ExtraSnapPointsMadeEasy.Configs
         internal static bool IsVerbosityHigh => Verbosity.Value >= LoggerLevel.High;
 
         internal static bool UpdateExtraSnapPoints { get; set; } = false;
-
-        internal static readonly AcceptableValueList<bool> AcceptableToggleValuesList = new(new bool[] { true, false });
 
         #region Events
 
@@ -94,13 +89,11 @@ namespace ExtraSnapPointsMadeEasy.Configs
             string name,
             T value,
             string description,
-            AcceptableValueBase acceptVals = null,
-            int sectionPriority = 0
+            AcceptableValueBase acceptVals = null
         )
         {
-            string sectionName = SetStringPriority(section, sectionPriority);
             ConfigEntry<T> configEntry = configFile.Bind(
-                sectionName,
+                section,
                 name,
                 value,
                 new ConfigDescription(description, acceptVals)
@@ -122,6 +115,11 @@ namespace ExtraSnapPointsMadeEasy.Configs
             return new string(ZWS, priority) + sectionName;
         }
 
+        private static readonly string MainSection = SetStringPriority("Global", 3);
+        private static readonly string SnapModeSection = SetStringPriority("ManualSnapping", 2);
+        private static readonly string ExtraSnapsSection = SetStringPriority("​ExtraSnapPoints (Requires Restart)", 1);
+        private static readonly string PrefabSnapSettings = "Individual Snap Point Settings (Requires Restart)";
+
         public static void Init(ConfigFile config)
         {
             configFile = config;
@@ -131,61 +129,54 @@ namespace ExtraSnapPointsMadeEasy.Configs
         public static void SetUp()
         {
             Verbosity = BindConfig(
-                "Global",
+                MainSection,
                 "Verbosity",
                 LoggerLevel.Low,
                 "Low will log basic information about the mod. Medium will log information that " +
                 "is useful for troubleshooting. High will log a lot of information, do not set " +
-                "it to this without good reason as it will slow down your game.",
-                sectionPriority: 3
+                "it to this without good reason as it will slow down your game."
             );
 
             EnableManualSnap = BindConfig(
                 SnapModeSection,
                 "ToggleManualSnapMode",
                 KeyCode.LeftAlt,
-                "This key will enable or disable manual snapping mode.",
-                sectionPriority: 2
+                "This key will enable or disable manual snapping mode."
             );
 
             EnableManualClosestSnap = BindConfig(
                 SnapModeSection,
                 "ToggleManualClosestMode",
                 KeyCode.CapsLock,
-                "This key will enable or disable manual closest snapping mode.",
-                sectionPriority: 2
+                "This key will enable or disable manual closest snapping mode."
             );
 
             EnableGridSnap = BindConfig(
                 SnapModeSection,
                 "ToggleSnapToGridMode",
                 KeyCode.F3,
-                "This key will enable or disable snap to grid mode.",
-                sectionPriority: 2
+                "This key will enable or disable snap to grid mode."
             );
 
             CycleGridPrecision = BindConfig(
                 SnapModeSection,
                 "CycleGridPrecision",
                 KeyCode.F4,
-                "This key will change the precision of the grid in when in grid mode.",
-                sectionPriority: 2
+                "This key will change the precision of the grid in when in grid mode."
             );
 
             IterateSourceSnapPoints = BindConfig(
                 SnapModeSection,
                 "IterateSourceSnapPoints",
                 KeyCode.LeftControl,
-                "This key will cycle through the snap points on the piece you are placing.",
-                sectionPriority: 2
+                "This key will cycle through the snap points on the piece you are placing."
             );
 
             IterateTargetSnapPoints = BindConfig(
                 SnapModeSection,
                 "IterateTargetSnapPoints",
                 KeyCode.LeftShift,
-                "This key will cycle through the snap points on the piece you are attaching to.",
-                sectionPriority: 2
+                "This key will cycle through the snap points on the piece you are attaching to."
             );
 
             ResetSnapsOnNewPiece = BindConfig(
@@ -193,67 +184,59 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "ResetSnapsOnNewPiece",
                 false,
                 "Controls if the selected snap point is reset for each placement, defaults to not reset." +
-                "This means your selections carry over between placements.",
-                sectionPriority: 2
+                "This means your selections carry over between placements."
             );
 
             NotificationType = BindConfig(
                 SnapModeSection,
                 "NotificationType",
                 MessageHud.MessageType.Center,
-                "Set the type of notification for when manual snapping mode is changed or selected snap points are changed. \"Center\" will display in the center of the screen in large yellow text. \"TopLeft\" will display under the hotkey bar in small white text.",
-                sectionPriority: 2
+                "Set the type of notification for when manual snapping mode is changed or selected snap points are changed. \"Center\" will display in the center of the screen in large yellow text. \"TopLeft\" will display under the hotkey bar in small white text."
             );
 
-            DisableExtraSnapPoints = BindConfig(
+            EnableExtraSnapPoints = BindConfig(
                 ExtraSnapsSection,
-                "DisableExtraSnapPoints",
-                false,
-                "Globally disable all extra snap points.",
-                AcceptableToggleValuesList,
-                sectionPriority: 1
+                "ExtraSnapPoints",
+                true,
+                "Globally enable/disable all extra snap points."
             );
-            DisableExtraSnapPoints.SettingChanged += SnapSettingChanged;
+            EnableExtraSnapPoints.SettingChanged += SnapSettingChanged;
 
-            DisableLineSnapPoints = BindConfig(
+            EnableLineSnapPoints = BindConfig(
                 ExtraSnapsSection,
-                "DisableLineSnapPoints",
-                false,
-                "Disable extra snap points for all \"Line\" pieces.",
-                AcceptableToggleValuesList,
-                sectionPriority: 1
+                "LineSnapPoints",
+                true,
+                "Enabled adds extra snap points for all \"Line\" pieces. " +
+                "Disabled will prevent extra snap points being added to any \"Line\" pieces."
             );
-            DisableLineSnapPoints.SettingChanged += SnapSettingChanged;
+            EnableLineSnapPoints.SettingChanged += SnapSettingChanged;
 
-            DisableTriangleSnapPoints = BindConfig(
+            EnableTriangleSnapPoints = BindConfig(
                 ExtraSnapsSection,
-                "DisableTriangleSnapPoints",
-                false,
-                "Disable extra snap points for all \"Triangle\" pieces.",
-                AcceptableToggleValuesList,
-                sectionPriority: 1
+                "TriangleSnapPoints",
+                true,
+                "Enabled adds extra snap points for all \"Triangle\" pieces. " +
+                "Disabled will prevent extra snap points being added to any \"Triangle\" pieces."
             );
-            DisableTriangleSnapPoints.SettingChanged += SnapSettingChanged;
+            EnableTriangleSnapPoints.SettingChanged += SnapSettingChanged;
 
-            DisableRect2DSnapPoints = BindConfig(
+            EnableRect2DSnapPoints = BindConfig(
                 ExtraSnapsSection,
-                "DisableRect2DSnapPoints",
-                false,
-                "Disable extra snap points for all \"Rect2D\" pieces.",
-                AcceptableToggleValuesList,
-                sectionPriority: 1
+                "Rect2DSnapPoints",
+                true,
+                "Enabled adds extra snap points for all \"Rect2D\" pieces. " +
+                "Disabled will prevent extra snap points being added to any \"Rect2D\" pieces."
             );
-            DisableRect2DSnapPoints.SettingChanged += SnapSettingChanged;
+            EnableRect2DSnapPoints.SettingChanged += SnapSettingChanged;
 
-            DisableRoofTopSnapPoints = BindConfig(
+            EnableRoofTopSnapPoints = BindConfig(
                ExtraSnapsSection,
-               "DisableRoofTopSnapPoints",
-               false,
-               "Disable extra snap points for all \"Line\" pieces.",
-               AcceptableToggleValuesList,
-               sectionPriority: 1
+               "RoofTopSnapPoints",
+               true,
+               "Enabled adds extra snap points for all \"RoofTop\" pieces. " +
+               "Disabled will prevent extra snap points being added to any \"RoofTop\" pieces."
            );
-            DisableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
+            EnableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
 
             Save();
         }
@@ -261,10 +244,10 @@ namespace ExtraSnapPointsMadeEasy.Configs
         internal static ConfigEntry<bool> LoadConfig(GameObject gameObject)
         {
             ConfigEntry<bool> prefabConfig = BindConfig(
-                "SnapPoints",
+                PrefabSnapSettings,
                 gameObject.name,
                 true,
-                "Set to true/enabled to enable snap points for this prefab."
+                "Set to true/enabled to enable snap points for this prefab and false/disabled to disable them."
             );
             prefabConfig.SettingChanged += SnapSettingChanged;
             SnapPointSettings[gameObject.name] = prefabConfig;

@@ -11,6 +11,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
     [HarmonyPatch(typeof(Player))]
     internal class PlayerPatch
     {
+        private static readonly int TerrainRayMask = LayerMask.GetMask("terrain");
         private static int currentSourceSnap = 0;
         private static int currentTargetSnap = 0;
 
@@ -119,10 +120,18 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 player.Message(ConfigManager.NotificationType.Value, $"Grid Precision: {currentGridPrecision}");
             }
 
-            var currentPos = player.m_placementGhost.transform.position;
-            currentPos.x = RoundToNearest(currentPos.x, currentGridPrecision);
-            currentPos.z = RoundToNearest(currentPos.z, currentGridPrecision);
-            player.m_placementGhost.transform.position = currentPos;
+            var position = player.m_placementGhost.transform.position;
+            position.x = RoundToNearest(position.x, currentGridPrecision);
+            position.z = RoundToNearest(position.z, currentGridPrecision);
+
+            // Snaps center of piece to the ground, which is not what I want
+            //Log.LogInfo($"Pre ground snap {position}");
+            //var groundHeight = GetGroundHeight(position);
+            //if (position.y != groundHeight) { position.y = groundHeight; }
+            //Log.LogInfo($"Post ground snap {position}");
+            //if (Mathf.Abs(position.y - groundHeight) < 0.25f) { position.y = groundHeight; }
+
+            player.m_placementGhost.transform.position = position;
         }
 
         /// <summary>
@@ -147,6 +156,17 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 return sign * whole;
             }
             return sign * (whole + precision);
+        }
+
+        private static float GetGroundHeight(Vector3 p)
+        {
+            Vector3 origin = p;
+            origin.y = 6000f;
+            if (Physics.Raycast(origin, Vector3.down, out var hitInfo, 10000f, TerrainRayMask))
+            {
+                return hitInfo.point.y;
+            }
+            return p.y;
         }
 
         private static void SnapManually(ref Player player)

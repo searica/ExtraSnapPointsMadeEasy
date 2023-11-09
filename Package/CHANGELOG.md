@@ -10,6 +10,7 @@
 				<ul>
 					<li>Changed configuration file formatting. <b>You need to regenerate your config file</b>.</li>
 					<li>Added Grid Snap mode.</li>
+					<li>New icon.</li>
 				</ul>
 			</td>
 		</tr>

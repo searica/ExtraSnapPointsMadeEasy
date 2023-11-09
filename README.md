@@ -46,6 +46,9 @@ Press a key to toggle Manual Snapping Mode, which allows you to cycle through sn
 ### Manual (Closest) Snapping
 Press a key to toggle Manual (Closest) Snapping Mode, which allows you to cycle through the snap points of the piece you are placing while snapping to the closest snap-point on the piece being targeted with your mouse.
 
+### Grid Snapping
+Press a key to toggle Grid Snapping Mode, which snaps pieces to the world grid. Pieces are only snapped to the world grid on the horizontal plane to avoid snapping pieces to thin air. Precision of the grid can be toggled between 1m and 0.5m.
+
 ### Key Bind Configuration
 The key-binds for manual snapping are configurable via editing of the configuration file at Valheim/BepInEx/config/searica.valheim.extrasnappointsmadeeasy.cfg or via an in-game configuration manager (live updates, no restart required).
 
@@ -54,6 +57,8 @@ The default key-bindings are:
 - Toggle Manual (Closest) Snapping Mode: Caps-Lock
 - Cycle Snap Points on the piece you are placing (source piece): Left-Ctrl
 - Cycle Snap Points on the piece you are snapping to (target piece): Left-Shift
+- Toggle Grid Snapping Mode: F3
+- Cycle Grid precision: F4
 
 ### Usage
 Grab a hammer and select a piece to place. Hit Left-Alt to enable Manual Snapping Mode, a notification will then appear in the center of your screen indicating whether the snapping mode is set to Auto or Manual. Point your piece at the piece you want to snap to and hit Left-Control to cycle through the snap points on the piece you're holding. Use Left-Shift to cycle through destination snap points. For example you can snap a horizontal pillar to the middle of the vertical pillar by cycling both to their midpoint snap points. While cycling through snap points you will also receive notifications indicating which snap point is currently selected on each piece. Alternatively press Caps-Lock to enable Manual (Closest) snapping mode which will snap to the closest snap point on the target piece while still allowing you to manually select the snap point of the piece you are placing.

@@ -8,12 +8,14 @@ using BepInEx.Bootstrap;
 using System.Reflection;
 using UnityEngine.Rendering;
 using ExtraSnapPointsMadeEasy.Helpers;
+using ExtraSnapPointsMadeEasy.Extensions;
 
 namespace ExtraSnapPointsMadeEasy.Configs
 {
-    public class Config
+    internal class ConfigManager
     {
-        private static BaseUnityPlugin configurationManager;
+        private static BaseUnityPlugin ConfigurationManager;
+        private const string ConfigManagerGUID = "com.bepis.bepinex.configurationmanager";
 
         private static ConfigFile configFile = null;
         private static readonly string ConfigFileName = ExtraSnapPointsMadeEasy.PluginGuid + ".cfg";
@@ -23,7 +25,11 @@ namespace ExtraSnapPointsMadeEasy.Configs
         private const string ExtraSnapsSection = "​\u200BExtraSnapPoints";
         public static ConfigEntry<KeyCode> EnableManualSnap { get; private set; }
         public static ConfigEntry<KeyCode> EnableManualClosestSnap { get; private set; }
+
+        public static ConfigEntry<KeyCode> EnableGridSnap { get; private set; }
+
         public static ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
+
         public static ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
         public static ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
         public static ConfigEntry<bool> DisableExtraSnapPoints { get; private set; }
@@ -59,30 +65,67 @@ namespace ExtraSnapPointsMadeEasy.Configs
 
         internal static readonly AcceptableValueList<bool> AcceptableToggleValuesList = new(new bool[] { true, false });
 
+        #region Events
+
+        /// <summary>
+        ///     Event triggered after a the in-game configuration manager is closed.
+        /// </summary>
+        internal static event Action OnConfigWindowClosed;
+
+        /// <summary>
+        ///     Safely invoke the <see cref="OnConfigWindowClosed"/> event
+        /// </summary>
+        private static void InvokeOnConfigWindowClosed()
+        {
+            OnConfigWindowClosed?.SafeInvoke();
+        }
+
+        /// <summary>
+        ///     Event triggered after the file watcher reloads the configuration file.
+        /// </summary>
+        internal static event Action OnConfigFileReloaded;
+
+        /// <summary>
+        ///     Safely invoke the <see cref="OnConfigFileReloaded"/> event
+        /// </summary>
+        private static void InvokeOnConfigFileReloaded()
+        {
+            OnConfigFileReloaded?.SafeInvoke();
+        }
+
+        #endregion Events
+
         internal static ConfigEntry<T> BindConfig<T>(
             string section,
             string name,
             T value,
             string description,
-            AcceptableValueBase acceptVals = null
+            AcceptableValueBase acceptVals = null,
+            int sectionPriority = 0
         )
         {
+            string sectionName = SetStringPriority(section, sectionPriority);
             ConfigEntry<T> configEntry = configFile.Bind(
-                section,
+                sectionName,
                 name,
                 value,
-                new ConfigDescription(
-                    description,
-                    acceptVals
-                )
+                new ConfigDescription(description, acceptVals)
             );
             return configEntry;
         }
 
-        internal static ConfigEntry<T> BindConfig<T>(string group, string name, T value, ConfigDescription description)
+        private const char ZWS = '\u200B';
+
+        /// <summary>
+        ///     Prepends Zero-Width-Space to set ordering of configuration sections
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="priority">Number of ZWS chars to prepend</param>
+        /// <returns></returns>
+        private static string SetStringPriority(string sectionName, int priority)
         {
-            ConfigEntry<T> configEntry = configFile.Bind(group, name, value, description);
-            return configEntry;
+            if (priority == 0) { return sectionName; }
+            return new string(ZWS, priority) + sectionName;
         }
 
         public static void Init(ConfigFile config)
@@ -93,48 +136,71 @@ namespace ExtraSnapPointsMadeEasy.Configs
 
         public static void SetUp()
         {
+            Verbosity = BindConfig(
+                "Global",
+                "Verbosity",
+                LoggerLevel.Low,
+                "Low will log basic information about the mod. Medium will log information that " +
+                "is useful for troubleshooting. High will log a lot of information, do not set " +
+                "it to this without good reason as it will slow down your game.",
+                sectionPriority: 3
+            );
+
             EnableManualSnap = BindConfig(
                 SnapModeSection,
-                "EnableManualSnap",
+                "ToggleManualSnapMode",
                 KeyCode.LeftAlt,
-                "This key will enable or disable manual snapping mode."
+                "This key will enable or disable manual snapping mode.",
+                sectionPriority: 2
             );
 
             EnableManualClosestSnap = BindConfig(
                 SnapModeSection,
-                "EnableManualClosestSnap",
+                "ToggleManualClosestMode",
                 KeyCode.CapsLock,
-                "This key will enable or disable manual closest snapping mode."
+                "This key will enable or disable manual closest snapping mode.",
+                sectionPriority: 2
+            );
+
+            EnableGridSnap = BindConfig(
+                SnapModeSection,
+                "ToggleSnapToGridMode",
+                KeyCode.F3,
+                "This key will enable or disable snap to grid mode.",
+                sectionPriority: 2
             );
 
             IterateSourceSnapPoints = BindConfig(
                 SnapModeSection,
                 "IterateSourceSnapPoints",
                 KeyCode.LeftControl,
-                "This key will cycle through the snap points on the piece you are placing."
+                "This key will cycle through the snap points on the piece you are placing.",
+                sectionPriority: 2
             );
 
             IterateTargetSnapPoints = BindConfig(
                 SnapModeSection,
                 "IterateTargetSnapPoints",
                 KeyCode.LeftShift,
-                "This key will cycle through the snap points on the piece you are attaching to."
+                "This key will cycle through the snap points on the piece you are attaching to.",
+                sectionPriority: 2
             );
 
             ResetSnapsOnNewPiece = BindConfig(
                 SnapModeSection,
                 "ResetSnapsOnNewPiece",
                 false,
-                "Controls if the selected snap point is reset for each placement, " +
-                "defaults to not reset. This means your selections carry over between placements.",
-                AcceptableToggleValuesList
+                "Controls if the selected snap point is reset for each placement, defaults to not reset." +
+                "This means your selections carry over between placements.",
+                sectionPriority: 2
             );
 
             NotificationType = BindConfig(
                 SnapModeSection,
                 "NotificationType",
                 MessageHud.MessageType.Center,
-                "Set the type of notification for when manual snapping mode is changed or selected snap points are changed. \"Center\" will display in the center of the screen in large yellow text. \"TopLeft\" will display under the hotkey bar in small white text."
+                "Set the type of notification for when manual snapping mode is changed or selected snap points are changed. \"Center\" will display in the center of the screen in large yellow text. \"TopLeft\" will display under the hotkey bar in small white text.",
+                sectionPriority: 2
             );
 
             DisableExtraSnapPoints = BindConfig(
@@ -142,7 +208,8 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "DisableExtraSnapPoints",
                 false,
                 "Globally disable all extra snap points.",
-                AcceptableToggleValuesList
+                AcceptableToggleValuesList,
+                sectionPriority: 1
             );
             DisableExtraSnapPoints.SettingChanged += SnapSettingChanged;
 
@@ -151,7 +218,8 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "DisableLineSnapPoints",
                 false,
                 "Disable extra snap points for all \"Line\" pieces.",
-                AcceptableToggleValuesList
+                AcceptableToggleValuesList,
+                sectionPriority: 1
             );
             DisableLineSnapPoints.SettingChanged += SnapSettingChanged;
 
@@ -160,7 +228,8 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "DisableTriangleSnapPoints",
                 false,
                 "Disable extra snap points for all \"Triangle\" pieces.",
-                AcceptableToggleValuesList
+                AcceptableToggleValuesList,
+                sectionPriority: 1
             );
             DisableTriangleSnapPoints.SettingChanged += SnapSettingChanged;
 
@@ -169,7 +238,8 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "DisableRect2DSnapPoints",
                 false,
                 "Disable extra snap points for all \"Rect2D\" pieces.",
-                AcceptableToggleValuesList
+                AcceptableToggleValuesList,
+                sectionPriority: 1
             );
             DisableRect2DSnapPoints.SettingChanged += SnapSettingChanged;
 
@@ -178,18 +248,10 @@ namespace ExtraSnapPointsMadeEasy.Configs
                "DisableRoofTopSnapPoints",
                false,
                "Disable extra snap points for all \"Line\" pieces.",
-               AcceptableToggleValuesList
+               AcceptableToggleValuesList,
+               sectionPriority: 1
            );
             DisableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
-
-            Verbosity = BindConfig(
-                "\u200B\u200B\u200BGlobal",
-                "Verbosity",
-                LoggerLevel.Low,
-                "Low will log basic information about the mod. Medium will log information that " +
-                "is useful for troubleshooting. High will log a lot of information, do not set " +
-                "it to this without good reason as it will slow down your game."
-            );
 
             Save();
         }
@@ -200,10 +262,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
                 "SnapPoints",
                 gameObject.name,
                 true,
-                new ConfigDescription(
-                    "Set to True to enable snap points for this prefab (Requires Restart).",
-                    AcceptableToggleValuesList
-                )
+                "Set to true/enabled to enable snap points for this prefab."
             );
             prefabConfig.SettingChanged += SnapSettingChanged;
             SnapPointSettings[gameObject.name] = prefabConfig;
@@ -212,69 +271,92 @@ namespace ExtraSnapPointsMadeEasy.Configs
 
         internal static void SnapSettingChanged(object o, EventArgs e)
         {
-            if (!UpdateExtraSnapPoints)
-            {
-                UpdateExtraSnapPoints = true;
-            }
+            if (!UpdateExtraSnapPoints) { UpdateExtraSnapPoints = true; }
         }
 
-        public static void Save()
+        /// <summary>
+        ///     Sets SaveOnConfigSet to false and returns
+        ///     the value prior to calling this method.
+        /// </summary>
+        /// <returns></returns>
+        private static bool DisableSaveOnConfigSet()
+        {
+            var val = configFile.SaveOnConfigSet;
+            configFile.SaveOnConfigSet = false;
+            return val;
+        }
+
+        /// <summary>
+        ///     Set the value for the SaveOnConfigSet field.
+        /// </summary>
+        /// <param name="value"></param>
+        internal static void SaveOnConfigSet(bool value)
+        {
+            configFile.SaveOnConfigSet = value;
+        }
+
+        /// <summary>
+        ///     Save config file to disk.
+        /// </summary>
+        internal static void Save()
         {
             configFile.Save();
         }
 
+        #region FileWatcher
+
         internal static void SetupWatcher()
         {
             FileSystemWatcher watcher = new(Paths.ConfigPath, ConfigFileName);
-            watcher.Changed += ReadConfigValues;
-            watcher.Created += ReadConfigValues;
-            watcher.Renamed += ReadConfigValues;
+            watcher.Changed += ReloadConfigFile;
+            watcher.Created += ReloadConfigFile;
+            watcher.Renamed += ReloadConfigFile;
             watcher.IncludeSubdirectories = true;
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
         }
 
-        private static void ReadConfigValues(object sender, FileSystemEventArgs e)
+        private static void ReloadConfigFile(object sender, FileSystemEventArgs e)
         {
-            if (!File.Exists(ConfigFileFullPath)) return;
+            if (!File.Exists(ConfigFileFullPath)) { return; }
             try
             {
                 Log.LogInfo("Reloading config file");
-                var saveOnConfig = configFile.SaveOnConfigSet;
-                configFile.SaveOnConfigSet = false;
+
+                // turn off saving on config entry set
+                var saveOnConfigSet = DisableSaveOnConfigSet();
                 configFile.Reload();
-                configFile.SaveOnConfigSet = saveOnConfig;
+                SaveOnConfigSet(saveOnConfigSet); // reset config saving state
+                InvokeOnConfigFileReloaded(); // fire event
             }
             catch
             {
                 Log.LogError($"There was an issue loading your {ConfigFileName}");
                 Log.LogError("Please check your config entries for spelling and format!");
             }
-            var msg = "Config settings changed after reloading config file, re-intializing";
-            SnapPointAdder.AddExtraSnapPoints(msg);
         }
 
+        #endregion FileWatcher
+
+        #region ConfigManager
+
+        /// <summary>
+        ///     Checks for in-game configuration manager and
+        ///     sets up OnConfigWindowClosed event if it is present
+        /// </summary>
         internal static void CheckForConfigManager()
         {
-            // Is headless server
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
             {
                 return;
             }
 
-            if (
-                Chainloader.PluginInfos.TryGetValue(
-                    "com.bepis.bepinex.configurationmanager",
-                    out PluginInfo configManagerInfo
-                )
-                && configManagerInfo.Instance
-            )
+            if (Chainloader.PluginInfos.TryGetValue(ConfigManagerGUID, out PluginInfo configManagerInfo) && configManagerInfo.Instance)
             {
-                configurationManager = configManagerInfo.Instance;
+                ConfigurationManager = configManagerInfo.Instance;
                 Log.LogDebug("Configuration manager found, hooking DisplayingWindowChanged");
 
-                EventInfo eventinfo = configurationManager.GetType()
-                    .GetEvent("DisplayingWindowChanged");
+                EventInfo eventinfo = ConfigurationManager.GetType().GetEvent("DisplayingWindowChanged");
 
                 if (eventinfo != null)
                 {
@@ -284,21 +366,22 @@ namespace ExtraSnapPointsMadeEasy.Configs
                         local.Target,
                         local.Method
                     );
-                    eventinfo.AddEventHandler(configurationManager, converted);
+                    eventinfo.AddEventHandler(ConfigurationManager, converted);
                 }
             }
         }
 
         private static void OnConfigManagerDisplayingWindowChanged(object sender, object e)
         {
-            PropertyInfo pi = configurationManager.GetType().GetProperty("DisplayingWindow");
-            bool cmActive = (bool)pi.GetValue(configurationManager, null);
+            PropertyInfo pi = ConfigurationManager.GetType().GetProperty("DisplayingWindow");
+            bool ConfigurationManagerWindowShown = (bool)pi.GetValue(ConfigurationManager, null);
 
-            if (!cmActive)
+            if (!ConfigurationManagerWindowShown)
             {
-                var msg = "Config settings changed, re-initializing";
-                SnapPointAdder.AddExtraSnapPoints(msg);
+                InvokeOnConfigWindowClosed();
             }
         }
+
+        #endregion ConfigManager
     }
 }

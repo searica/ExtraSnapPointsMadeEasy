@@ -21,17 +21,33 @@ namespace ExtraSnapPointsMadeEasy.Patches
         {
             Auto,
             Manual,
-            ManualClosest
+            ManualClosest,
+            Grid
         }
 
         private static readonly Dictionary<SnapMode, string> SnapModeMsg = new()
-            {
-                {SnapMode.Auto,  "Snap Mode: Auto"},
-                {SnapMode.Manual, "Snap Mode: Manual"},
-                {SnapMode.ManualClosest, "Snap Mode: Manual (Closest)"}
-            };
+        {
+            {SnapMode.Auto,  "Snap Mode: Auto"},
+            {SnapMode.Manual, "Snap Mode: Manual"},
+            {SnapMode.ManualClosest, "Snap Mode: Manual (Closest)"},
+            {SnapMode.Grid, "SnapMode: Grid"}
+        };
 
         internal static SnapMode snapMode;
+
+        internal enum GridPrecision
+        {
+            Low,
+            High,
+        }
+
+        internal static Dictionary<GridPrecision, float> GridPrecisionMap = new()
+        {
+            { GridPrecision.High, 0.5f },
+            { GridPrecision.Low, 1f }
+        };
+
+        internal static GridPrecision gridPrecision;
 
         [HarmonyReversePatch]
         [HarmonyPatch(nameof(Player.PieceRayTest))]
@@ -51,32 +67,26 @@ namespace ExtraSnapPointsMadeEasy.Patches
         private static void UpdatePlacementGhostPostfix(Player __instance)
         {
             SnapMode prevSnapMode = snapMode;
-            if (Input.GetKeyDown(Config.EnableManualSnap.Value))
+
+            if (Input.GetKeyDown(ConfigManager.EnableManualSnap.Value))
             {
-                if (snapMode == SnapMode.Manual)
-                {
-                    snapMode = SnapMode.Auto;
-                }
-                else
-                {
-                    snapMode = SnapMode.Manual;
-                }
+                if (snapMode == SnapMode.Manual) { snapMode = SnapMode.Auto; }
+                else { snapMode = SnapMode.Manual; }
             }
-            else if (Input.GetKeyDown(Config.EnableManualClosestSnap.Value))
+            else if (Input.GetKeyDown(ConfigManager.EnableManualClosestSnap.Value))
             {
-                if (snapMode == SnapMode.ManualClosest)
-                {
-                    snapMode = SnapMode.Auto;
-                }
-                else
-                {
-                    snapMode = SnapMode.ManualClosest;
-                }
+                if (snapMode == SnapMode.ManualClosest) { snapMode = SnapMode.Auto; }
+                else { snapMode = SnapMode.ManualClosest; }
+            }
+            else if (Input.GetKeyDown(ConfigManager.EnableGridSnap.Value))
+            {
+                if (snapMode == SnapMode.Grid) { snapMode = SnapMode.Auto; }
+                else { snapMode = SnapMode.Grid; }
             }
 
-            if (prevSnapMode != snapMode)
+            if (snapMode != prevSnapMode)
             {
-                __instance.Message(Config.NotificationType.Value, SnapModeMsg[snapMode]);
+                __instance.Message(ConfigManager.NotificationType.Value, SnapModeMsg[snapMode]);
             }
 
             if (__instance.m_placementGhost == null || snapMode == SnapMode.Auto)
@@ -84,31 +94,72 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 return;
             }
 
-            var sourcePiece = __instance.m_placementGhost.GetComponent<Piece>();
-            if (sourcePiece == null)
+            if (snapMode == SnapMode.Manual || snapMode == SnapMode.ManualClosest)
             {
-                return;
+                SnapManually(ref __instance);
             }
 
-            Piece targetPiece = RayTest(__instance, __instance.m_placementGhost);
-            if (!targetPiece)
+            if (snapMode == SnapMode.Grid)
             {
-                return;
+                SnapToGrid(ref __instance);
             }
+        }
+
+        private static void SnapToGrid(ref Player player)
+        {
+            var sourcePiece = player.m_placementGhost?.GetComponent<Piece>();
+            if (sourcePiece == null) { return; }
+
+            var currentPos = player.m_placementGhost.transform.position;
+            currentPos.x = RoundToNearest(currentPos.x, 0.5f);
+            currentPos.z = RoundToNearest(currentPos.z, 0.5f);
+            player.m_placementGhost.transform.position = currentPos;
+        }
+
+        /// <summary>
+        ///     Round to nearest multiple of precision (midpoint rounds away from zero)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="precision"></param>
+        /// <returns></returns>
+        private static float RoundToNearest(float x, float precision)
+        {
+            if (precision <= 0) { return x; }
+            var sign = Mathf.Sign(x);
+
+            var val = (int)Mathf.Abs(x * 1000f);
+            var whole = val / 1000;
+            var fraction = val % 1000;
+
+            int midPoint = (int)(precision * 1000f / 2f);
+
+            if (fraction < midPoint)
+            {
+                return sign * whole;
+            }
+            return sign * (whole + precision);
+        }
+
+        private static void SnapManually(ref Player player)
+        {
+            var sourcePiece = player.m_placementGhost?.GetComponent<Piece>();
+            if (sourcePiece == null) { return; }
+
+            var targetPiece = RayTest(player, player.m_placementGhost);
+            if (targetPiece == null) { return; }
 
             if (currentTargetParent != targetPiece.transform)
             {
-                if (Config.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
+                if (ConfigManager.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
                 {
                     currentTargetSnap = 0;
                 }
-
                 currentTargetParent = targetPiece.transform;
             }
 
             if (currentSourceParent != sourcePiece.transform)
             {
-                if (Config.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
+                if (ConfigManager.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
                 {
                     currentSourceSnap = 0;
                 }
@@ -117,13 +168,13 @@ namespace ExtraSnapPointsMadeEasy.Patches
             }
 
             int prevSourceSnap = currentSourceSnap;
-            if (Input.GetKeyDown(Config.IterateSourceSnapPoints.Value))
+            if (Input.GetKeyDown(ConfigManager.IterateSourceSnapPoints.Value))
             {
                 currentSourceSnap++;
             }
 
             int prevTargetSnap = currentTargetSnap;
-            if (Input.GetKeyDown(Config.IterateTargetSnapPoints.Value))
+            if (Input.GetKeyDown(ConfigManager.IterateTargetSnapPoints.Value))
             {
                 currentTargetSnap++;
             }
@@ -136,50 +187,39 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 return;
             }
 
-            if (currentSourceSnap >= sourceSnapPoints.Count)
-            {
-                currentSourceSnap = 0;
-            }
-
-            if (currentTargetSnap >= targetSnapPoints.Count)
-            {
-                currentTargetSnap = 0;
-            }
+            if (currentSourceSnap >= sourceSnapPoints.Count) { currentSourceSnap = 0; }
+            if (currentTargetSnap >= targetSnapPoints.Count) { currentTargetSnap = 0; }
 
             if (prevSourceSnap != currentSourceSnap)
             {
-                __instance.Message(Config.NotificationType.Value, $"Source Snap Point: {currentSourceSnap}");
+                player.Message(ConfigManager.NotificationType.Value, $"Source Snap Point: {currentSourceSnap}");
             }
 
             if (prevTargetSnap != currentTargetSnap && snapMode == SnapMode.Manual)
             {
-                __instance.Message(Config.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
+                player.Message(ConfigManager.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
             }
 
-            Transform a = sourceSnapPoints[currentSourceSnap];
-            Transform b;
+            Transform sourceSnap = sourceSnapPoints[currentSourceSnap];
+            Transform targetSnap;
             switch (snapMode)
             {
                 case SnapMode.Manual:
-                    b = targetSnapPoints[currentTargetSnap];
+                    targetSnap = targetSnapPoints[currentTargetSnap];
                     break;
 
                 case SnapMode.ManualClosest:
-                    if (Player.m_localPlayer.m_placementMarkerInstance == null)
-                    {
-                        return;
-                    }
-                    b = targetSnapPoints.OrderBy(
-                            (Transform snapPoint) => Vector3.Distance(Player.m_localPlayer.m_placementMarkerInstance.transform.position, snapPoint.position)
-                        ).First();
+                    if (player.m_placementMarkerInstance == null) { return; }
+                    var markerPosition = player.m_placementMarkerInstance.transform.position;
+                    targetSnap = targetSnapPoints.OrderBy(snapPoint => Vector3.Distance(markerPosition, snapPoint.position)).First();
                     break;
 
                 default:
                     return;
             }
 
-            // adjust placement ghost position based on the difference between a and b
-            __instance.m_placementGhost.transform.position += b.position - a.position;
+            // adjust placement ghost position based on the difference between sourceSnap and targetSnap
+            player.m_placementGhost.transform.position += targetSnap.position - sourceSnap.position;
         }
 
         private static Piece RayTest(Player player, GameObject placementGhost)

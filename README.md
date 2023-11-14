@@ -90,6 +90,7 @@ If you like this mod you might like some of my other ones.
 
 #### Building Mods
 - [More Vanilla Build Prefabs](https://valheim.thunderstore.io/package/Searica/More_Vanilla_Build_Prefabs/)
+- [TerrainTools](https://valheim.thunderstore.io/package/Searica/TerrainTools/)
 - [BuildRestrictionTweaksSync](https://valheim.thunderstore.io/package/Searica/BuildRestrictionTweaksSync/)
 
 #### Gameplay Mods
@@ -97,5 +98,5 @@ If you like this mod you might like some of my other ones.
 - [DodgeShortcut](https://valheim.thunderstore.io/package/Searica/DodgeShortcut/)
 - [FortifySkillsRedux](https://valheim.thunderstore.io/package/Searica/FortifySkillsRedux/)
 - [ProjectileTweaks](https://github.com/searica/ProjectileTweaks/)
-- - [SafetyStatus](https://valheim.thunderstore.io/package/Searica/SafetyStatus/)
+- [SafetyStatus](https://valheim.thunderstore.io/package/Searica/SafetyStatus/)
 - [SkilledCarryWeight](https://github.com/searica/SkilledCarryWeight/)

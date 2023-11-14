@@ -34,13 +34,13 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             }
 
             // Only update if needed.
-            if (!ConfigManager.UpdateExtraSnapPoints && !forceUpdate)
+            if (!ExtraSnapPointsMadeEasy.UpdateExtraSnapPoints && !forceUpdate)
             {
                 return;
             }
 
             var watch = new System.Diagnostics.Stopwatch();
-            if (ConfigManager.IsVerbosityMedium)
+            if (Log.IsVerbosityMedium)
             {
                 watch.Start();
             }
@@ -63,7 +63,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 }
             }
 
-            if (ConfigManager.IsVerbosityMedium)
+            if (Log.IsVerbosityMedium)
             {
                 watch.Stop();
                 Log.LogInfo($"Time to add snap points: {watch.ElapsedMilliseconds} ms");
@@ -73,7 +73,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 Log.LogInfo("Adding snap points complete");
             }
 
-            ConfigManager.UpdateExtraSnapPoints = false;
+            ExtraSnapPointsMadeEasy.UpdateExtraSnapPoints = false;
         }
 
         /// <summary>
@@ -172,8 +172,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
 
         private static bool AddSnapPoints(GameObject prefab)
         {
-            var prefabConfig = ConfigManager.LoadConfig(prefab);
-            if (!prefabConfig.Value || !ConfigManager.EnableExtraSnapPoints.Value)
+            var prefabConfig = ExtraSnapPointsMadeEasy.LoadConfig(prefab);
+            if (!prefabConfig.Value || !ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value)
             {
                 return false; // skip adding snap points if not enabled
             }
@@ -848,19 +848,19 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                             }
                         );
                     }
-                    else if (SnapPointHelper.IsLine(prefab) && ConfigManager.EnableLineSnapPoints.Value)
+                    else if (SnapPointHelper.IsLine(prefab) && ExtraSnapPointsMadeEasy.EnableLineSnapPoints.Value)
                     {
                         SnapPointHelper.AddSnapPointToLine(prefab);
                     }
-                    else if (SnapPointHelper.IsTriangle(prefab) && ConfigManager.EnableTriangleSnapPoints.Value)
+                    else if (SnapPointHelper.IsTriangle(prefab) && ExtraSnapPointsMadeEasy.EnableTriangleSnapPoints.Value)
                     {
                         SnapPointHelper.AddSnapPointsToTriangle(prefab);
                     }
-                    else if (SnapPointHelper.IsRect2D(prefab) && ConfigManager.EnableRect2DSnapPoints.Value)
+                    else if (SnapPointHelper.IsRect2D(prefab) && ExtraSnapPointsMadeEasy.EnableRect2DSnapPoints.Value)
                     {
                         SnapPointHelper.AddSnapPointsToRect2D(prefab);
                     }
-                    else if (SnapPointHelper.IsRoofTop(prefab) && ConfigManager.EnableRoofTopSnapPoints.Value)
+                    else if (SnapPointHelper.IsRoofTop(prefab) && ExtraSnapPointsMadeEasy.EnableRoofTopSnapPoints.Value)
                     {
                         SnapPointHelper.AddSnapPointsToRoofTop(prefab);
                     }

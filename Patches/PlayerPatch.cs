@@ -70,17 +70,17 @@ namespace ExtraSnapPointsMadeEasy.Patches
         {
             SnapMode prevSnapMode = snapMode;
 
-            if (Input.GetKeyDown(ConfigManager.EnableManualSnap.Value))
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableManualSnap.Value))
             {
                 if (snapMode == SnapMode.Manual) { snapMode = SnapMode.Auto; }
                 else { snapMode = SnapMode.Manual; }
             }
-            else if (Input.GetKeyDown(ConfigManager.EnableManualClosestSnap.Value))
+            else if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableManualClosestSnap.Value))
             {
                 if (snapMode == SnapMode.ManualClosest) { snapMode = SnapMode.Auto; }
                 else { snapMode = SnapMode.ManualClosest; }
             }
-            else if (Input.GetKeyDown(ConfigManager.EnableGridSnap.Value))
+            else if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableGridSnap.Value))
             {
                 if (snapMode == SnapMode.Grid) { snapMode = SnapMode.Auto; }
                 else { snapMode = SnapMode.Grid; }
@@ -88,7 +88,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (snapMode != prevSnapMode)
             {
-                __instance.Message(ConfigManager.NotificationType.Value, SnapModeMsg[snapMode]);
+                __instance.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, SnapModeMsg[snapMode]);
             }
 
             if (__instance.m_placementGhost == null || snapMode == SnapMode.Auto)
@@ -112,12 +112,12 @@ namespace ExtraSnapPointsMadeEasy.Patches
             var sourcePiece = player.m_placementGhost?.GetComponent<Piece>();
             if (sourcePiece == null) { return; }
 
-            if (Input.GetKeyDown(ConfigManager.CycleGridPrecision.Value))
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.CycleGridPrecision.Value))
             {
                 if (gridPrecision == GridPrecision.Low) { gridPrecision = GridPrecision.High; }
                 else { gridPrecision = GridPrecision.Low; }
                 currentGridPrecision = GridPrecisionMap[gridPrecision];
-                player.Message(ConfigManager.NotificationType.Value, $"Grid Precision: {currentGridPrecision}");
+                player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Grid Precision: {currentGridPrecision}");
             }
 
             var position = player.m_placementGhost.transform.position;
@@ -179,7 +179,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (currentTargetParent != targetPiece.transform)
             {
-                if (ConfigManager.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
+                if (ExtraSnapPointsMadeEasy.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
                 {
                     currentTargetSnap = 0;
                 }
@@ -188,7 +188,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (currentSourceParent != sourcePiece.transform)
             {
-                if (ConfigManager.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
+                if (ExtraSnapPointsMadeEasy.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
                 {
                     currentSourceSnap = 0;
                 }
@@ -197,13 +197,13 @@ namespace ExtraSnapPointsMadeEasy.Patches
             }
 
             int prevSourceSnap = currentSourceSnap;
-            if (Input.GetKeyDown(ConfigManager.IterateSourceSnapPoints.Value))
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.IterateSourceSnapPoints.Value))
             {
                 currentSourceSnap++;
             }
 
             int prevTargetSnap = currentTargetSnap;
-            if (Input.GetKeyDown(ConfigManager.IterateTargetSnapPoints.Value))
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.IterateTargetSnapPoints.Value))
             {
                 currentTargetSnap++;
             }
@@ -221,12 +221,12 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             if (prevSourceSnap != currentSourceSnap)
             {
-                player.Message(ConfigManager.NotificationType.Value, $"Source Snap Point: {currentSourceSnap}");
+                player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Source Snap Point: {currentSourceSnap}");
             }
 
             if (prevTargetSnap != currentTargetSnap && snapMode == SnapMode.Manual)
             {
-                player.Message(ConfigManager.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
+                player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
             }
 
             Transform sourceSnap = sourceSnapPoints[currentSourceSnap];

@@ -10,6 +10,7 @@
 				<ul>
 					<li>Compiled against newest game version.</li>
 					<li>Improves snap points for item stands.</li>
+					<li>Update short description to mention world grid snapping.</li>
 				</ul>
 			</td>
 		</tr>

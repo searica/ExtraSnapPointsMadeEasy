@@ -240,16 +240,15 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 /* Item Stands */
-                // TODO: Change these snap points to reduce clipping
                 case "itemstandh":
                     SnapPointHelper.AddSnapPoints(
                         prefab, // itemstandh (horizontal)
                         new[] {
-                            new Vector3 (0f, 0f, 0f),
-                            new Vector3 (0.1f, 0f, 0f),
-                            new Vector3 (-0.1f, 0f, 0f),
-                            new Vector3 (0.0f, 0f, 0.1f),
-                            new Vector3 (0.0f, 0f, -0.1f),
+                            new Vector3 (0f, -0.0346f, 0f),
+                            new Vector3 (0.1f, -0.0346f, 0f),
+                            new Vector3 (-0.1f, -0.0346f, 0f),
+                            new Vector3 (0.0f, -0.0346f, 0.1f),
+                            new Vector3 (0.0f, -0.0346f, -0.1f),
                         }
                     );
                     break;
@@ -258,11 +257,11 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     SnapPointHelper.AddSnapPoints(
                         prefab, // itemstand (vertical)
                         new[] {
-                            new Vector3 (0f, 0f, 0f),
-                            new Vector3 (0.22f, 0f, 0f),
-                            new Vector3 (-0.22f, 0f, 0f),
-                            new Vector3 (0.0f, 0.22f, 0f),
-                            new Vector3 (0.0f, -0.22f, 0f),
+                            new Vector3 (0f, 0f, -0.06f),
+                            new Vector3 (0.22f, 0f, -0.06f),
+                            new Vector3 (-0.22f, 0f, -0.06f),
+                            new Vector3 (0.0f, 0.22f, -0.06f),
+                            new Vector3 (0.0f, -0.22f, -0.06f),
                         }
                      );
                     break;

@@ -3,7 +3,7 @@
   "author": "Searica",
   "version_number": "1.2.2",
   "website_url": "https://discord.gg/sFmGTBYN6n",
-  "description": "Quality of life building mod that adds snap points to most vanilla pieces and allow you to manually select snap points for the piece you are placing and the piece you are snapping to.",
+  "description": "Quality of life building mod that adds snap points to most vanilla pieces and allows you to manually select snap points for the piece you are placing and the piece you are snapping to. Also has a snap to world grid mode.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2202"
   ]

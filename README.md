@@ -74,7 +74,7 @@ My mods will always be free to use but if you feel like saying thanks you can ti
 ## Source Code
 Source code is available on Github.
 
-| Github Repository: | <button style="font-size:20px"><img height="18" src="https://github.githubassets.com/favicons/favicon-dark.svg"></img><a href="https://https://github.com/searica/ExtraSnapPointsMadeEasy"> Extra Snap Points Made Easy</button> |
+| Github Repository: | <img height="18" src="https://github.githubassets.com/favicons/favicon-dark.svg"></img><a href="https://https://github.com/searica/ExtraSnapPointsMadeEasy"> Extra Snap Points Made Easy</a> |
 |-----------|---------------|
 
 ### Contributions
@@ -97,5 +97,5 @@ If you like this mod you might like some of my other ones.
 - [DodgeShortcut](https://valheim.thunderstore.io/package/Searica/DodgeShortcut/)
 - [FortifySkillsRedux](https://valheim.thunderstore.io/package/Searica/FortifySkillsRedux/)
 - [ProjectileTweaks](https://github.com/searica/ProjectileTweaks/)
+- - [SafetyStatus](https://valheim.thunderstore.io/package/Searica/SafetyStatus/)
 - [SkilledCarryWeight](https://github.com/searica/SkilledCarryWeight/)
-- [SafetyStatus](https://valheim.thunderstore.io/package/Searica/SafetyStatus/)

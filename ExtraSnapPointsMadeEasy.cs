@@ -14,7 +14,7 @@ namespace ExtraSnapPointsMadeEasy
         internal const string PluginName = "ExtraSnapPointsMadeEasy";
         internal const string Author = "Searica";
         public const string PluginGuid = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.2.1";
+        public const string PluginVersion = "1.2.2";
 
         internal static ExtraSnapPointsMadeEasy Instance;
 

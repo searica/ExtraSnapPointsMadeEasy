@@ -65,19 +65,20 @@ This mod adds extra snap points to increase precision when building. The type of
 
 **Other Pieces:** If a piece has no snap points then a snap point is added at the local center of the piece. If a piece has only a single snap point then no extra snap points are added.
 
-
 ## Donations/Tips
- My mods will always be free to use but if you feel like saying thanks you can tip/donate.
+My mods will always be free to use but if you feel like saying thanks you can tip/donate.
 
-  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/searica)
-
+| My Ko-fi: | [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/searica) |
+|-----------|---------------|
 
 ## Source Code
-Github: https://github.com/searica/ExtraSnapPointsMadeEasy
+Source code is available on Github.
+
+| Github Repository: | <button style="font-size:20px"><img height="18" src="https://github.githubassets.com/favicons/favicon-dark.svg"></img><a href="https://https://github.com/searica/ExtraSnapPointsMadeEasy"> Extra Snap Points Made Easy</button> |
+|-----------|---------------|
 
 ### Contributions
 If you would like to provide suggestions, make feature requests, or reports bugs and compatibility issues you can either open an issue on the Github repository or tag me (@searica) with a message on my discord [Searica's Mods](https://discord.gg/sFmGTBYN6n).
-<!--the [Jotunn discord](https://discord.gg/DdUt6g7gyA), or the [Odin Plus discord](https://discord.gg/mbkPcvu9ax)-->
 
 I'm a grad student and have a lot of personal responsibilities on top of that so I can't promise I will respond quickly, but I do intend to maintain and improve the mod in my free time.
 
@@ -88,11 +89,13 @@ This mod was inspired by Snap Points Made Easy which is originally by yardik and
 If you like this mod you might like some of my other ones.
 
 #### Building Mods
-- [MoreVanillaBuildPrefabs](https://valheim.thunderstore.io/package/Searica/More_Vanilla_Build_Prefabs/)
+- [More Vanilla Build Prefabs](https://valheim.thunderstore.io/package/Searica/More_Vanilla_Build_Prefabs/)
 - [BuildRestrictionTweaksSync](https://valheim.thunderstore.io/package/Searica/BuildRestrictionTweaksSync/)
 
 #### Gameplay Mods
-- [FortifySkillsRedux](https://valheim.thunderstore.io/package/Searica/FortifySkillsRedux/)
+- [CameraTweaks](https://valheim.thunderstore.io/package/Searica/CameraTweaks/)
 - [DodgeShortcut](https://valheim.thunderstore.io/package/Searica/DodgeShortcut/)
-- [ProjectileTweaks](https://valheim.thunderstore.io/package/Searica/ProjectileTweaks/)
-- [SkilledCarryWeight](https://valheim.thunderstore.io/package/Searica/SkilledCarryWeight/)
+- [FortifySkillsRedux](https://valheim.thunderstore.io/package/Searica/FortifySkillsRedux/)
+- [ProjectileTweaks](https://github.com/searica/ProjectileTweaks/)
+- [SkilledCarryWeight](https://github.com/searica/SkilledCarryWeight/)
+- [SafetyStatus](https://valheim.thunderstore.io/package/Searica/SafetyStatus/)

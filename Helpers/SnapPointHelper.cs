@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ExtraSnapPointsMadeEasy.Extensions;
+﻿using ExtraSnapPointsMadeEasy.Extensions;
+using System.Collections.Generic;
 using UnityEngine;
 
 /* In Unity

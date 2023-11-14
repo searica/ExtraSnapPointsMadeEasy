@@ -1,10 +1,9 @@
-﻿using HarmonyLib;
+﻿using ExtraSnapPointsMadeEasy.Helpers;
+using HarmonyLib;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using ExtraSnapPointsMadeEasy.Helpers;
-using ExtraSnapPointsMadeEasy.Configs;
 
 namespace ExtraSnapPointsMadeEasy.Patches
 {

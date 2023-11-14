@@ -1,13 +1,13 @@
 ﻿using BepInEx;
-using BepInEx.Logging;
-using ExtraSnapPointsMadeEasy.Helpers;
-using ExtraSnapPointsMadeEasy.Configs;
-using HarmonyLib;
-using System.Reflection;
 using BepInEx.Configuration;
-using System.Collections.Generic;
-using UnityEngine;
+using BepInEx.Logging;
+using ExtraSnapPointsMadeEasy.Configs;
+using ExtraSnapPointsMadeEasy.Helpers;
+using HarmonyLib;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
 namespace ExtraSnapPointsMadeEasy

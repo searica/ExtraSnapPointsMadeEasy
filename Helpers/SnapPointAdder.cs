@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ExtraSnapPointsMadeEasy.Configs;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

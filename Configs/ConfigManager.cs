@@ -1,12 +1,12 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
-using System.IO;
-using UnityEngine;
-using System;
 using BepInEx.Bootstrap;
-using System.Reflection;
-using UnityEngine.Rendering;
+using BepInEx.Configuration;
 using ExtraSnapPointsMadeEasy.Extensions;
+using System;
+using System.IO;
+using System.Reflection;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace ExtraSnapPointsMadeEasy.Configs
 {
@@ -157,7 +157,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
 
         #endregion FileWatcher
 
-        #region ConfigManager
+        #region ConfigManagerWindow
 
         /// <summary>
         ///     Checks for in-game configuration manager and
@@ -201,6 +201,6 @@ namespace ExtraSnapPointsMadeEasy.Configs
             }
         }
 
-        #endregion ConfigManager
+        #endregion ConfigManagerWindow
     }
 }

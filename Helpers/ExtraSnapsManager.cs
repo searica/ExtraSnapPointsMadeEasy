@@ -2,10 +2,11 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ExtraSnapPointsMadeEasy.Extensions;
 
 namespace ExtraSnapPointsMadeEasy.Helpers
 {
-    internal class SnapPointAdder
+    internal class ExtraSnapsManager
     {
         private static readonly HashSet<string> DoNotAddSnapPoints = new()
         {
@@ -18,16 +19,10 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// </summary>
         private static readonly List<GameObject> AlteredPrefabs = new();
 
-        /// <summary>
-        ///     Default number of snap points for each prefab before adding extras.
-        /// </summary>
-        private static readonly Dictionary<string, int> DefaultNumSnapPoints = new();
-
         internal static void AddExtraSnapPoints(string msg, bool forceUpdate = false)
         {
             // Avoid updating before world and prefabs are loaded.
-            if (!ZNetScene.instance || SceneManager.GetActiveScene() == null
-                || SceneManager.GetActiveScene().name != "main")
+            if (!ZNetScene.instance || SceneManager.GetActiveScene().name != "main")
             {
                 return;
             }
@@ -46,7 +41,6 @@ namespace ExtraSnapPointsMadeEasy.Helpers
 
             Log.LogInfo(msg);
             var prefabPieces = FindPrefabPieces();
-            InitSnapDefaults(prefabPieces);
 
             if (AlteredPrefabs.Count > 0)
             {
@@ -87,30 +81,16 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 .ToList();
         }
 
-        internal static void InitSnapDefaults(List<GameObject> prefabs)
-        {
-            foreach (var prefab in prefabs)
-            {
-                if (!DefaultNumSnapPoints.ContainsKey(prefab.name))
-                {
-                    var snapPoints = SnapPointHelper.GetSnapPoints(prefab.transform);
-                    DefaultNumSnapPoints.Add(prefab.name, snapPoints.Count);
-                }
-            }
-        }
-
         internal static void RemoveExtraSnapPoints(List<GameObject> prefabs)
         {
             foreach (var prefab in prefabs)
             {
-                if (DefaultNumSnapPoints.ContainsKey(prefab.name))
-                {
-                    // destroy all extra snap points on prefab
-                    var defaultNum = DefaultNumSnapPoints[prefab.name];
-                    var snapPoints = SnapPointHelper.GetSnapPoints(prefab.transform);
+                // destroy all extra snap points on prefab
+                var snapPoints = prefab.GetSnapPoints();
 
-                    // iterate in reverse to avoid NRE
-                    for (int i = snapPoints.Count - 1; i > defaultNum - 1; i--)
+                for (int i = 0; i < snapPoints.Count; i++)
+                {
+                    if (snapPoints[i].name == SnapPointExtensions.SnapPointName)
                     {
                         Object.DestroyImmediate(snapPoints[i].gameObject);
                     }
@@ -124,48 +104,46 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             {
                 return true;
             }
+
             // Customs filters
-            if (prefab.GetComponent("Projectile") != null ||
-                prefab.GetComponent("Humanoid") != null ||
-                prefab.GetComponent("AnimalAI") != null ||
-                prefab.GetComponent("Character") != null ||
-                prefab.GetComponent("CreatureSpawner") != null ||
-                prefab.GetComponent("SpawnArea") != null ||
-                prefab.GetComponent("Fish") != null ||
-                prefab.GetComponent("RandomFlyingBird") != null ||
-                prefab.GetComponent("MusicLocation") != null ||
-                prefab.GetComponent("Aoe") != null ||
-                prefab.GetComponent("ItemDrop") != null ||
-                prefab.GetComponent("DungeonGenerator") != null ||
-                prefab.GetComponent("TerrainModifier") != null ||
-                prefab.GetComponent("EventZone") != null ||
-                prefab.GetComponent("LocationProxy") != null ||
-                prefab.GetComponent("LootSpawner") != null ||
-                prefab.GetComponent("Mister") != null ||
-                prefab.GetComponent("Ragdoll") != null ||
-                prefab.GetComponent("MineRock5") != null ||
-                prefab.GetComponent("TombStone") != null ||
-                prefab.GetComponent("LiquidVolume") != null ||
-                prefab.GetComponent("Gibber") != null ||
-                prefab.GetComponent("TimedDestruction") != null ||
-                prefab.GetComponent("ShipConstructor") != null ||
-                prefab.GetComponent("TriggerSpawner") != null ||
-                prefab.GetComponent("TerrainOp") != null ||
-
-                prefab.GetComponentInChildren<Ship>() != null || // ignore ships
-                prefab.GetComponentInChildren<Vagon>() != null || // ignore carts
-                prefab.GetComponent<Piece>().m_repairPiece == true ||
-
-                prefab.name.StartsWith("_") ||
+            if (prefab.name.StartsWith("_") ||
                 prefab.name.StartsWith("OLD_") ||
                 prefab.name.EndsWith("OLD") ||
                 prefab.name.StartsWith("vfx_") ||
                 prefab.name.StartsWith("sfx_") ||
-                prefab.name.StartsWith("fx_")
-            )
+                prefab.name.StartsWith("fx_") ||
+                prefab.GetComponent<Projectile>() ||
+                prefab.GetComponent<Humanoid>() ||
+                prefab.GetComponent<AnimalAI>() ||
+                prefab.GetComponent<Character>() ||
+                prefab.GetComponent<CreatureSpawner>() ||
+                prefab.GetComponent<SpawnArea>() ||
+                prefab.GetComponent<Fish>() ||
+                prefab.GetComponent<RandomFlyingBird>() ||
+                prefab.GetComponent<MusicLocation>() ||
+                prefab.GetComponent<Aoe>() ||
+                prefab.GetComponent<ItemDrop>() ||
+                prefab.GetComponent<DungeonGenerator>() ||
+                prefab.GetComponent<TerrainModifier>() ||
+                prefab.GetComponent<EventZone>() ||
+                prefab.GetComponent<LocationProxy>() ||
+                prefab.GetComponent<LootSpawner>() ||
+                prefab.GetComponent<Mister>() ||
+                prefab.GetComponent<Ragdoll>() ||
+                prefab.GetComponent<MineRock5>() ||
+                prefab.GetComponent<TombStone>() ||
+                prefab.GetComponent<LiquidVolume>() ||
+                prefab.GetComponent<Gibber>() ||
+                prefab.GetComponent<TimedDestruction>() ||
+                prefab.GetComponent<ShipConstructor>() ||
+                prefab.GetComponent<TriggerSpawner>() ||
+                prefab.GetComponentInChildren<Ship>() || // ignore ships
+                prefab.GetComponentInChildren<Vagon>() || // ignore carts
+                (prefab.TryGetComponent(out Piece piece) && piece.m_repairPiece))
             {
                 return true;
             }
+
             return false;
         }
 
@@ -181,8 +159,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             {
                 /* Fences */
                 case "wood_fence":
-                    SnapPointHelper.AddSnapPoints(
-                       prefab,
+                    prefab.AddSnapPoints(
                        new[]
                        {
                             new Vector3(+1f, -0.2f, 0f),
@@ -206,8 +183,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_sharpstakes":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[]
                         {
                             new Vector3(1.12f, -0.2f, 0f),
@@ -218,13 +194,11 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                             new Vector3(-1.12f, 0.2f, 0f),
                         },
                         false,
-                        false
-                    );
+                        false);
                     break;
 
                 case "piece_dvergr_sharpstakes":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(-0.5f, -0.5f, 2f),
                             new Vector3(-0.5f, -0.5f, -2f),
@@ -239,9 +213,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 /* Item Stands */
-                case "itemstandh":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // itemstandh (horizontal)
+                case "itemstandh": // itemstandh (horizontal)
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3 (0f, -0.0346f, 0f),
                             new Vector3 (0.1f, -0.0346f, 0f),
@@ -252,9 +225,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     );
                     break;
 
-                case "itemstand":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // itemstand (vertical)
+                case "itemstand":  // itemstand (vertical)
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3 (0f, 0f, -0.06f),
                             new Vector3 (0.22f, 0f, -0.06f),
@@ -267,8 +239,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
 
                 /* Chests */
                 case "piece_chest_wood":
-                    SnapPointHelper.AddSnapPoints(
-                       prefab,
+                    prefab.AddSnapPoints(
                        new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                             new Vector3(0.8f, -0.01f, 0.37f),
@@ -283,46 +254,42 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     );
                     break;
 
-                case "piece_chest":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // (Reinforced Chest)
+                case "piece_chest": // (Reinforced Chest)
+                    prefab.AddSnapPoints(
                         new[] {
-                    new Vector3(0.0f, -0.01f, 0.0f),
-                    new Vector3(0.9f, -0.01f, 0.47f),
-                    new Vector3(0.9f, -0.01f, -0.47f),
-                    new Vector3(-0.9f, -0.01f, 0.47f),
-                    new Vector3(-0.9f, -0.01f, -0.47f),
-                    new Vector3(0.7f, 0.99f, 0.47f),
-                    new Vector3(0.7f, 0.99f, -0.47f),
-                    new Vector3(-0.7f, 0.99f, 0.47f),
-                    new Vector3(-0.7f, 0.99f, -0.47f)
+                            new Vector3(0.0f, -0.01f, 0.0f),
+                            new Vector3(0.9f, -0.01f, 0.47f),
+                            new Vector3(0.9f, -0.01f, -0.47f),
+                            new Vector3(-0.9f, -0.01f, 0.47f),
+                            new Vector3(-0.9f, -0.01f, -0.47f),
+                            new Vector3(0.7f, 0.99f, 0.47f),
+                            new Vector3(0.7f, 0.99f, -0.47f),
+                            new Vector3(-0.7f, 0.99f, 0.47f),
+                            new Vector3(-0.7f, 0.99f, -0.47f)
                         }
                     );
                     break;
 
                 case "piece_chest_private":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
-                        new[]
-                        {
-                    new Vector3(0.0f, -0.01f, 0.0f),
-                    new Vector3(0.45f, -0.01f, 0.25f),
-                    new Vector3(0.45f, -0.01f, -0.25f),
-                    new Vector3(-0.45f, -0.01f, 0.25f),
-                    new Vector3(-0.45f, -0.01f, -0.25f),
-                    new Vector3(0.36f, 0.55f, 0.23f),
-                    new Vector3(0.36f, 0.55f, -0.23f),
-                    new Vector3(-0.36f, 0.55f, 0.23f),
-                    new Vector3(-0.36f, 0.55f, -0.23f)
+                    prefab.AddSnapPoints(
+                        new[] {
+                            new Vector3(0.0f, -0.01f, 0.0f),
+                            new Vector3(0.45f, -0.01f, 0.25f),
+                            new Vector3(0.45f, -0.01f, -0.25f),
+                            new Vector3(-0.45f, -0.01f, 0.25f),
+                            new Vector3(-0.45f, -0.01f, -0.25f),
+                            new Vector3(0.36f, 0.55f, 0.23f),
+                            new Vector3(0.36f, 0.55f, -0.23f),
+                            new Vector3(-0.36f, 0.55f, 0.23f),
+                            new Vector3(-0.36f, 0.55f, -0.23f)
                         }
                     );
                     break;
 
                 case "piece_chest_blackmetal":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(1.0f, 0.0f, 0.5f),
                             new Vector3(1.0f, 0.0f, -0.5f),
                             new Vector3(-1.0f, 0.0f, 0.5f),
@@ -336,33 +303,26 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 /* Torches */
-                case "piece_walltorch":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // (sconce)
+                case "piece_walltorch":  // (sconce)
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(-0.2f, 0.0f, 0.0f), // black marble snap
                             new Vector3(-0.25f, 0.0f, 0.0f), // stone snap
                             new Vector3(-0.35f, 0.0f, 0.0f),  // wood snap
-                            // new Vector3(0.0f, 0.0f, 0.0f),
+                            // Vector3.zero,
                         }
                     );
                     break;
 
                 case "piece_dvergr_lantern_pole":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
-                        new[] {
-                            Vector3.zero,
-                        }
-                    );
+                    prefab.AddSnapPoints(new[] { Vector3.zero });
                     break;
 
                 /* Furniture */
                 case "sign":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(0.0f, 0.0f, -0.05f), // marble & stone
                             new Vector3(0.0f, 0.0f, -0.20f), // wood
                         }
@@ -370,8 +330,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "ArmorStand":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(0.0f, -0.1f, 0.0f),
                             new Vector3(0.5f, -0.1f, 0.0f),
@@ -383,9 +342,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 /* Rugs & Carpets */
-                case "jute_carpet":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // (red jute carpet)
+                case "jute_carpet": // (red jute carpet)
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                             new Vector3(2.0f, -0.01f, -1.25f),
@@ -396,9 +354,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     );
                     break;
 
-                case "rug_fur":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // (lox rug)
+                case "rug_fur": // (lox rug)
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(0.0f, -0.01f, 0.0f),
                             new Vector3(1.25f, -0.01f, -2.0f),
@@ -413,12 +370,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 case "rug_wolf":
                 case "rug_hare": // (scale rug)
                 case "jute_carpet_blue": // (round blue jute carpet)
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
-                        new[] {
-                            new Vector3(0.0f, -0.01f, 0.0f),
-                        }
-                    );
+                    prefab.AddSnapPoints(new[] { new Vector3(0.0f, -0.01f, 0.0f) });
                     break;
 
                 /* Thrones, Chairs, Benches */
@@ -428,16 +380,15 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 case "piece_chair": // (stool)
                 case "piece_chair02": // (finewood chair)
                 case "piece_chair03": // (darkwood chair)
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 case "piece_bench01":
                 case "piece_blackmarble_bench":
                 case "piece_logbench01": // sitting log
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(-1.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.0f),
                         }
@@ -458,10 +409,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 case "piece_banner10": // (orange)
                 case "piece_banner11": // (white)
                 case "piece_cloth_hanging_door": // (red jute curtain)
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(0.136f, 0.0f, 0.0f), // stone walls
                             new Vector3(-0.136f, 0.0f, 0.0f), // stone walls
                             new Vector3(0.236f, 0.0f, 0.0f), // wood walls
@@ -471,28 +421,26 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 /* Blue Jute Hangings */
-                case "piece_cloth_hanging_door_blue2":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // (Blue Jute Curtain) TODO
+                case "piece_cloth_hanging_door_blue2":  // (Blue Jute Curtain)
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(0.0f, 1.5f, 0.0f),
                             new Vector3(0.0f, 1.5f, 2.0f),
                             new Vector3(0.0f, 1.5f, -2.0f),
-                            new Vector3(0.14f*2, 1.5f, 2.0f), // stone walls
-                            new Vector3(0.14f*2, 1.5f, -2.0f), // stone walls
-                            new Vector3(-0.14f*2, 1.5f, -2.0f), // stone walls
-                            new Vector3(-0.14f*2, 1.5f, 2.0f), // stone walls
-                            new Vector3(0.236f*2, 1.5f, 2.0f), // wood walls
-                            new Vector3(0.236f*2, 1.5f, -2.0f), // wood walls
-                            new Vector3(-0.236f*2, 1.5f, -2.0f), // wood walls
-                            new Vector3(-0.236f*2, 1.5f, 2.0f), // wood walls
+                            new Vector3(0.14f * 2, 1.5f, 2.0f), // stone walls
+                            new Vector3(0.14f * 2, 1.5f, -2.0f), // stone walls
+                            new Vector3(-0.14f * 2, 1.5f, -2.0f), // stone walls
+                            new Vector3(-0.14f * 2, 1.5f, 2.0f), // stone walls
+                            new Vector3(0.236f * 2, 1.5f, 2.0f), // wood walls
+                            new Vector3(0.236f * 2, 1.5f, -2.0f), // wood walls
+                            new Vector3(-0.236f * 2, 1.5f, -2.0f), // wood walls
+                            new Vector3(-0.236f * 2, 1.5f, 2.0f), // wood walls
                         }
                     );
                     break;
 
-                case "piece_cloth_hanging_door_blue":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // (Blue Jute Drape)
+                case "piece_cloth_hanging_door_blue": // (Blue Jute Drape)
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(0.0f, 4.0f, 0.0f), // center
                             new Vector3(0.16f, 4.0f, 0.0f),
@@ -506,14 +454,13 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 /* Workbench */
                 case "piece_workbench":
                 case "piece_workbench_ext1": // (Chopping block)
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 case "piece_workbench_ext2": // (Tanning rack)
-                    SnapPointHelper.AddSnapPoints(
-                       prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(1.0f, 0.0f, 0.0f),
                             new Vector3(-1.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, -1.0f),
@@ -523,10 +470,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_workbench_ext3": // (Adze)
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(1.0f, 0.0f, 0.0f),
                             new Vector3(-1.0f, 0.0f, 0.0f),
                         }
@@ -534,8 +480,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_workbench_ext4":  // (Tool shelf)
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(0.0f, 0.0f, -0.1f),
                             new Vector3(1.0f, 0.0f, -0.1f),
@@ -554,45 +499,38 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 case "forge_ext4": // (Smith's anvil)
                 case "forge_ext5": // (Forge cooler)
                 case "forge_ext6": // (Forge toolrack)
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 /* Black Forge */
                 case "blackforge": // galdr table
                 case "blackforge_ext1": // cooler
                 case "blackforge_ext2_vise": // vice
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 /* Galdr Table */
                 case "piece_magetable": // galdr table
                 case "piece_magetable_ext": // rune table
                 case "piece_magetable_ext2": // candles
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 /* Cooking Pieces */
                 case "piece_cauldron":
                 case "cauldron_ext5_mortarandpestle":
                 case "fermenter":
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 case "cauldron_ext1_spice":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
-                        new[] {
-                            // new Vector3(0.0f, 0.75f, 0.0f),
-                            new Vector3(0.0f, 1.25f, 0.0f),
-                        }
-                    );
+                    prefab.AddSnapPoints(new[] { new Vector3(0.0f, 1.25f, 0.0f) });
                     break;
 
                 case "cauldron_ext3_butchertable":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(0.5f, 0.0f, -0.5f),
                             new Vector3(0.5f, 0.0f, 0.5f),
                             new Vector3(-0.5f, 0.0f, -0.5f),
@@ -602,10 +540,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "cauldron_ext4_pots":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(1.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 1.0f, 0.0f),
                             new Vector3(-1.0f, 0.0f, 0.0f),
@@ -615,10 +552,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_cookingstation":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(-1.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.0f),
                         }
@@ -626,10 +562,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_cookingstation_iron":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(-2.0f, 0.0f, 0.0f),
                             new Vector3(2.0f, 0.0f, 0.0f),
                         }
@@ -638,22 +573,21 @@ namespace ExtraSnapPointsMadeEasy.Helpers
 
                 /* Fires */
                 case "hearth": // already has snappoints but not a center one
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 /* Beams & Poles */
                 // Core wood log walls have 4 snap points by default
                 case "wood_wall_log": // core wood beam 2m
                 case "wood_wall_log_4x0.5": // core wood beam 4m
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 /* Beds */
                 case "bed":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(0.5f, 0.0f, -1.5f),
                             new Vector3(0.5f, 0.0f, 1.5f),
                             new Vector3(-0.5f, 0.0f, -1.5f),
@@ -663,10 +597,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_bed02":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(1.0f, 0.0f, -1.5f),
                             new Vector3(1.0f, 0.0f, 1.5f),
                             new Vector3(-1.0f, 0.0f, -1.5f),
@@ -677,10 +610,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
 
                 /* Tables */
                 case "piece_table":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(-1.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.0f),
                         }
@@ -688,10 +620,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_blackmarble_table":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(-1.0f, 0.0f, 0.0f),
                             new Vector3(1.0f, 0.0f, 0.0f),
                         }
@@ -699,19 +630,13 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "piece_table_round": // round table
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
-                        new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
-                        }
-                    );
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 case "piece_table_oak": // long heavy table
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(-2.0f, 0.0f, 0.0f),
                             new Vector3(2.0f, 0.0f, 0.0f),
                         }
@@ -720,7 +645,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
 
                 /* Misc */
                 case "piece_bathtub": // has snap points but adding center
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 // TODO: add snaps to these
@@ -728,14 +653,13 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 case "piece_spinningwheel":
                 case "piece_stonecutter":
                 case "piece_artisanstation":
-                    SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                    prefab.AddLocalCenterSnapPoint();
                     break;
 
                 case "piece_barber":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // wisp fountain
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(1.0f, 0.0f, -0.75f),
                             new Vector3(1.0f, 0.0f, 0.75f),
                             new Vector3(-1.0f, 0.0f, -0.75f),
@@ -744,20 +668,14 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     );
                     break;
 
-                case "piece_wisplure":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab, // wisp fountain
-                        new[] {
-                            new Vector3(0.0f, -0.05f, 0.0f),
-                        }
-                    );
+                case "piece_wisplure": // wisp fountain
+                    prefab.AddSnapPoints(new[] { new Vector3(0.0f, -0.05f, 0.0f) });
                     break;
 
                 case "eitrrefinery":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(2.75f, 0.0f, -1.0f),
                             new Vector3(2.75f, 0.0f, 1.0f),
                             new Vector3(-2.75f, 0.0f, -1.0f),
@@ -767,8 +685,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "windmill":
-                    SnapPointHelper.AddSnapPoints(
-                       prefab,
+                    prefab.AddSnapPoints(
                         new[] {
                             new Vector3(0.0f, -0.005f, 0.0f),
                             new Vector3(2.0f, -0.005f, -2.0f),
@@ -780,10 +697,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "smelter":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(1.0f, 0.0f, -1.0f),
                             new Vector3(1.0f, 0.0f, 1.0f),
                             new Vector3(-1.0f, 0.0f, -1.0f),
@@ -793,10 +709,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 case "blastfurnace":
-                    SnapPointHelper.AddSnapPoints(
-                        prefab,
+                    prefab.AddSnapPoints(
                         new[] {
-                            new Vector3(0.0f, 0.0f, 0.0f),
+                            Vector3.zero,
                             new Vector3(2.0f, 0.0f, -1.25f),
                             new Vector3(2.0f, 0.0f, 1.25f),
                             new Vector3(-1.75f, 0.0f, -1.25f),
@@ -806,65 +721,66 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 default:
-                    if (SnapPointHelper.IsPoint(prefab) || SnapPointHelper.IsCross(prefab))
+                    if (ShapeClassifier.IsPoint(prefab) || ShapeClassifier.IsCross(prefab))
                     {
                         return false;
                     }
-                    if (SnapPointHelper.IsCeilingBrazier(prefab)
-                        && SnapPointHelper.HasNoSnapPoints(prefab))
+
+                    if (!ExtraSnapPointsMadeEasy.EnableTerrainOpSnapPoints.Value && prefab.GetComponent<TerrainOp>())
                     {
-                        SnapPointHelper.AddSnapPoints( // (Hanging Brazier)
-                            prefab,
+                        return false;
+                    }
+
+                    if (ShapeClassifier.IsCeilingBrazier(prefab) && prefab.HasNoSnapPoints())
+                    {
+                        prefab.AddSnapPoints( // (Hanging Brazier)
                             new[] {
                                 new Vector3(0.0f, 2.0f, 0.0f),
                                 new Vector3(0.0f, 1.5f, 0.0f),
                             }
                         );
                     }
-                    else if (SnapPointHelper.IsFloorBrazier(prefab)
-                        && SnapPointHelper.HasNoSnapPoints(prefab))
+                    else if (ShapeClassifier.IsFloorBrazier(prefab) && prefab.HasNoSnapPoints())
                     {
                         // standing brazier, blue standing brazier, mountainkit, etc.
-                        SnapPointHelper.AddSnapPoints(
-                           prefab,
-                           new[] {
+                        prefab.AddSnapPoints(
+                            new[] {
                                 new Vector3(0.0f, -1.0f, 0.0f),
-                                new Vector3(0.0f, 0.0f, 0.0f),
+                                Vector3.zero,
                            }
                         );
                     }
-                    else if (SnapPointHelper.IsTorch(prefab)
-                        && SnapPointHelper.HasNoSnapPoints(prefab))
+                    else if (ShapeClassifier.IsTorch(prefab)
+                        && prefab.HasNoSnapPoints())
                     {
                         // piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green,
                         // piece_groundtorch_blue, piece_groundtorch_mist, etc.
-                        SnapPointHelper.AddSnapPoints(
-                            prefab,
+                        prefab.AddSnapPoints(
                             new[] {
-                                new Vector3(0.0f, 0.0f, 0.0f),
+                                Vector3.zero,
                                 new Vector3(0.0f, -0.7f, 0.0f),
                             }
                         );
                     }
-                    else if (SnapPointHelper.IsLine(prefab) && ExtraSnapPointsMadeEasy.EnableLineSnapPoints.Value)
+                    else if (ShapeClassifier.IsLine(prefab) && ExtraSnapPointsMadeEasy.EnableLineSnapPoints.Value)
                     {
-                        SnapPointHelper.AddSnapPointToLine(prefab);
+                        ShapeClassifier.AddSnapPointToLine(prefab);
                     }
-                    else if (SnapPointHelper.IsTriangle(prefab) && ExtraSnapPointsMadeEasy.EnableTriangleSnapPoints.Value)
+                    else if (ShapeClassifier.IsTriangle(prefab) && ExtraSnapPointsMadeEasy.EnableTriangleSnapPoints.Value)
                     {
-                        SnapPointHelper.AddSnapPointsToTriangle(prefab);
+                        ShapeClassifier.AddSnapPointsToTriangle(prefab);
                     }
-                    else if (SnapPointHelper.IsRect2D(prefab) && ExtraSnapPointsMadeEasy.EnableRect2DSnapPoints.Value)
+                    else if (ShapeClassifier.IsRect2D(prefab) && ExtraSnapPointsMadeEasy.EnableRect2DSnapPoints.Value)
                     {
-                        SnapPointHelper.AddSnapPointsToRect2D(prefab);
+                        ShapeClassifier.AddSnapPointsToRect2D(prefab);
                     }
-                    else if (SnapPointHelper.IsRoofTop(prefab) && ExtraSnapPointsMadeEasy.EnableRoofTopSnapPoints.Value)
+                    else if (ShapeClassifier.IsRoofTop(prefab) && ExtraSnapPointsMadeEasy.EnableRoofTopSnapPoints.Value)
                     {
-                        SnapPointHelper.AddSnapPointsToRoofTop(prefab);
+                        ShapeClassifier.AddSnapPointsToRoofTop(prefab);
                     }
                     else
                     {
-                        SnapPointHelper.AddLocalCenterSnapPoint(prefab);
+                        prefab.AddLocalCenterSnapPoint();
                     }
 
                     break;

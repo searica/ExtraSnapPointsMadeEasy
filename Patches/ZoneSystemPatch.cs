@@ -11,7 +11,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         [HarmonyPatch(nameof(ZoneSystem.Start))]
         public static void Start()
         {
-            SnapPointAdder.AddExtraSnapPoints("Adding extra snap points", true);
+            ExtraSnapsManager.AddExtraSnapPoints("Adding extra snap points", true);
         }
     }
 }

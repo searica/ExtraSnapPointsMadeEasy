@@ -1,24 +1,28 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Logging;
-using ExtraSnapPointsMadeEasy.Configs;
-using ExtraSnapPointsMadeEasy.Helpers;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
+using HarmonyLib;
 using UnityEngine;
+
+using ExtraSnapPointsMadeEasy.Configs;
+using ExtraSnapPointsMadeEasy.Helpers;
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
 namespace ExtraSnapPointsMadeEasy
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-    public class ExtraSnapPointsMadeEasy : BaseUnityPlugin
+    internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
     {
-        internal const string PluginName = "ExtraSnapPointsMadeEasy";
-        internal const string Author = "Searica";
+        public const string PluginName = "ExtraSnapPointsMadeEasy";
+        public const string Author = "Searica";
         public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
         public const string PluginVersion = "1.2.2";
+
+        internal static ExtraSnapPointsMadeEasy Instance;
 
         private static readonly string MainSection = ConfigManager.SetStringPriority("Global", 3);
         private static readonly string SnapModeSection = ConfigManager.SetStringPriority("ManualSnapping", 2);
@@ -37,6 +41,7 @@ namespace ExtraSnapPointsMadeEasy
         public static ConfigEntry<bool> EnableTriangleSnapPoints { get; private set; }
         public static ConfigEntry<bool> EnableRect2DSnapPoints { get; private set; }
         public static ConfigEntry<bool> EnableRoofTopSnapPoints { get; private set; }
+        public static ConfigEntry<bool> EnableTerrainOpSnapPoints { get; private set; }
 
         internal static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
 
@@ -44,7 +49,7 @@ namespace ExtraSnapPointsMadeEasy
 
         internal static bool UpdateExtraSnapPoints { get; set; } = false;
 
-        internal static ExtraSnapPointsMadeEasy Instance;
+
 
         private void Awake()
         {
@@ -61,12 +66,12 @@ namespace ExtraSnapPointsMadeEasy
             ConfigManager.CheckForConfigManager();
             ConfigManager.OnConfigWindowClosed += () =>
             {
-                SnapPointAdder.AddExtraSnapPoints("Config settings changed, re-initializing");
+                ExtraSnapsManager.AddExtraSnapPoints("Config settings changed, re-initializing");
             };
 
             ConfigManager.OnConfigFileReloaded += () =>
             {
-                SnapPointAdder.AddExtraSnapPoints("Config settings changed after reloading config file, re-initializing");
+                ExtraSnapsManager.AddExtraSnapPoints("Config settings changed after reloading config file, re-initializing");
             };
         }
 
@@ -184,7 +189,17 @@ namespace ExtraSnapPointsMadeEasy
                true,
                "Enabled adds extra snap points for all \"RoofTop\" pieces. " +
                "Disabled will prevent extra snap points being added to any \"RoofTop\" pieces."
-           );
+            );
+            EnableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
+
+
+            EnableRoofTopSnapPoints = ConfigManager.BindConfig(
+               ExtraSnapsSection,
+               "TerrainOpSnapPoints",
+               true,
+               "Enabled adds extra snap points for all \"TerrainOp\" pieces like the level ground tool in the Hoe. " +
+               "Disabled will prevent extra snap points being added to any \"TerrainOp\" pieces."
+            );
             EnableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
         }
 
@@ -201,7 +216,7 @@ namespace ExtraSnapPointsMadeEasy
             return prefabConfig;
         }
 
-        internal static void SnapSettingChanged(object o, EventArgs e)
+        private static void SnapSettingChanged(object o, EventArgs e)
         {
             if (!UpdateExtraSnapPoints) { UpdateExtraSnapPoints = true; }
         }
@@ -216,7 +231,7 @@ namespace ExtraSnapPointsMadeEasy
             //var pluginInfo = BepInExUtils.GetSourceModMetadata();
             //var msg = $"{pluginInfo.Name} triggered a re-initialization, adding extra snap points";
             var msg = $"External mod triggered a re-initialization, adding extra snap points";
-            SnapPointAdder.AddExtraSnapPoints(msg, true);
+            ExtraSnapsManager.AddExtraSnapPoints(msg, true);
         }
     }
 

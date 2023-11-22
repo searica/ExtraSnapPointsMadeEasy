@@ -1,34 +1,27 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ExtraSnapPointsMadeEasy.Extensions
 {
-    internal static class TransformExtensions
+    /// <summary>
+    ///     Convenience methods for Transforms
+    /// </summary>
+    public static class TransformExtensions
     {
         /// <summary>
-        ///     Breadth-first search for transform child by name.
+        ///     Extension method to find nested children by name using either
+        ///     a breadth-first or depth-first search. Default is breadth-first.
         /// </summary>
-        /// <param name="aParent"></param>
-        /// <param name="aName"></param>
+        /// <param name="transform"></param>
+        /// <param name="childName">Name of the child object to search for.</param>
+        /// <param name="searchType">Whether to preform a breadth first or depth first search. Default is breadth first.</param>
         /// <returns></returns>
-        public static Transform FindDeepChild(this Transform aParent, string aName)
+        public static Transform FindDeepChild(
+            this Transform transform,
+            string childName,
+            global::Utils.IterativeSearchType searchType = global::Utils.IterativeSearchType.BreadthFirst
+        )
         {
-            Queue<Transform> queue = new();
-            queue.Enqueue(aParent);
-            while (queue.Count > 0)
-            {
-                var c = queue.Dequeue();
-                if (c.name == aName)
-                {
-                    return c;
-                }
-
-                foreach (Transform t in c)
-                {
-                    queue.Enqueue(t);
-                }
-            }
-            return null;
+            return global::Utils.FindChild(transform, childName, searchType);
         }
     }
 }

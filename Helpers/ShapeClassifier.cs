@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace ExtraSnapPointsMadeEasy.Helpers
 {
-    internal class SnapPointHelper
+    internal static class ShapeClassifier
     {
         private const float Tolerance = 1e-6f;
 
@@ -21,23 +21,6 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             "dverger_demister_large",
         };
 
-        internal static bool HasNoSnapPoints(GameObject gameObject)
-        {
-            return GetSnapPoints(gameObject.transform).Count == 0;
-        }
-
-        /// <summary>
-        ///     Checks equality using both relative and absolute tolerance.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        private static bool Equals(float x, float y)
-        {
-            var diff = Mathf.Abs(x - y);
-            return diff <= Tolerance || diff <= Mathf.Max(Mathf.Abs(x), Mathf.Abs(y)) * Tolerance;
-        }
-
         /// <summary>
         ///     Check if piece has a single snap point.
         /// </summary>
@@ -45,9 +28,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <returns></returns>
         internal static bool IsPoint(GameObject gameObject)
         {
-            if (gameObject == null) { return false; }
-            var snapPoints = GetSnapPoints(gameObject.transform);
-            return snapPoints.Count == 1;
+            if (!gameObject) { return false; }
+            return gameObject.GetSnapPoints().Count == 1;
         }
 
         /// <summary>
@@ -57,9 +39,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <returns></returns>
         internal static bool IsLine(GameObject gameObject)
         {
-            if (gameObject == null) { return false; }
-            var snapPoints = GetSnapPoints(gameObject.transform);
-            return snapPoints.Count == 2 && EverySnapPointLiesOnExtremums(snapPoints);
+            if (!gameObject) { return false; }
+            var snapPoints = gameObject.GetSnapPoints();
+            return snapPoints.Count == 2 && EverySnapPointLiesOnExtrema(snapPoints);
         }
 
         /// <summary>
@@ -69,9 +51,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <returns></returns>
         internal static bool IsTriangle(GameObject gameObject)
         {
-            if (gameObject == null) { return false; }
-            var snapPoints = GetSnapPoints(gameObject.transform);
-            return snapPoints.Count == 3 && EverySnapPointLiesOnExtremums(snapPoints);
+            if (!gameObject) { return false; }
+            var snapPoints = gameObject.GetSnapPoints();
+            return snapPoints.Count == 3 && EverySnapPointLiesOnExtrema(snapPoints);
         }
 
         /// <summary>
@@ -81,10 +63,10 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <returns></returns>
         internal static bool IsRect2D(GameObject gameObject)
         {
-            if (gameObject == null) { return false; }
-            var snapPoints = GetSnapPoints(gameObject.transform);
+            if (!gameObject) { return false; }
+            var snapPoints = gameObject.GetSnapPoints();
             // must have 4 points that lie on extremes
-            if (snapPoints.Count != 4 || !EverySnapPointLiesOnExtremums(snapPoints))
+            if (snapPoints.Count != 4 || !EverySnapPointLiesOnExtrema(snapPoints))
             {
                 return false;
             }
@@ -102,9 +84,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <returns></returns>
         internal static bool IsCube(GameObject gameObject)
         {
-            if (gameObject == null) { return false; }
-            var snapPoints = GetSnapPoints(gameObject.transform);
-            return snapPoints.Count == 8 && EverySnapPointLiesOnExtremums(snapPoints);
+            if (!gameObject) { return false; }
+            var snapPoints = gameObject.GetSnapPoints();
+            return snapPoints.Count == 8 && EverySnapPointLiesOnExtrema(snapPoints);
         }
 
         /// <summary>
@@ -115,8 +97,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <returns></returns>
         internal static bool IsCross(GameObject gameObject)
         {
-            if (gameObject == null) { return false; }
-            var snapPoints = GetSnapPoints(gameObject.transform);
+            if (!gameObject) { return false; }
+            var snapPoints = gameObject.GetSnapPoints();
 
             if (snapPoints.Count != 5)
             {
@@ -131,7 +113,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             int centerPointCount = 0;
             foreach (var snapNode in snapPoints)
             {
-                if (!LiesOnExtremums(snapNode.localPosition, minimums, maximums))
+                if (!LiesOnExtrema(snapNode.localPosition, minimums, maximums))
                 {
                     if (snapNode.localPosition == centerPoint) { centerPointCount++; }
                 }
@@ -161,6 +143,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
                 }
             }
+
             if (!hasRoofTag) { return false; }
 
             return IsWedge3D(gameObject);
@@ -173,9 +156,16 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <returns></returns>
         internal static bool IsWedge3D(GameObject gameObject)
         {
-            if (gameObject == null) { return false; }
-            var snapPoints = GetSnapPoints(gameObject.transform);
-            if (snapPoints.Count != 6) return false;
+            if (!gameObject)
+            {
+                return false;
+            }
+
+            var snapPoints = gameObject.GetSnapPoints();
+            if (snapPoints.Count != 6)
+            {
+                return false;
+            }
 
             // needs 6 points. 4 should lie on an extremus and 2 on edge mid-points
             var minimums = SolveMinimumsOf(snapPoints);
@@ -184,15 +174,17 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             int midEdgePointCount = 0;
             foreach (var snapNode in snapPoints)
             {
-                if (LiesOnExtremums(snapNode.localPosition, minimums, maximums))
+                if (LiesOnExtrema(snapNode.localPosition, minimums, maximums))
                 {
                     extremusPointCount++;
                 }
+
                 if (LiesOnEdgeMidPoint(snapNode.localPosition, minimums, maximums))
                 {
                     midEdgePointCount++;
                 }
             }
+
             return extremusPointCount == 4 && midEdgePointCount == 2;
         }
 
@@ -227,14 +219,13 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             {
                 return true;
             }
-            if (
-                prefab.transform.FindDeepChild("FireWarmth") != null
-                || prefab.GetComponentInChildren<Demister>(true) != null
-                || prefab.transform.FindDeepChild("fx_Torch_Basic") != null
-                || prefab.transform.FindDeepChild("fx_Torch_Blue") != null
-                || prefab.transform.FindDeepChild("fx_Torch_Green") != null
-                || prefab.transform.FindDeepChild("demister_ball (1)") != null
-            )
+
+            if (prefab.FindDeepChild("FireWarmth") ||
+                prefab.GetComponentInChildren<Demister>(true) ||
+                prefab.transform.FindDeepChild("fx_Torch_Basic") ||
+                prefab.transform.FindDeepChild("fx_Torch_Blue") ||
+                prefab.transform.FindDeepChild("fx_Torch_Green") ||
+                prefab.transform.FindDeepChild("demister_ball (1)"))
             {
                 var prefabName = prefab.name.ToLower();
                 if (prefabName.Contains("torch") || prefabName.Contains("demister"))
@@ -242,27 +233,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     return true;
                 }
             }
+
             return false;
-        }
-
-        internal static List<Transform> GetSnapPoints(Transform pieceTransform)
-        {
-            List<Transform> points = new();
-
-            if (pieceTransform == null)
-            {
-                return points;
-            }
-
-            for (var index = 0; index < pieceTransform.childCount; ++index)
-            {
-                var child = pieceTransform.GetChild(index);
-                if (child.CompareTag("snappoint"))
-                {
-                    points.Add(child);
-                }
-            }
-            return points;
         }
 
         /// <summary>
@@ -272,17 +244,18 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// </summary>
         /// <param name="snapPoints"></param>
         /// <returns></returns>
-        private static bool EverySnapPointLiesOnExtremums(List<Transform> snapPoints)
+        private static bool EverySnapPointLiesOnExtrema(List<Transform> snapPoints)
         {
             var minimums = SolveMinimumsOf(snapPoints);
             var maximums = SolveMaximumsOf(snapPoints);
             foreach (var snapNode in snapPoints)
             {
-                if (!LiesOnExtremums(snapNode.localPosition, minimums, maximums))
+                if (!LiesOnExtrema(snapNode.localPosition, minimums, maximums))
                 {
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -336,7 +309,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <param name="minimums"></param>
         /// <param name="maximums"></param>
         /// <returns></returns>
-        private static bool LiesOnExtremums(
+        private static bool LiesOnExtrema(
             Vector3 snapPoint,
             Vector3 minimums,
             Vector3 maximums
@@ -346,14 +319,17 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             {
                 return false;
             }
+
             if (!Equals(snapPoint.y, minimums.y) && !Equals(snapPoint.y, maximums.y))
             {
                 return false;
             }
+
             if (!Equals(snapPoint.z, minimums.z) && !Equals(snapPoint.z, maximums.z))
             {
                 return false;
             }
+
             return true;
         }
 
@@ -378,14 +354,17 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             {
                 extremusCoordinates++;
             }
+
             if (Equals(snapPoint.y, minimums.y) || Equals(snapPoint.y, maximums.y))
             {
                 extremusCoordinates++;
             }
+
             if (Equals(snapPoint.z, minimums.z) || Equals(snapPoint.z, maximums.z))
             {
                 extremusCoordinates++;
             }
+
             if (extremusCoordinates != 2) { return false; }
 
             // one should be in the center of two extremes
@@ -399,18 +378,6 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             return true;
         }
 
-        internal static Vector3 GetCenterOfSnapPoints(List<Transform> snapPoints)
-        {
-            // compute center snap point
-            var centerPoint = Vector3.zero;
-            foreach (var snapPoint in snapPoints)
-            {
-                centerPoint += snapPoint.transform.localPosition;
-            }
-            centerPoint /= snapPoints.Count;
-            return centerPoint;
-        }
-
         /// <summary>
         ///     Add a snap point at the midpoint between
         ///     the two existing snap points.
@@ -418,15 +385,9 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <param name="gameObject"></param>
         internal static void AddSnapPointToLine(GameObject gameObject)
         {
-            var snapPoints = GetSnapPoints(gameObject.transform);
+            var snapPoints = gameObject.GetSnapPoints();
             var centerPoint = GetCenterOfSnapPoints(snapPoints);
-            AddSnapPoints(
-                gameObject,
-                new Vector3[]
-                {
-                    centerPoint,
-                }
-            );
+            gameObject.AddSnapPoints(new Vector3[] { centerPoint });
         }
 
         /// <summary>
@@ -436,7 +397,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <param name="gameObject"></param>
         internal static void AddSnapPointsToTriangle(GameObject gameObject)
         {
-            var snapPoints = GetSnapPoints(gameObject.transform);
+            var snapPoints = gameObject.GetSnapPoints();
             var pts = new HashSet<Vector3>();
 
             // compute center snap point
@@ -450,15 +411,15 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 for (int j = i + 1; j < snapPoints.Count; j++)
                 {
                     var snap2 = snapPoints[j];
-                    var newPt = (snap1.transform.localPosition
-                        + snap2.transform.localPosition) / 2;
+                    var newPt = (snap1.transform.localPosition + snap2.transform.localPosition) / 2;
                     if (newPt != centerPoint)
                     {
                         pts.Add(newPt);
                     }
                 }
             }
-            AddSnapPoints(gameObject, pts);
+
+            gameObject.AddSnapPoints(pts);
         }
 
         /// <summary>
@@ -468,7 +429,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <param name="gameObject"></param>
         internal static void AddSnapPointsToRect2D(GameObject gameObject)
         {
-            var snapPoints = GetSnapPoints(gameObject.transform);
+            var snapPoints = gameObject.GetSnapPoints();
             var pts = new HashSet<Vector3>();
 
             // compute center snap point
@@ -482,15 +443,14 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 for (int j = i + 1; j < snapPoints.Count; j++)
                 {
                     var snap2 = snapPoints[j];
-                    var newPt = (snap1.transform.localPosition
-                        + snap2.transform.localPosition) / 2;
+                    var newPt = (snap1.transform.localPosition + snap2.transform.localPosition) / 2;
                     if (newPt != centerPoint)
                     {
                         pts.Add(newPt);
                     }
                 }
             }
-            AddSnapPoints(gameObject, pts);
+            gameObject.AddSnapPoints(pts);
         }
 
         /// <summary>
@@ -499,7 +459,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// <param name="gameObject"></param>
         internal static void AddSnapPointsToRoofTop(GameObject gameObject)
         {
-            var snapPoints = GetSnapPoints(gameObject.transform);
+            var snapPoints = gameObject.GetSnapPoints();
             var minimums = SolveMinimumsOf(snapPoints);
             var maximums = SolveMaximumsOf(snapPoints);
             var middles = (minimums + maximums) / 2;
@@ -576,89 +536,32 @@ namespace ExtraSnapPointsMadeEasy.Helpers
             var mid2 = mid1;
             mid2[frontAxis] = maximums[frontAxis];
 
-            AddSnapPoints(gameObject, new[] { topCenter, mid1, mid2 });
+            gameObject.AddSnapPoints(new[] { topCenter, mid1, mid2 });
+        }
+
+
+        private static Vector3 GetCenterOfSnapPoints(List<Transform> snapPoints)
+        {
+            // compute center snap point
+            var centerPoint = Vector3.zero;
+            foreach (var snapPoint in snapPoints)
+            {
+                centerPoint += snapPoint.transform.localPosition;
+            }
+            centerPoint /= snapPoints.Count;
+            return centerPoint;
         }
 
         /// <summary>
-        ///     Adds a snap point to the local center of
-        ///     GameObject if there is not already one there.
+        ///     Checks equality using both relative and absolute tolerance.
         /// </summary>
-        /// <param name="gameObject"></param>
-        internal static void AddLocalCenterSnapPoint(GameObject gameObject)
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private static bool Equals(float x, float y)
         {
-            // Only add snap point if it doesn't have one there already
-            var snapPts = GetSnapPoints(gameObject.transform);
-            foreach (var snapPoint in snapPts)
-            {
-                if (snapPoint.transform.localPosition == Vector3.zero)
-                {
-                    return;
-                }
-            }
-            AddSnapPoints(
-                gameObject,
-                new Vector3[]
-                {
-                    new Vector3(0.0f, 0.0f, 0.0f),
-                }
-            );
-        }
-
-        internal static void AddSnapPoints(
-            GameObject gameObject,
-            IEnumerable<Vector3> points,
-            bool fixPiece = false,
-            bool fixZClipping = false
-        )
-        {
-            if (!gameObject)
-            {
-                Log.LogWarning("GameObject is null. Cannot add snappoints");
-                return;
-            }
-
-            if (fixPiece)
-            {
-                FixPiece(gameObject);
-            }
-
-            float z = 0f;
-
-            foreach (Vector3 point in points)
-            {
-                Vector3 pos = point;
-
-                if (fixZClipping)
-                {
-                    pos.z = z;
-                    z += 0.0001f;
-                }
-
-                CreateSnapPoint(pos, gameObject.transform);
-            }
-        }
-
-        private static void CreateSnapPoint(Vector3 pos, Transform parent)
-        {
-            GameObject snappoint = new("_snappoint");
-            snappoint.transform.parent = parent;
-            snappoint.transform.localPosition = pos;
-            snappoint.tag = "snappoint";
-            snappoint.SetActive(false);
-        }
-
-        internal static void FixPiece(GameObject gameObject)
-        {
-            if (!gameObject)
-            {
-                Log.LogWarning($"Prefab is null. Cannot fix pieceTransform");
-                return;
-            }
-
-            foreach (Collider collider in gameObject.GetComponentsInChildren<Collider>())
-            {
-                collider.gameObject.layer = LayerMask.NameToLayer("pieceTransform");
-            }
+            var diff = Mathf.Abs(x - y);
+            return diff <= Tolerance || diff <= Mathf.Max(Mathf.Abs(x), Mathf.Abs(y)) * Tolerance;
         }
     }
 }

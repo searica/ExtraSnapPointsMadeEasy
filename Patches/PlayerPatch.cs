@@ -207,8 +207,8 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 currentTargetSnap++;
             }
 
-            var sourceSnapPoints = SnapPointHelper.GetSnapPoints(sourcePiece.transform);
-            var targetSnapPoints = SnapPointHelper.GetSnapPoints(currentTargetParent);
+            var sourceSnapPoints = ShapeClassifier.GetSnapPoints(sourcePiece.transform);
+            var targetSnapPoints = ShapeClassifier.GetSnapPoints(currentTargetParent);
 
             if (sourceSnapPoints.Count == 0 || targetSnapPoints.Count == 0)
             {

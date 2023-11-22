@@ -1,9 +1,9 @@
-﻿using ExtraSnapPointsMadeEasy.Helpers;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ExtraSnapPointsMadeEasy.Extensions;
 
 namespace ExtraSnapPointsMadeEasy.Patches
 {
@@ -207,8 +207,8 @@ namespace ExtraSnapPointsMadeEasy.Patches
                 currentTargetSnap++;
             }
 
-            var sourceSnapPoints = ShapeClassifier.GetSnapPoints(sourcePiece.transform);
-            var targetSnapPoints = ShapeClassifier.GetSnapPoints(currentTargetParent);
+            var sourceSnapPoints = sourcePiece.gameObject.GetSnapPoints();
+            var targetSnapPoints = currentTargetParent.GetSnapPoints();
 
             if (sourceSnapPoints.Count == 0 || targetSnapPoints.Count == 0)
             {

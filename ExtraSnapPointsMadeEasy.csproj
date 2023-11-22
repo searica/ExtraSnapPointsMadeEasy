@@ -80,10 +80,10 @@
 		<PackageReference Include="MonoMod" Version="21.9.19.1" />
 		<PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
 		<PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
-		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+		<!--<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		</PackageReference>-->
 		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
 	</ItemGroup>
 

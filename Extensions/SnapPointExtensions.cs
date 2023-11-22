@@ -11,6 +11,11 @@ namespace ExtraSnapPointsMadeEasy.Extensions
         /// </summary>
         internal const string SnapPointName = "ExtraSnapPoint";
 
+        /// <summary>
+        ///     Check if gameObject has no snap point child objects.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
         internal static bool HasNoSnapPoints(this GameObject gameObject)
         {
             return gameObject.GetSnapPoints().Count == 0;
@@ -46,6 +51,7 @@ namespace ExtraSnapPointsMadeEasy.Extensions
             {
                 return points;
             }
+
             var transform = gameObject.transform;
             for (var index = 0; index < transform.childCount; ++index)
             {

@@ -1,24 +1,26 @@
-﻿using BepInEx;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using ExtraSnapPointsMadeEasy.Extensions;
-using System;
-using System.IO;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace ExtraSnapPointsMadeEasy.Configs
 {
-    internal class ConfigManager
+    internal static class ConfigManager
     {
+        private const char ZWS = '\u200B';
+        private const string ConfigManagerGUID = "com.bepis.bepinex.configurationmanager";
+
         private static string ConfigFileName;
 
         private static string ConfigFileFullPath;
 
         private static ConfigFile configFile;
         private static BaseUnityPlugin ConfigurationManager;
-        private const string ConfigManagerGUID = "com.bepis.bepinex.configurationmanager";
 
         #region Events
 
@@ -28,7 +30,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
         internal static event Action OnConfigWindowClosed;
 
         /// <summary>
-        ///     Safely invoke the <see cref="OnConfigWindowClosed"/> event
+        ///     Safely invoke the <see cref="OnConfigWindowClosed"/> event.
         /// </summary>
         private static void InvokeOnConfigWindowClosed()
         {
@@ -41,7 +43,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
         internal static event Action OnConfigFileReloaded;
 
         /// <summary>
-        ///     Safely invoke the <see cref="OnConfigFileReloaded"/> event
+        ///     Safely invoke the <see cref="OnConfigFileReloaded"/> event.
         /// </summary>
         private static void InvokeOnConfigFileReloaded()
         {
@@ -69,14 +71,12 @@ namespace ExtraSnapPointsMadeEasy.Configs
             return configEntry;
         }
 
-        private const char ZWS = '\u200B';
-
         /// <summary>
-        ///     Prepends Zero-Width-Space to set ordering of configuration sections
+        ///     Prepends Zero-Width-Space to set ordering of configuration sections.
         /// </summary>
-        /// <param name="sectionName">Section name</param>
-        /// <param name="priority">Number of ZWS chars to prepend</param>
-        /// <returns></returns>
+        /// <param name="sectionName">Section name.</param>
+        /// <param name="priority">Number of ZWS chars to prepend.</param>
+        /// <returns>Modified string.</returns>
         internal static string SetStringPriority(string sectionName, int priority)
         {
             if (priority == 0) { return sectionName; }
@@ -97,7 +97,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
         ///     Sets SaveOnConfigSet to false and returns
         ///     the value prior to calling this method.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Value prior to disabling it.</returns>
         internal static bool DisableSaveOnConfigSet()
         {
             var val = configFile.SaveOnConfigSet;
@@ -108,7 +108,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
         /// <summary>
         ///     Set the value for the SaveOnConfigSet field.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value to set it to.</param>
         internal static void SaveOnConfigSet(bool value)
         {
             configFile.SaveOnConfigSet = value;
@@ -161,7 +161,7 @@ namespace ExtraSnapPointsMadeEasy.Configs
 
         /// <summary>
         ///     Checks for in-game configuration manager and
-        ///     sets up OnConfigWindowClosed event if it is present
+        ///     sets up OnConfigWindowClosed event if it is present.
         /// </summary>
         internal static void CheckForConfigManager()
         {

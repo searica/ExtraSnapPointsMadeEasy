@@ -81,7 +81,7 @@ namespace ExtraSnapPointsMadeEasy.Extensions
                 }
                 catch (Exception e)
                 {
-                    Log.LogWarning($"Exception thrown at event {(new StackFrame(1).GetMethod().Name)} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
+                    Log.LogWarning($"Exception thrown at event {new StackFrame(1).GetMethod().Name} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
                 }
             }
         }

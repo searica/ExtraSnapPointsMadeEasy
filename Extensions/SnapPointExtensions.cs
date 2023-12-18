@@ -73,7 +73,7 @@ namespace ExtraSnapPointsMadeEasy.Extensions
         internal static void AddLocalCenterSnapPoint(this GameObject gameObject)
         {
             // Only add snap point if it doesn't have one there already
-            var snapPts = GetSnapPoints(gameObject.transform);
+            var snapPts = gameObject.GetSnapPoints();
             foreach (var snapPoint in snapPts)
             {
                 if (snapPoint.transform.localPosition == Vector3.zero)

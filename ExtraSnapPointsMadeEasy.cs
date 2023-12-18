@@ -18,7 +18,7 @@ namespace ExtraSnapPointsMadeEasy {
         public const string PluginName = "ExtraSnapPointsMadeEasy";
         public const string Author = "Searica";
         public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.2.3";
+        public const string PluginVersion = "1.2.4";
 
         internal static ExtraSnapPointsMadeEasy Instance;
 
@@ -41,7 +41,7 @@ namespace ExtraSnapPointsMadeEasy {
         public static ConfigEntry<bool> EnableRoofTopSnapPoints { get; private set; }
         public static ConfigEntry<bool> EnableTerrainOpSnapPoints { get; private set; }
 
-        internal static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
+        internal readonly static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
 
         internal static ConfigEntry<MessageHud.MessageType> NotificationType { get; private set; }
 
@@ -186,14 +186,13 @@ namespace ExtraSnapPointsMadeEasy {
             EnableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
 
 
-            EnableRoofTopSnapPoints = ConfigManager.BindConfig(
+            EnableTerrainOpSnapPoints = ConfigManager.BindConfig(
                ExtraSnapsSection,
                "TerrainOpSnapPoints",
-               true,
-               "Enabled adds extra snap points for all \"TerrainOp\" pieces like the level ground tool in the Hoe. " +
-               "Disabled will prevent extra snap points being added to any \"TerrainOp\" pieces."
+               false,
+               "Enabled adds extra snap points for all \"TerrainOp\" pieces like the level ground tool in the Hoe. Disabled will prevent extra snap points being added to any \"TerrainOp\" pieces."
             );
-            EnableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
+            EnableTerrainOpSnapPoints.SettingChanged += SnapSettingChanged;
         }
 
         internal static ConfigEntry<bool> LoadConfig(GameObject gameObject) {

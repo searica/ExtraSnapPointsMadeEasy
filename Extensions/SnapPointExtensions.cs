@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ExtraSnapPointsMadeEasy.Extensions
-{
-    internal static class SnapPointExtensions
-    {
+namespace ExtraSnapPointsMadeEasy.Extensions {
+    internal static class SnapPointExtensions {
         /// <summary>
         ///     Name of all child snap point objects added by this mod.
         /// </summary>
@@ -16,25 +14,20 @@ namespace ExtraSnapPointsMadeEasy.Extensions
         /// </summary>
         /// <param name="gameObject"></param>
         /// <returns></returns>
-        internal static bool HasNoSnapPoints(this GameObject gameObject)
-        {
+        internal static bool HasNoSnapPoints(this GameObject gameObject) {
             return gameObject.GetSnapPoints().Count == 0;
         }
 
-        internal static List<Transform> GetSnapPoints(this Transform transform)
-        {
+        internal static List<Transform> GetSnapPoints(this Transform transform) {
             List<Transform> points = new();
 
-            if (transform == null)
-            {
+            if (!transform) {
                 return points;
             }
 
-            for (var index = 0; index < transform.childCount; ++index)
-            {
+            for (var index = 0; index < transform.childCount; ++index) {
                 var child = transform.GetChild(index);
-                if (child.CompareTag("snappoint"))
-                {
+                if (child.CompareTag("snappoint")) {
                     points.Add(child);
                 }
             }
@@ -43,21 +36,17 @@ namespace ExtraSnapPointsMadeEasy.Extensions
         }
 
 
-        internal static List<Transform> GetSnapPoints(this GameObject gameObject)
-        {
+        internal static List<Transform> GetSnapPoints(this GameObject gameObject) {
             List<Transform> points = new();
 
-            if (!gameObject)
-            {
+            if (!gameObject) {
                 return points;
             }
 
             var transform = gameObject.transform;
-            for (var index = 0; index < transform.childCount; ++index)
-            {
+            for (var index = 0; index < transform.childCount; ++index) {
                 var child = transform.GetChild(index);
-                if (child.CompareTag("snappoint"))
-                {
+                if (child.CompareTag("snappoint")) {
                     points.Add(child);
                 }
             }
@@ -70,14 +59,11 @@ namespace ExtraSnapPointsMadeEasy.Extensions
         ///     GameObject if there is not already one there.
         /// </summary>
         /// <param name="gameObject"></param>
-        internal static void AddLocalCenterSnapPoint(this GameObject gameObject)
-        {
+        internal static void AddLocalCenterSnapPoint(this GameObject gameObject) {
             // Only add snap point if it doesn't have one there already
             var snapPts = gameObject.GetSnapPoints();
-            foreach (var snapPoint in snapPts)
-            {
-                if (snapPoint.transform.localPosition == Vector3.zero)
-                {
+            foreach (var snapPoint in snapPts) {
+                if (snapPoint.transform.localPosition == Vector3.zero) {
                     return;
                 }
             }
@@ -90,27 +76,22 @@ namespace ExtraSnapPointsMadeEasy.Extensions
             IEnumerable<Vector3> points,
             bool fixPiece = false,
             bool fixZClipping = false
-        )
-        {
-            if (!gameObject)
-            {
+        ) {
+            if (!gameObject) {
                 Log.LogWarning("GameObject is null. Cannot add snappoints");
                 return;
             }
 
-            if (fixPiece)
-            {
+            if (fixPiece) {
                 FixPiece(gameObject);
             }
 
             float z = 0f;
 
-            foreach (Vector3 point in points)
-            {
+            foreach (Vector3 point in points) {
                 Vector3 pos = point;
 
-                if (fixZClipping)
-                {
+                if (fixZClipping) {
                     pos.z = z;
                     z += 0.0001f;
                 }
@@ -119,8 +100,7 @@ namespace ExtraSnapPointsMadeEasy.Extensions
             }
         }
 
-        private static void CreateSnapPoint(Vector3 pos, Transform parent)
-        {
+        private static void CreateSnapPoint(Vector3 pos, Transform parent) {
             GameObject snappoint = new(SnapPointName);
             snappoint.transform.parent = parent;
             snappoint.transform.localPosition = pos;
@@ -128,16 +108,13 @@ namespace ExtraSnapPointsMadeEasy.Extensions
             snappoint.SetActive(false);
         }
 
-        internal static void FixPiece(GameObject gameObject)
-        {
-            if (!gameObject)
-            {
+        internal static void FixPiece(GameObject gameObject) {
+            if (!gameObject) {
                 Log.LogWarning($"Prefab is null. Cannot fix pieceTransform");
                 return;
             }
 
-            foreach (Collider collider in gameObject.GetComponentsInChildren<Collider>())
-            {
+            foreach (Collider collider in gameObject.GetComponentsInChildren<Collider>()) {
                 collider.gameObject.layer = LayerMask.NameToLayer("pieceTransform");
             }
         }

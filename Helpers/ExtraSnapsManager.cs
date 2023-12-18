@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -42,8 +43,13 @@ namespace ExtraSnapPointsMadeEasy.Helpers {
             }
 
             foreach (var prefab in prefabPieces) {
-                if (AddSnapPoints(prefab)) {
-                    AlteredPrefabs.Add(prefab);
+                try {
+                    if (AddSnapPoints(prefab)) {
+                        AlteredPrefabs.Add(prefab);
+                    }
+                }
+                catch (Exception e) {
+                    Log.LogWarning($"Failed to add snappoints to {prefab}: {e}");
                 }
             }
 
@@ -76,7 +82,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers {
 
                 for (int i = 0; i < snapPoints.Count; i++) {
                     if (snapPoints[i].name == SnapPointExtensions.SnapPointName) {
-                        Object.DestroyImmediate(snapPoints[i].gameObject);
+                        GameObject.DestroyImmediate(snapPoints[i].gameObject);
                     }
                 }
             }
@@ -129,6 +135,10 @@ namespace ExtraSnapPointsMadeEasy.Helpers {
         }
 
         private static bool AddSnapPoints(GameObject prefab) {
+            if (!prefab) {
+                return false;
+            }
+
             var prefabConfig = ExtraSnapPointsMadeEasy.LoadConfig(prefab);
             if (!prefabConfig.Value || !ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value) {
                 return false; // skip adding snap points if not enabled
@@ -724,8 +734,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers {
                            }
                         );
                     }
-                    else if (ShapeClassifier.IsTorch(prefab)
-                        && prefab.HasNoSnapPoints()) {
+                    else if (ShapeClassifier.IsTorch(prefab) && prefab.HasNoSnapPoints()) {
                         // piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green,
                         // piece_groundtorch_blue, piece_groundtorch_mist, etc.
                         prefab.AddSnapPoints(
@@ -753,6 +762,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers {
 
                     break;
             }
+
             return true;
         }
     }

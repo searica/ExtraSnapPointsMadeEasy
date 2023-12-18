@@ -4,10 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using ExtraSnapPointsMadeEasy.Extensions;
 
-namespace ExtraSnapPointsMadeEasy.Helpers
-{
-    internal class ExtraSnapsManager
-    {
+namespace ExtraSnapPointsMadeEasy.Helpers {
+    internal class ExtraSnapsManager {
         private static readonly HashSet<string> DoNotAddSnapPoints = new()
         {
             "piece_dvergr_spiralstair",
@@ -19,50 +17,41 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         /// </summary>
         private static readonly List<GameObject> AlteredPrefabs = new();
 
-        internal static void AddExtraSnapPoints(string msg, bool forceUpdate = false)
-        {
+        internal static void AddExtraSnapPoints(string msg, bool forceUpdate = false) {
             // Avoid updating before world and prefabs are loaded.
-            if (!ZNetScene.instance || SceneManager.GetActiveScene().name != "main")
-            {
+            if (!ZNetScene.instance || SceneManager.GetActiveScene().name != "main") {
                 return;
             }
 
             // Only update if needed.
-            if (!ExtraSnapPointsMadeEasy.UpdateExtraSnapPoints && !forceUpdate)
-            {
+            if (!ExtraSnapPointsMadeEasy.UpdateExtraSnapPoints && !forceUpdate) {
                 return;
             }
 
             var watch = new System.Diagnostics.Stopwatch();
-            if (Log.IsVerbosityMedium)
-            {
+            if (Log.IsVerbosityMedium) {
                 watch.Start();
             }
 
             Log.LogInfo(msg);
             var prefabPieces = FindPrefabPieces();
 
-            if (AlteredPrefabs.Count > 0)
-            {
+            if (AlteredPrefabs.Count > 0) {
                 RemoveExtraSnapPoints(AlteredPrefabs);
                 AlteredPrefabs.Clear();
             }
 
-            foreach (var prefab in prefabPieces)
-            {
-                if (AddSnapPoints(prefab))
-                {
+            foreach (var prefab in prefabPieces) {
+                if (AddSnapPoints(prefab)) {
                     AlteredPrefabs.Add(prefab);
                 }
             }
 
-            if (Log.IsVerbosityMedium)
-            {
+            if (Log.IsVerbosityMedium) {
                 watch.Stop();
                 Log.LogInfo($"Time to add snap points: {watch.ElapsedMilliseconds} ms");
             }
-            else
-            {
+            else {
                 Log.LogInfo("Adding snap points complete");
             }
 
@@ -73,35 +62,28 @@ namespace ExtraSnapPointsMadeEasy.Helpers
         ///      Iterate over piece tables to get all existing prefabPieces
         /// </summary>
         /// <returns></returns>
-        internal static List<GameObject> FindPrefabPieces()
-        {
+        internal static List<GameObject> FindPrefabPieces() {
             return Resources.FindObjectsOfTypeAll<PieceTable>()
                 .SelectMany(pieceTable => pieceTable.m_pieces)
                 .Where(piecePrefab => !SkipPrefab(piecePrefab))
                 .ToList();
         }
 
-        internal static void RemoveExtraSnapPoints(List<GameObject> prefabs)
-        {
-            foreach (var prefab in prefabs)
-            {
+        internal static void RemoveExtraSnapPoints(List<GameObject> prefabs) {
+            foreach (var prefab in prefabs) {
                 // destroy all extra snap points on prefab
                 var snapPoints = prefab.GetSnapPoints();
 
-                for (int i = 0; i < snapPoints.Count; i++)
-                {
-                    if (snapPoints[i].name == SnapPointExtensions.SnapPointName)
-                    {
+                for (int i = 0; i < snapPoints.Count; i++) {
+                    if (snapPoints[i].name == SnapPointExtensions.SnapPointName) {
                         Object.DestroyImmediate(snapPoints[i].gameObject);
                     }
                 }
             }
         }
 
-        private static bool SkipPrefab(GameObject prefab)
-        {
-            if (DoNotAddSnapPoints.Contains(prefab.name))
-            {
+        private static bool SkipPrefab(GameObject prefab) {
+            if (DoNotAddSnapPoints.Contains(prefab.name)) {
                 return true;
             }
 
@@ -139,24 +121,20 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                 prefab.GetComponent<TriggerSpawner>() ||
                 prefab.GetComponentInChildren<Ship>() || // ignore ships
                 prefab.GetComponentInChildren<Vagon>() || // ignore carts
-                (prefab.TryGetComponent(out Piece piece) && piece.m_repairPiece))
-            {
+                (prefab.TryGetComponent(out Piece piece) && piece.m_repairPiece)) {
                 return true;
             }
 
             return false;
         }
 
-        private static bool AddSnapPoints(GameObject prefab)
-        {
+        private static bool AddSnapPoints(GameObject prefab) {
             var prefabConfig = ExtraSnapPointsMadeEasy.LoadConfig(prefab);
-            if (!prefabConfig.Value || !ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value)
-            {
+            if (!prefabConfig.Value || !ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value) {
                 return false; // skip adding snap points if not enabled
             }
 
-            switch (prefab.name)
-            {
+            switch (prefab.name) {
                 /* Fences */
                 case "wood_fence":
                     prefab.AddSnapPoints(
@@ -721,18 +699,15 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     break;
 
                 default:
-                    if (ShapeClassifier.IsPoint(prefab) || ShapeClassifier.IsCross(prefab))
-                    {
+                    if (ShapeClassifier.IsPoint(prefab) || ShapeClassifier.IsCross(prefab)) {
                         return false;
                     }
 
-                    if (!ExtraSnapPointsMadeEasy.EnableTerrainOpSnapPoints.Value && prefab.GetComponent<TerrainOp>())
-                    {
+                    if (!ExtraSnapPointsMadeEasy.EnableTerrainOpSnapPoints.Value && prefab.GetComponent<TerrainOp>()) {
                         return false;
                     }
 
-                    if (ShapeClassifier.IsCeilingBrazier(prefab) && prefab.HasNoSnapPoints())
-                    {
+                    if (ShapeClassifier.IsCeilingBrazier(prefab) && prefab.HasNoSnapPoints()) {
                         prefab.AddSnapPoints( // (Hanging Brazier)
                             new[] {
                                 new Vector3(0.0f, 2.0f, 0.0f),
@@ -740,8 +715,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                             }
                         );
                     }
-                    else if (ShapeClassifier.IsFloorBrazier(prefab) && prefab.HasNoSnapPoints())
-                    {
+                    else if (ShapeClassifier.IsFloorBrazier(prefab) && prefab.HasNoSnapPoints()) {
                         // standing brazier, blue standing brazier, mountainkit, etc.
                         prefab.AddSnapPoints(
                             new[] {
@@ -751,8 +725,7 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                         );
                     }
                     else if (ShapeClassifier.IsTorch(prefab)
-                        && prefab.HasNoSnapPoints())
-                    {
+                        && prefab.HasNoSnapPoints()) {
                         // piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green,
                         // piece_groundtorch_blue, piece_groundtorch_mist, etc.
                         prefab.AddSnapPoints(
@@ -762,24 +735,19 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                             }
                         );
                     }
-                    else if (ShapeClassifier.IsLine(prefab) && ExtraSnapPointsMadeEasy.EnableLineSnapPoints.Value)
-                    {
+                    else if (ShapeClassifier.IsLine(prefab) && ExtraSnapPointsMadeEasy.EnableLineSnapPoints.Value) {
                         ShapeClassifier.AddSnapPointToLine(prefab);
                     }
-                    else if (ShapeClassifier.IsTriangle(prefab) && ExtraSnapPointsMadeEasy.EnableTriangleSnapPoints.Value)
-                    {
+                    else if (ShapeClassifier.IsTriangle(prefab) && ExtraSnapPointsMadeEasy.EnableTriangleSnapPoints.Value) {
                         ShapeClassifier.AddSnapPointsToTriangle(prefab);
                     }
-                    else if (ShapeClassifier.IsRect2D(prefab) && ExtraSnapPointsMadeEasy.EnableRect2DSnapPoints.Value)
-                    {
+                    else if (ShapeClassifier.IsRect2D(prefab) && ExtraSnapPointsMadeEasy.EnableRect2DSnapPoints.Value) {
                         ShapeClassifier.AddSnapPointsToRect2D(prefab);
                     }
-                    else if (ShapeClassifier.IsRoofTop(prefab) && ExtraSnapPointsMadeEasy.EnableRoofTopSnapPoints.Value)
-                    {
+                    else if (ShapeClassifier.IsRoofTop(prefab) && ExtraSnapPointsMadeEasy.EnableRoofTopSnapPoints.Value) {
                         ShapeClassifier.AddSnapPointsToRoofTop(prefab);
                     }
-                    else
-                    {
+                    else {
                         prefab.AddLocalCenterSnapPoint();
                     }
 

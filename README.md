@@ -92,6 +92,8 @@ If you like this mod you might like some of my other ones.
 - [More Vanilla Build Prefabs](https://valheim.thunderstore.io/package/Searica/More_Vanilla_Build_Prefabs/)
 - [TerrainTools](https://valheim.thunderstore.io/package/Searica/TerrainTools/)
 - [BuildRestrictionTweaksSync](https://valheim.thunderstore.io/package/Searica/BuildRestrictionTweaksSync/)
+- [ToolTweaks](https://valheim.thunderstore.io/package/Searica/ToolTweaks/)
+- [AdvancedTerrainModifiers](https://valheim.thunderstore.io/package/Searica/AdvancedTerrainModifiers/)
 
 #### Gameplay Mods
 - [CameraTweaks](https://valheim.thunderstore.io/package/Searica/CameraTweaks/)

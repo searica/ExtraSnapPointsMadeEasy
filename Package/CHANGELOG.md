@@ -5,6 +5,24 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.2.3</td>
+			<td align="left">
+				<ul>
+					<li>Changed it so snapping mode only changes while in placement mode.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">1.2.2</td>
+			<td align="left">
+				<ul>
+					<li>Added option to set terrain tools to have snap point or not.</li>
+					<li>Minor optimizations.</li>
+					<li>Changed removal of extra snap points to prevent possible side-effects.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.2.2</td>
 			<td align="left">
 				<ul>

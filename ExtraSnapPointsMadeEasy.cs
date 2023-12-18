@@ -12,15 +12,13 @@ using ExtraSnapPointsMadeEasy.Configs;
 using ExtraSnapPointsMadeEasy.Helpers;
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
-namespace ExtraSnapPointsMadeEasy
-{
+namespace ExtraSnapPointsMadeEasy {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-    internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
-    {
+    internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin {
         public const string PluginName = "ExtraSnapPointsMadeEasy";
         public const string Author = "Searica";
         public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.2.2";
+        public const string PluginVersion = "1.2.3";
 
         internal static ExtraSnapPointsMadeEasy Instance;
 
@@ -51,8 +49,7 @@ namespace ExtraSnapPointsMadeEasy
 
 
 
-        private void Awake()
-        {
+        private void Awake() {
             Instance = this;
             Log.Init(Logger);
             ConfigManager.Init(PluginGUID, Config, false);
@@ -64,24 +61,20 @@ namespace ExtraSnapPointsMadeEasy
 
             ConfigManager.SetupWatcher();
             ConfigManager.CheckForConfigManager();
-            ConfigManager.OnConfigWindowClosed += () =>
-            {
+            ConfigManager.OnConfigWindowClosed += () => {
                 ExtraSnapsManager.AddExtraSnapPoints("Config settings changed, re-initializing");
             };
 
-            ConfigManager.OnConfigFileReloaded += () =>
-            {
+            ConfigManager.OnConfigFileReloaded += () => {
                 ExtraSnapsManager.AddExtraSnapPoints("Config settings changed after reloading config file, re-initializing");
             };
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             ConfigManager.Save();
         }
 
-        public static void Initialize()
-        {
+        public static void Initialize() {
             Log.Verbosity = ConfigManager.BindConfig(
                 MainSection,
                 "Verbosity",
@@ -203,8 +196,7 @@ namespace ExtraSnapPointsMadeEasy
             EnableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
         }
 
-        internal static ConfigEntry<bool> LoadConfig(GameObject gameObject)
-        {
+        internal static ConfigEntry<bool> LoadConfig(GameObject gameObject) {
             ConfigEntry<bool> prefabConfig = ConfigManager.BindConfig(
                 PrefabSnapSettings,
                 gameObject.name,
@@ -216,8 +208,7 @@ namespace ExtraSnapPointsMadeEasy
             return prefabConfig;
         }
 
-        private static void SnapSettingChanged(object o, EventArgs e)
-        {
+        private static void SnapSettingChanged(object o, EventArgs e) {
             if (!UpdateExtraSnapPoints) { UpdateExtraSnapPoints = true; }
         }
 
@@ -226,8 +217,7 @@ namespace ExtraSnapPointsMadeEasy
         ///     extra snap points after dynamically adding/removing pieces
         ///     from piece tables.
         /// </summary>
-        public static void ReInitExtraSnapPoints()
-        {
+        public static void ReInitExtraSnapPoints() {
             //var pluginInfo = BepInExUtils.GetSourceModMetadata();
             //var msg = $"{pluginInfo.Name} triggered a re-initialization, adding extra snap points";
             var msg = $"External mod triggered a re-initialization, adding extra snap points";
@@ -238,8 +228,7 @@ namespace ExtraSnapPointsMadeEasy
     /// <summary>
     ///     Log level to control output to BepInEx log
     /// </summary>
-    internal enum LogLevel
-    {
+    internal enum LogLevel {
         Low = 0,
         Medium = 1,
         High = 2,
@@ -248,8 +237,7 @@ namespace ExtraSnapPointsMadeEasy
     /// <summary>
     ///     Helper class for properly logging from static contexts.
     /// </summary>
-    internal static class Log
-    {
+    internal static class Log {
         #region Verbosity
 
         internal static ConfigEntry<LogLevel> Verbosity { get; set; }
@@ -273,8 +261,7 @@ namespace ExtraSnapPointsMadeEasy
             | BindingFlags.GetProperty
             | BindingFlags.SetProperty;
 
-        internal static void Init(ManualLogSource logSource)
-        {
+        internal static void Init(ManualLogSource logSource) {
             _logSource = logSource;
         }
 
@@ -284,10 +271,8 @@ namespace ExtraSnapPointsMadeEasy
 
         internal static void LogFatal(object data) => _logSource.LogFatal(data);
 
-        internal static void LogInfo(object data, LogLevel level = LogLevel.Low)
-        {
-            if (Verbosity is null || VerbosityLevel >= level)
-            {
+        internal static void LogInfo(object data, LogLevel level = LogLevel.Low) {
+            if (Verbosity is null || VerbosityLevel >= level) {
                 _logSource.LogInfo(data);
             }
         }
@@ -298,40 +283,33 @@ namespace ExtraSnapPointsMadeEasy
 
         #region Logging Unity Objects
 
-        internal static void LogGameObject(GameObject prefab, bool includeChildren = false)
-        {
+        internal static void LogGameObject(GameObject prefab, bool includeChildren = false) {
             LogInfo("***** " + prefab.name + " *****");
-            foreach (Component compo in prefab.GetComponents<Component>())
-            {
+            foreach (Component compo in prefab.GetComponents<Component>()) {
                 LogComponent(compo);
             }
 
             if (!includeChildren) { return; }
 
             LogInfo("***** " + prefab.name + " (children) *****");
-            foreach (Transform child in prefab.transform)
-            {
+            foreach (Transform child in prefab.transform) {
                 LogInfo($" - {child.gameObject.name}");
-                foreach (Component compo in child.gameObject.GetComponents<Component>())
-                {
+                foreach (Component compo in child.gameObject.GetComponents<Component>()) {
                     LogComponent(compo);
                 }
             }
         }
 
-        internal static void LogComponent(Component compo)
-        {
+        internal static void LogComponent(Component compo) {
             LogInfo($"--- {compo.GetType().Name}: {compo.name} ---");
 
             PropertyInfo[] properties = compo.GetType().GetProperties(AllBindings);
-            foreach (var property in properties)
-            {
+            foreach (var property in properties) {
                 LogInfo($" - {property.Name} = {property.GetValue(compo)}");
             }
 
             FieldInfo[] fields = compo.GetType().GetFields(AllBindings);
-            foreach (var field in fields)
-            {
+            foreach (var field in fields) {
                 LogInfo($" - {field.Name} = {field.GetValue(compo)}");
             }
         }

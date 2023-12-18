@@ -5,11 +5,9 @@ using System.Linq;
 using UnityEngine;
 using ExtraSnapPointsMadeEasy.Extensions;
 
-namespace ExtraSnapPointsMadeEasy.Patches
-{
+namespace ExtraSnapPointsMadeEasy.Patches {
     [HarmonyPatch(typeof(Player))]
-    internal class PlayerPatch
-    {
+    internal class PlayerPatch {
         private static readonly int TerrainRayMask = LayerMask.GetMask("terrain");
         private static int currentSourceSnap = 0;
         private static int currentTargetSnap = 0;
@@ -17,8 +15,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         private static Transform currentTargetParent;
         private static Transform currentSourceParent;
 
-        internal enum SnapMode
-        {
+        internal enum SnapMode {
             Auto,
             Manual,
             ManualClosest,
@@ -35,8 +32,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
         internal static SnapMode snapMode;
 
-        internal enum GridPrecision
-        {
+        internal enum GridPrecision {
             Low,
             High,
         }
@@ -65,54 +61,48 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.UpdatePlacementGhost))]
-        private static void UpdatePlacementGhostPostfix(Player __instance)
-        {
+        private static void UpdatePlacementGhostPostfix(Player __instance) {
+            if (!__instance || !__instance.InPlaceMode() || __instance.IsDead()) {
+                return;
+            }
+
             SnapMode prevSnapMode = snapMode;
 
-            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableManualSnap.Value))
-            {
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableManualSnap.Value)) {
                 if (snapMode == SnapMode.Manual) { snapMode = SnapMode.Auto; }
                 else { snapMode = SnapMode.Manual; }
             }
-            else if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableManualClosestSnap.Value))
-            {
+            else if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableManualClosestSnap.Value)) {
                 if (snapMode == SnapMode.ManualClosest) { snapMode = SnapMode.Auto; }
                 else { snapMode = SnapMode.ManualClosest; }
             }
-            else if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableGridSnap.Value))
-            {
+            else if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.EnableGridSnap.Value)) {
                 if (snapMode == SnapMode.Grid) { snapMode = SnapMode.Auto; }
                 else { snapMode = SnapMode.Grid; }
             }
 
-            if (snapMode != prevSnapMode)
-            {
+            if (snapMode != prevSnapMode) {
                 __instance.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, SnapModeMsg[snapMode]);
             }
 
-            if (__instance.m_placementGhost == null || snapMode == SnapMode.Auto)
-            {
+            if (__instance.m_placementGhost == null || snapMode == SnapMode.Auto) {
                 return;
             }
 
-            if (snapMode == SnapMode.Manual || snapMode == SnapMode.ManualClosest)
-            {
+            if (snapMode == SnapMode.Manual || snapMode == SnapMode.ManualClosest) {
                 SnapManually(ref __instance);
             }
 
-            if (snapMode == SnapMode.Grid)
-            {
+            if (snapMode == SnapMode.Grid) {
                 SnapToGrid(ref __instance);
             }
         }
 
-        private static void SnapToGrid(ref Player player)
-        {
+        private static void SnapToGrid(ref Player player) {
             var sourcePiece = player.m_placementGhost?.GetComponent<Piece>();
             if (sourcePiece == null) { return; }
 
-            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.CycleGridPrecision.Value))
-            {
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.CycleGridPrecision.Value)) {
                 if (gridPrecision == GridPrecision.Low) { gridPrecision = GridPrecision.High; }
                 else { gridPrecision = GridPrecision.Low; }
                 currentGridPrecision = GridPrecisionMap[gridPrecision];
@@ -139,8 +129,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
         /// <param name="x"></param>
         /// <param name="precision"></param>
         /// <returns></returns>
-        private static float RoundToNearest(float x, float precision)
-        {
+        private static float RoundToNearest(float x, float precision) {
             if (precision <= 0) { return x; }
             var sign = Mathf.Sign(x);
 
@@ -150,45 +139,37 @@ namespace ExtraSnapPointsMadeEasy.Patches
 
             int midPoint = (int)(precision * 1000f / 2f);
 
-            if (fraction < midPoint)
-            {
+            if (fraction < midPoint) {
                 return sign * whole;
             }
             return sign * (whole + precision);
         }
 
-        private static float GetGroundHeight(Vector3 p)
-        {
+        private static float GetGroundHeight(Vector3 p) {
             Vector3 origin = p;
             origin.y = 6000f;
-            if (Physics.Raycast(origin, Vector3.down, out var hitInfo, 10000f, TerrainRayMask))
-            {
+            if (Physics.Raycast(origin, Vector3.down, out var hitInfo, 10000f, TerrainRayMask)) {
                 return hitInfo.point.y;
             }
             return p.y;
         }
 
-        private static void SnapManually(ref Player player)
-        {
+        private static void SnapManually(ref Player player) {
             var sourcePiece = player.m_placementGhost?.GetComponent<Piece>();
             if (sourcePiece == null) { return; }
 
             var targetPiece = RayTest(player, player.m_placementGhost);
             if (targetPiece == null) { return; }
 
-            if (currentTargetParent != targetPiece.transform)
-            {
-                if (ExtraSnapPointsMadeEasy.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
-                {
+            if (currentTargetParent != targetPiece.transform) {
+                if (ExtraSnapPointsMadeEasy.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0) {
                     currentTargetSnap = 0;
                 }
                 currentTargetParent = targetPiece.transform;
             }
 
-            if (currentSourceParent != sourcePiece.transform)
-            {
-                if (ExtraSnapPointsMadeEasy.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
-                {
+            if (currentSourceParent != sourcePiece.transform) {
+                if (ExtraSnapPointsMadeEasy.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0) {
                     currentSourceSnap = 0;
                 }
 
@@ -196,42 +177,36 @@ namespace ExtraSnapPointsMadeEasy.Patches
             }
 
             int prevSourceSnap = currentSourceSnap;
-            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.IterateSourceSnapPoints.Value))
-            {
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.IterateSourceSnapPoints.Value)) {
                 currentSourceSnap++;
             }
 
             int prevTargetSnap = currentTargetSnap;
-            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.IterateTargetSnapPoints.Value))
-            {
+            if (Input.GetKeyDown(ExtraSnapPointsMadeEasy.IterateTargetSnapPoints.Value)) {
                 currentTargetSnap++;
             }
 
             var sourceSnapPoints = sourcePiece.gameObject.GetSnapPoints();
             var targetSnapPoints = currentTargetParent.GetSnapPoints();
 
-            if (sourceSnapPoints.Count == 0 || targetSnapPoints.Count == 0)
-            {
+            if (sourceSnapPoints.Count == 0 || targetSnapPoints.Count == 0) {
                 return;
             }
 
             if (currentSourceSnap >= sourceSnapPoints.Count) { currentSourceSnap = 0; }
             if (currentTargetSnap >= targetSnapPoints.Count) { currentTargetSnap = 0; }
 
-            if (prevSourceSnap != currentSourceSnap)
-            {
+            if (prevSourceSnap != currentSourceSnap) {
                 player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Source Snap Point: {currentSourceSnap}");
             }
 
-            if (prevTargetSnap != currentTargetSnap && snapMode == SnapMode.Manual)
-            {
+            if (prevTargetSnap != currentTargetSnap && snapMode == SnapMode.Manual) {
                 player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
             }
 
             Transform sourceSnap = sourceSnapPoints[currentSourceSnap];
             Transform targetSnap;
-            switch (snapMode)
-            {
+            switch (snapMode) {
                 case SnapMode.Manual:
                     targetSnap = targetSnapPoints[currentTargetSnap];
                     break;
@@ -250,8 +225,7 @@ namespace ExtraSnapPointsMadeEasy.Patches
             player.m_placementGhost.transform.position += targetSnap.position - sourceSnap.position;
         }
 
-        private static Piece RayTest(Player player, GameObject placementGhost)
-        {
+        private static Piece RayTest(Player player, GameObject placementGhost) {
             var component1 = placementGhost.GetComponent<Piece>();
             var water = component1.m_waterPiece || component1.m_noInWater;
             Call_PieceRayTest(player, out Vector3 point, out Vector3 normal, out Piece piece, out Heightmap heightmap, out Collider waterSurface, water);

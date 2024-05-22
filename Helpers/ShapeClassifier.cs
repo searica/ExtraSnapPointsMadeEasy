@@ -484,7 +484,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                         }
                         else if (frontAxis != i)
                         {
-                            Log.LogError("Invalid front axis for RoofTop");
+                            Log.LogWarning($"Invalid front axis for RoofTop piece: {gameObject.name}, will not add extra snap points.");
+                            return;
                         }
                         topPoints.Add(snapPoint.localPosition);
                     }
@@ -508,7 +509,8 @@ namespace ExtraSnapPointsMadeEasy.Helpers
                     }
                     else if (ridgeAxis != i)
                     {
-                        Log.LogError("Invalid ridge axis for RoofTop");
+                        Log.LogWarning($"Invalid ridge axis for RoofTop piece: {gameObject.name}, will not add extra snap points.");
+                        return;
                     }
                 }
             }

@@ -5,6 +5,14 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.3.1</td>
+			<td align="left">
+				<ul>
+					<li>Improved warnings in log file for pieces added by mods that cannot have extra snap points added.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.3.0</td>
 			<td align="left">
 				<ul>

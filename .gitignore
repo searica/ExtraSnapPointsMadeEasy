@@ -74,3 +74,6 @@ DerivedDataCache/*
 
 bin/**
 obj/**
+
+# File with local paths (may differ per contributer/system)
+environment.props

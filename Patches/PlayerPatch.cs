@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ExtraSnapPointsMadeEasy.Extensions;
 using HarmonyLib;
@@ -48,19 +47,6 @@ internal class PlayerPatch
 
     internal static GridPrecision gridPrecision;
     private static float currentGridPrecision = GridPrecisionMap[GridPrecision.Low];
-
-    [HarmonyReversePatch]
-    [HarmonyPatch(nameof(Player.PieceRayTest))]
-    public static bool Call_PieceRayTest(
-        object instance,
-        out Vector3 point,
-        out Vector3 normal,
-        out Piece piece,
-        out Heightmap heightmap,
-        out Collider waterSurface,
-        bool water
-    )
-    => throw new NotImplementedException();
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Player.UpdatePlacementGhost))]
@@ -126,26 +112,7 @@ internal class PlayerPatch
         Vector3 position = player.m_placementGhost.transform.position;
         position.x = position.x.RoundToNearest(currentGridPrecision);
         position.z = position.z.RoundToNearest(currentGridPrecision);
-
-        // Snaps center of piece to the ground, which is not what I want
-        //Log.LogInfo($"Pre ground snap {position}");
-        //var groundHeight = GetGroundHeight(position);
-        //if (position.y != groundHeight) { position.y = groundHeight; }
-        //Log.LogInfo($"Post ground snap {position}");
-        //if (Mathf.Abs(position.y - groundHeight) < 0.25f) { position.y = groundHeight; }
-
         player.m_placementGhost.transform.position = position;
-    }
-
-    private static float GetGroundHeight(Vector3 p)
-    {
-        Vector3 origin = p;
-        origin.y = 6000f;
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hitInfo, 10000f, TerrainRayMask))
-        {
-            return hitInfo.point.y;
-        }
-        return p.y;
     }
 
     private static void SnapManually(ref Player player)
@@ -232,9 +199,9 @@ internal class PlayerPatch
 
     private static Piece RayTest(Player player, GameObject placementGhost)
     {
-        Piece component1 = placementGhost.GetComponent<Piece>();
-        bool water = component1.m_waterPiece || component1.m_noInWater;
-        Call_PieceRayTest(player, out _, out _, out Piece piece, out _, out _, water);
+        Piece placementGhostPiece = placementGhost.GetComponent<Piece>();
+        bool water = placementGhostPiece.m_waterPiece || placementGhostPiece.m_noInWater;
+        player.PieceRayTest(out _, out _, out Piece piece, out _, out _, water);
         return piece;
     }
 }

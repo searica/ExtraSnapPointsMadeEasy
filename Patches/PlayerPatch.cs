@@ -124,8 +124,8 @@ internal class PlayerPatch
         }
 
         Vector3 position = player.m_placementGhost.transform.position;
-        position.x = RoundToNearest(position.x, currentGridPrecision);
-        position.z = RoundToNearest(position.z, currentGridPrecision);
+        position.x = position.x.RoundToNearest(currentGridPrecision);
+        position.z = position.z.RoundToNearest(currentGridPrecision);
 
         // Snaps center of piece to the ground, which is not what I want
         //Log.LogInfo($"Pre ground snap {position}");
@@ -135,30 +135,6 @@ internal class PlayerPatch
         //if (Mathf.Abs(position.y - groundHeight) < 0.25f) { position.y = groundHeight; }
 
         player.m_placementGhost.transform.position = position;
-    }
-
-    /// <summary>
-    ///     Round to nearest multiple of precision (midpoint rounds away from zero)
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="precision"></param>
-    /// <returns></returns>
-    private static float RoundToNearest(float x, float precision)
-    {
-        if (precision <= 0) { return x; }
-        float sign = Mathf.Sign(x);
-
-        int val = (int)Mathf.Abs(x * 1000f);
-        int whole = val / 1000;
-        int fraction = val % 1000;
-
-        int midPoint = (int)(precision * 1000f / 2f);
-
-        if (fraction < midPoint)
-        {
-            return sign * whole;
-        }
-        return sign * (whole + precision);
     }
 
     private static float GetGroundHeight(Vector3 p)

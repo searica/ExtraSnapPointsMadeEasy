@@ -220,7 +220,7 @@ internal static class ShapeClassifier
             return true;
         }
 
-        if (prefab.FindDeepChild("FireWarmth") ||
+        if (prefab.transform.FindDeepChild("FireWarmth") ||
             prefab.GetComponentInChildren<Demister>(true) ||
             prefab.transform.FindDeepChild("fx_Torch_Basic") ||
             prefab.transform.FindDeepChild("fx_Torch_Blue") ||

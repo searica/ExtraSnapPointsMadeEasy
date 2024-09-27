@@ -50,6 +50,11 @@ internal class ExtraSnapsManager
             AlteredPrefabs.Clear();
         }
 
+        if (!ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value)
+        {
+            return;
+        }
+
         foreach (GameObject prefab in prefabPieces)
         {
             try
@@ -164,7 +169,7 @@ internal class ExtraSnapsManager
         }
 
         ConfigEntry<bool> prefabConfig = ExtraSnapPointsMadeEasy.LoadConfig(prefab);
-        if (!prefabConfig.Value || !ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value)
+        if (!prefabConfig.Value)
         {
             return false; // skip adding snap points if not enabled
         }

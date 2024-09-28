@@ -504,7 +504,9 @@ internal class ExtraSnapsManager
             case "wood_wall_log_4x0.5": // core wood beam 4m
                 return new[]
                 {
-                    new NamedSnapPoint(Vector3.zero, CENTER)
+                    new NamedSnapPoint(0.0f, -0.25f, 0.0f, $"{BOTTOM} {CENTER}"),
+                    new NamedSnapPoint(Vector3.zero, CENTER),
+                    new NamedSnapPoint(0.0f, 0.25f,  0.0f, $"{TOP} {CENTER}"),
                 };
 
             /* Beds */

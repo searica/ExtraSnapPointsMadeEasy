@@ -625,6 +625,13 @@ internal class ExtraSnapsManager
                     new Vector3(-1.75f, 0.0f, 1.25f),
                 });
 
+            case "Piece_grausten_pillarbase_tapered":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.75f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.0f, 0.5f, 0.0f, $"Floor Height {CENTER}")
+                };
+
             default:
                 return GetCalculatedSnapPointsOrEmpty(prefab);
         }

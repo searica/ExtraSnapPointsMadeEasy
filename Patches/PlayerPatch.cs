@@ -15,6 +15,18 @@ internal class PlayerPatch
     private static Transform currentTargetParent;
     private static Transform currentSourceParent;
 
+    /// <summary>
+    /// Re-usable list for source snap points to avoid allocating a list every frame.
+    /// Clear this list before reading snap points into it!
+    /// </summary>
+    private static readonly List<Transform> TempSourceSnapPoints = new();
+
+    /// <summary>
+    /// Re-usable list for target snap points to avoid allocating a list every frame.
+    /// Clear this list before reading snap points into it!
+    /// </summary>
+    private static readonly List<Transform> TempTargetSnapPoints = new();
+
     internal enum SnapMode
     {
         Auto,
@@ -154,16 +166,18 @@ internal class PlayerPatch
             currentTargetSnap++;
         }
 
-        List<Transform> sourceSnapPoints = sourcePiece.gameObject.GetSnapPoints();
-        List<Transform> targetSnapPoints = currentTargetParent.GetSnapPoints();
+        TempSourceSnapPoints.Clear();
+        sourcePiece.GetSnapPoints(TempSourceSnapPoints);
+        TempTargetSnapPoints.Clear();
+        targetPiece.GetSnapPoints(TempTargetSnapPoints);
 
-        if (sourceSnapPoints.Count == 0 || targetSnapPoints.Count == 0)
+        if (TempSourceSnapPoints.Count == 0 || TempTargetSnapPoints.Count == 0)
         {
             return;
         }
 
-        if (currentSourceSnap >= sourceSnapPoints.Count) { currentSourceSnap = 0; }
-        if (currentTargetSnap >= targetSnapPoints.Count) { currentTargetSnap = 0; }
+        if (currentSourceSnap >= TempSourceSnapPoints.Count) { currentSourceSnap = 0; }
+        if (currentTargetSnap >= TempTargetSnapPoints.Count) { currentTargetSnap = 0; }
 
         if (prevSourceSnap != currentSourceSnap)
         {
@@ -175,18 +189,18 @@ internal class PlayerPatch
             player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
         }
 
-        Transform sourceSnap = sourceSnapPoints[currentSourceSnap];
+        Transform sourceSnap = TempSourceSnapPoints[currentSourceSnap];
         Transform targetSnap;
         switch (snapMode)
         {
             case SnapMode.Manual:
-                targetSnap = targetSnapPoints[currentTargetSnap];
+                targetSnap = TempTargetSnapPoints[currentTargetSnap];
                 break;
 
             case SnapMode.ManualClosest:
                 if (player.m_placementMarkerInstance == null) { return; }
                 Vector3 markerPosition = player.m_placementMarkerInstance.transform.position;
-                targetSnap = targetSnapPoints.OrderBy(snapPoint => Vector3.Distance(markerPosition, snapPoint.position)).First();
+                targetSnap = TempTargetSnapPoints.OrderBy(snapPoint => Vector3.Distance(markerPosition, snapPoint.position)).First();
                 break;
 
             default:

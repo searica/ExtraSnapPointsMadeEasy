@@ -8,7 +8,6 @@ namespace ExtraSnapPointsMadeEasy.Patches;
 [HarmonyPatch(typeof(Player))]
 internal class PlayerPatch
 {
-    private static readonly int TerrainRayMask = LayerMask.GetMask("terrain");
     private static int currentSourceSnap = 0;
     private static int currentTargetSnap = 0;
 
@@ -179,16 +178,6 @@ internal class PlayerPatch
         if (currentSourceSnap >= TempSourceSnapPoints.Count) { currentSourceSnap = 0; }
         if (currentTargetSnap >= TempTargetSnapPoints.Count) { currentTargetSnap = 0; }
 
-        if (prevSourceSnap != currentSourceSnap)
-        {
-            player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Source Snap Point: {currentSourceSnap}");
-        }
-
-        if (prevTargetSnap != currentTargetSnap && snapMode == SnapMode.Manual)
-        {
-            player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Target Snap Point: {currentTargetSnap}");
-        }
-
         Transform sourceSnap = TempSourceSnapPoints[currentSourceSnap];
         Transform targetSnap;
         switch (snapMode)
@@ -205,6 +194,18 @@ internal class PlayerPatch
 
             default:
                 return;
+        }
+
+        if (prevSourceSnap != currentSourceSnap)
+        {
+            string name = sourceSnap.name is not null and not "_snappoint" ? sourceSnap.name : $"Point {currentSourceSnap + 1}";
+            player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Source Snap Point: {name}");
+        }
+
+        if (prevTargetSnap != currentTargetSnap && snapMode == SnapMode.Manual)
+        {
+            string name = sourceSnap.name is not null and not "_snappoint" ? targetSnap.name : $"Point {currentTargetSnap + 1}";
+            player.Message(ExtraSnapPointsMadeEasy.NotificationType.Value, $"Target Snap Point: {name}");
         }
 
         // adjust placement ghost position based on the difference between sourceSnap and targetSnap

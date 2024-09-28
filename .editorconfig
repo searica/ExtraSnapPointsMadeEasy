@@ -9,10 +9,10 @@ dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggesti
 dotnet_style_prefer_auto_properties = true:silent
 [*.cs]
 csharp_indent_labels = one_less_than_current
-csharp_using_directive_placement = outside_namespace:silent
+csharp_using_directive_placement = outside_namespace:suggestion
 csharp_prefer_simple_using_statement = true:suggestion
-csharp_prefer_braces = true:silent
-csharp_style_namespace_declarations = block_scoped:silent
+csharp_prefer_braces = true:warning
+csharp_style_namespace_declarations = file_scoped:warning
 csharp_style_prefer_method_group_conversion = true:silent
 csharp_style_prefer_top_level_statements = true:silent
 csharp_style_prefer_primary_constructors = true:suggestion
@@ -44,7 +44,9 @@ csharp_style_prefer_readonly_struct_member = true:suggestion
 csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true:silent
 dotnet_diagnostic.SA1013.severity = warning
 dotnet_diagnostic.SA1012.severity = warning
-csharp_style_var_when_type_is_apparent = false:silent
+csharp_style_var_when_type_is_apparent = false:suggestion
+csharp_style_var_elsewhere = false:warning
+csharp_style_var_for_built_in_types = false:warning
 dotnet_diagnostic.SA1118.severity = silent
 dotnet_diagnostic.SA1009.severity = suggestion
 dotnet_diagnostic.SA1110.severity = warning
@@ -54,6 +56,9 @@ csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimenta
 csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true:silent
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
 dotnet_diagnostic.SA1026.severity = warning
+csharp_new_line_before_open_brace = all
+dotnet_diagnostic.IDE0011.severity = warning
+
 [*.{cs,vb}]
 #### Naming styles ####
 

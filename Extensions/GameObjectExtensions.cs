@@ -154,23 +154,4 @@ internal static class GameObjectExtensions
             UnityEngine.Object.DestroyImmediate(component);
         }
     }
-
-    internal static Mesh GetMesh(this GameObject gameObject, string meshName)
-    {
-        foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren<MeshFilter>())
-        {
-            Mesh mesh = meshFilter.mesh;
-            if (mesh == null)
-            {
-                continue;
-            }
-
-            if (mesh.name.RemoveSuffix("Instance").Trim() == meshName)
-            {
-                return mesh;
-            }
-        }
-        Log.LogWarning($"Could not find Mesh: {meshName} for GameObject: {gameObject.name}");
-        return null;
-    }
 }

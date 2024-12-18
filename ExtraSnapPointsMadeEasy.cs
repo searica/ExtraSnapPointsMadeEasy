@@ -18,7 +18,7 @@ namespace ExtraSnapPointsMadeEasy {
         public const string PluginName = "ExtraSnapPointsMadeEasy";
         public const string Author = "Searica";
         public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
-        public const string PluginVersion = "1.4.0";
+        public const string PluginVersion = "1.4.1";
 
         internal static ExtraSnapPointsMadeEasy Instance;
 
@@ -55,6 +55,7 @@ namespace ExtraSnapPointsMadeEasy {
             ConfigManager.Init(PluginGUID, Config, false);
             Initialize();
             ConfigManager.Save();
+
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: PluginGUID);
 
             Game.isModded = true;

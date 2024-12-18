@@ -5,6 +5,16 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">1.4.1</td>
+			<td align="left">
+				<ul>
+					<li>Disabled Vanilla manual snapping and snap point cycling.</li>
+					<li>Added key hints for cycling source/target snap points.</li>
+					<li>Added key hints for toggling manual snapping mode.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">1.4.0</td>
 			<td align="left">
 				<ul>

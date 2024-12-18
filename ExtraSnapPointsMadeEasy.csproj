@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<NuGetPackages>$(UserProfile)\.nuget\packages</NuGetPackages>
-		<JotunnProps>$(NuGetPackages)\jotunnlib\2.21.3\build\JotunnLib.props</JotunnProps>
+		<JotunnProps>$(NuGetPackages)\jotunnlib\2.22.0\build\JotunnLib.props</JotunnProps>
 	</PropertyGroup>
 
 	<!--<Import Project="environment.props" Condition="Exists('environment.props')" />-->
@@ -61,8 +61,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Libraries" />
-		<Folder Include="Libraries\Debug\" />
 		<Folder Include="Package\" />
 		<Folder Include="Publish\Nexus\" />
 		<Folder Include="Publish\ThunderStore\" />
@@ -74,16 +72,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="HarmonyX" Version="2.9.0" />
-		<!--<PackageReference Include="JotunnLib" Version="2.14.6" />-->
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="Mono.Cecil" Version="0.11.4" />
 		<PackageReference Include="MonoMod" Version="21.9.19.1" />
 		<PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.29.1" />
 		<PackageReference Include="MonoMod.Utils" Version="22.1.29.1" />
-		<!--<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>-->
 		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
 	</ItemGroup>
 

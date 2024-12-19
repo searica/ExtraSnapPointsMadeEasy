@@ -8,7 +8,7 @@ using ExtraSnapPointsMadeEasy.Extensions;
 namespace ExtraSnapPointsMadeEasy.Patches;
 
 [HarmonyPatch(typeof(Player))]
-internal class PlayerPatch
+internal class PlacementPatches
 {
     private static readonly int TerrainRayMask = LayerMask.GetMask("terrain");
     private static int currentSourceSnap = 0;

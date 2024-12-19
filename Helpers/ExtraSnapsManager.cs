@@ -3,10 +3,11 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BepInEx.Configuration;
 using ExtraSnapPointsMadeEasy.Extensions;
 
-namespace ExtraSnapPointsMadeEasy.Helpers;
 
+namespace ExtraSnapPointsMadeEasy.Helpers;
 internal class ExtraSnapsManager
 {
     private static readonly HashSet<string> DoNotAddSnapPoints = new()
@@ -47,6 +48,11 @@ internal class ExtraSnapsManager
         {
             RemoveExtraSnapPoints(AlteredPrefabs);
             AlteredPrefabs.Clear();
+        }
+
+        if (!ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value)
+        {
+            return;
         }
 
         foreach (GameObject prefab in prefabPieces)
@@ -162,7 +168,7 @@ internal class ExtraSnapsManager
             return false;
         }
 
-        BepInEx.Configuration.ConfigEntry<bool> prefabConfig = ExtraSnapPointsMadeEasy.LoadConfig(prefab);
+        ConfigEntry<bool> prefabConfig = ExtraSnapPointsMadeEasy.LoadConfig(prefab);
         if (!prefabConfig.Value || !ExtraSnapPointsMadeEasy.EnableExtraSnapPoints.Value)
         {
             return false; // skip adding snap points if not enabled

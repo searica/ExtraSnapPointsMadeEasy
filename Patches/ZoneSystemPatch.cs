@@ -1,7 +1,7 @@
-﻿using ExtraSnapPointsMadeEasy.Helpers;
+﻿using ExtraSnapsMadeEasy.Helpers;
 using HarmonyLib;
 
-namespace ExtraSnapPointsMadeEasy.Patches;
+namespace ExtraSnapsMadeEasy.Patches;
 
 [HarmonyPatch(typeof(ZoneSystem))]
 internal class ZoneSystemPatch

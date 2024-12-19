@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ExtraSnapPointsMadeEasy.Extensions;
+namespace ExtraSnapsMadeEasy.Extensions;
 internal static class FloatExtensions
 {
     /// <summary>

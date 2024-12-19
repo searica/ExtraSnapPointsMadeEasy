@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: MVBP
 
-namespace ExtraSnapPointsMadeEasy.Extensions;
+namespace ExtraSnapsMadeEasy.Extensions;
 
 internal static class StringExtensions
 {

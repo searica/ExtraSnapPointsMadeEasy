@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ExtraSnapPointsMadeEasy.Models;
+namespace ExtraSnapsMadeEasy.Models;
 
 internal sealed class NamedSnapPoint
 {

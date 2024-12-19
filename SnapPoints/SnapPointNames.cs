@@ -1,4 +1,4 @@
-﻿namespace ExtraSnapPointsMadeEasy.SnapPoints;
+﻿namespace ExtraSnapsMadeEasy.SnapPoints;
 
 internal static class SnapPointNames
 {

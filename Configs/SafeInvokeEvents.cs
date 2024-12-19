@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ExtraSnapPointsMadeEasy.Extensions;
+namespace ExtraSnapsMadeEasy.Configs;
 
 /// <summary>
 ///     Helper class for C# Events.
 /// </summary>
-internal static class EventExtensions
+internal static class SafeInvokeEvents
 {
     /// <summary>
     ///     try/catch the delegate chain so that it doesn't break on the first failing Delegate.
@@ -27,7 +27,7 @@ internal static class EventExtensions
             }
             catch (Exception e)
             {
-                Log.LogWarning($"Exception thrown at event {(new StackFrame(1).GetMethod().Name)} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
+                Log.LogWarning($"Exception thrown at event {new StackFrame(1).GetMethod().Name} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
             }
         }
     }
@@ -53,7 +53,7 @@ internal static class EventExtensions
             }
             catch (Exception e)
             {
-                Log.LogWarning($"Exception thrown at event {(new StackFrame(1).GetMethod().Name)} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
+                Log.LogWarning($"Exception thrown at event {new StackFrame(1).GetMethod().Name} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
             }
         }
     }
@@ -108,7 +108,7 @@ internal static class EventExtensions
             }
             catch (Exception e)
             {
-                Log.LogWarning($"Exception thrown at event {(new StackFrame(1).GetMethod().Name)} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
+                Log.LogWarning($"Exception thrown at event {new StackFrame(1).GetMethod().Name} in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}");
             }
         }
     }

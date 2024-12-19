@@ -1,6 +1,9 @@
-﻿using ExtraSnapPointsMadeEasy.Extensions;
+﻿using System;
 using System.Collections.Generic;
+using ExtraSnapsMadeEasy.Extensions;
+using ExtraSnapsMadeEasy.Models;
 using UnityEngine;
+using static ExtraSnapsMadeEasy.SnapPoints.SnapPointNames;
 
 /* In Unity
  * X = left/right
@@ -8,73 +11,66 @@ using UnityEngine;
  * Z = forward/back
  */
 
-namespace ExtraSnapPointsMadeEasy.Helpers;
+namespace ExtraSnapsMadeEasy.Helpers;
 
 internal static class ShapeClassifier
 {
     private const float Tolerance = 1e-6f;
 
-    private static readonly HashSet<string> Torches = new()
-    {
-        "piece_groundtorch_mist",
-        "dverger_demister",
-        "dverger_demister_large",
-    };
-
-    /// <summary>
-    ///     Check if piece has a single snap point.
-    /// </summary>
-    /// <param name="gameObject"></param>
-    /// <returns></returns>
-    internal static bool IsPoint(GameObject gameObject)
-    {
-        if (!gameObject) { return false; }
-        return gameObject.GetSnapPoints().Count == 1;
-    }
-
     /// <summary>
     ///     Check if piece has 2 snap points that form a line.
     /// </summary>
-    /// <param name="gameObject"></param>
     /// <returns></returns>
-    internal static bool IsLine(GameObject gameObject)
+    internal static bool FormLine(List<Transform> snapPoints)
     {
-        if (!gameObject) { return false; }
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
-        return snapPoints.Count == 2 && EverySnapPointLiesOnExtrema(snapPoints);
+        // Any two points that are not in the exact same position form a line
+        return snapPoints.Count == 2 && snapPoints[0].localPosition != snapPoints[1].localPosition;
     }
 
     /// <summary>
     ///     Check if piece has 3 snap points that form a triangle.
     /// </summary>
-    /// <param name="gameObject"></param>
     /// <returns></returns>
-    internal static bool IsTriangle(GameObject gameObject)
+    internal static bool FormTriangle(List<Transform> snapPoints)
     {
-        if (!gameObject) { return false; }
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
-        return snapPoints.Count == 3 && EverySnapPointLiesOnExtrema(snapPoints);
+        // Any 3 points form a triangle, unless they are collinear
+        return snapPoints.Count == 3 && !snapPoints.AreCollinear();
     }
 
     /// <summary>
     ///     Check if piece has 4 snap points that form a rectangle.
     /// </summary>
-    /// <param name="gameObject"></param>
     /// <returns></returns>
-    internal static bool IsRect2D(GameObject gameObject)
+    internal static bool FormRectangle(List<Transform> snapPoints)
     {
-        if (!gameObject) { return false; }
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
-        // must have 4 points that lie on extremes
-        if (snapPoints.Count != 4 || !EverySnapPointLiesOnExtrema(snapPoints))
+        // A rectangle should have 4 points on the same plane
+        if (snapPoints.Count != 4 || !snapPoints.AreCoplanar())
         {
             return false;
         }
-        // check if all four points lie on the same plane
-        Vector3 vec0_1 = snapPoints[1].localPosition - snapPoints[0].localPosition;
-        Vector3 vec0_2 = snapPoints[2].localPosition - snapPoints[0].localPosition;
-        Vector3 vec0_3 = snapPoints[3].localPosition - snapPoints[0].localPosition;
-        return Equals(Vector3.Dot(vec0_3, Vector3.Cross(vec0_2, vec0_1)), 0.0f);
+
+        // Check that this is actually a rectange,
+        // meaning it has 2 sets of opposite sides with the same length and diagonals with the same length.
+
+        Vector3 p0 = snapPoints[0].localPosition;
+        Vector3 p1 = snapPoints[1].localPosition;
+        Vector3 p2 = snapPoints[2].localPosition;
+        Vector3 p3 = snapPoints[3].localPosition;
+
+        // Calculate the distances between all pairs of points
+        float distance0_1 = Vector3.Distance(p0, p1);
+        float distance0_2 = Vector3.Distance(p0, p2);
+        float distance0_3 = Vector3.Distance(p0, p3);
+        float distance1_2 = Vector3.Distance(p1, p2);
+        float distance1_3 = Vector3.Distance(p1, p3);
+        float distance2_3 = Vector3.Distance(p2, p3);
+
+        // There should be 3 sets of equal distances. 2 sets of (opposite) sides and 2 diagonals.
+        // We only need to compare distance lines that do not share any vertex,
+        // as any other line also intersecting the same vertex will belong to a different set by definition (where a set either contains opposite lines or diagonals).
+        return distance0_1 == distance2_3
+            && distance0_2 == distance1_3
+            && distance0_3 == distance1_2;
     }
 
     /// <summary>
@@ -82,10 +78,8 @@ internal static class ShapeClassifier
     /// </summary>
     /// <param name="gameObject"></param>
     /// <returns></returns>
-    internal static bool IsCube(GameObject gameObject)
+    internal static bool IsCube(List<Transform> snapPoints)
     {
-        if (!gameObject) { return false; }
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
         return snapPoints.Count == 8 && EverySnapPointLiesOnExtrema(snapPoints);
     }
 
@@ -95,18 +89,15 @@ internal static class ShapeClassifier
     /// </summary>
     /// <param name="gameObject"></param>
     /// <returns></returns>
-    internal static bool IsCross(GameObject gameObject)
+    internal static bool IsCross(List<Transform> snapPoints)
     {
-        if (!gameObject) { return false; }
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
-
         if (snapPoints.Count != 5)
         {
             return false;
         }
 
         // Should have 4 extremus points and 1 center point
-        Vector3 centerPoint = GetCenterOfSnapPoints(snapPoints);
+        Vector3 centerPoint = snapPoints.GetCenter();
         Vector3 minimums = SolveMinimumsOf(snapPoints);
         Vector3 maximums = SolveMaximumsOf(snapPoints);
         int extremusPointCount = 0;
@@ -130,38 +121,8 @@ internal static class ShapeClassifier
     /// </summary>
     /// <param name="gameObject"></param>
     /// <returns></returns>
-    internal static bool IsRoofTop(GameObject gameObject)
+    internal static bool IsWedge3D(List<Transform> snapPoints)
     {
-        if (gameObject == null) { return false; }
-
-        bool hasRoofTag = false;
-        foreach (Collider collider in gameObject.GetComponentsInChildren<Collider>())
-        {
-            if (collider.CompareTag("roof"))
-            {
-                hasRoofTag = true;
-                break;
-            }
-        }
-
-        if (!hasRoofTag) { return false; }
-
-        return IsWedge3D(gameObject);
-    }
-
-    /// <summary>
-    ///     Checks if game object is top piece for roof.
-    /// </summary>
-    /// <param name="gameObject"></param>
-    /// <returns></returns>
-    internal static bool IsWedge3D(GameObject gameObject)
-    {
-        if (!gameObject)
-        {
-            return false;
-        }
-
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
         if (snapPoints.Count != 6)
         {
             return false;
@@ -186,55 +147,6 @@ internal static class ShapeClassifier
         }
 
         return extremusPointCount == 4 && midEdgePointCount == 2;
-    }
-
-    /// <summary>
-    ///     Checks if game object is a floor braizer.
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <returns></returns>
-    internal static bool IsFloorBrazier(GameObject prefab)
-    {
-        return prefab.name.Contains("brazier") && !prefab.name.Contains("ceiling");
-    }
-
-    /// <summary>
-    ///     Checks if game object is a ceiling brazier.
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <returns></returns>
-    internal static bool IsCeilingBrazier(GameObject prefab)
-    {
-        return prefab.name.Contains("brazier") && prefab.name.Contains("ceiling");
-    }
-
-    /// <summary>
-    ///     Checks if game object is a torch.
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <returns></returns>
-    internal static bool IsTorch(GameObject prefab)
-    {
-        if (Torches.Contains(prefab.name))
-        {
-            return true;
-        }
-
-        if (prefab.FindDeepChild("FireWarmth") ||
-            prefab.GetComponentInChildren<Demister>(true) ||
-            prefab.transform.FindDeepChild("fx_Torch_Basic") ||
-            prefab.transform.FindDeepChild("fx_Torch_Blue") ||
-            prefab.transform.FindDeepChild("fx_Torch_Green") ||
-            prefab.transform.FindDeepChild("demister_ball (1)"))
-        {
-            string prefabName = prefab.name.ToLower();
-            if (prefabName.Contains("torch") || prefabName.Contains("demister"))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /// <summary>
@@ -378,94 +290,18 @@ internal static class ShapeClassifier
         return true;
     }
 
-    /// <summary>
-    ///     Add a snap point at the midpoint between
-    ///     the two existing snap points.
-    /// </summary>
-    /// <param name="gameObject"></param>
-    internal static void AddSnapPointToLine(GameObject gameObject)
-    {
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
-        Vector3 centerPoint = GetCenterOfSnapPoints(snapPoints);
-        gameObject.AddSnapPoints(new Vector3[] { centerPoint });
-    }
-
-    /// <summary>
-    ///     Add snap points at the midpoint along each edge
-    ///     of the triangle and in the center of the triangle.
-    /// </summary>
-    /// <param name="gameObject"></param>
-    internal static void AddSnapPointsToTriangle(GameObject gameObject)
-    {
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
-        var pts = new HashSet<Vector3>();
-
-        // compute center snap point
-        Vector3 centerPoint = GetCenterOfSnapPoints(snapPoints);
-        pts.Add(centerPoint);
-
-        // compute mid points of each edge
-        for (int i = 0; i < snapPoints.Count - 1; i++)
-        {
-            Transform snap1 = snapPoints[i];
-            for (int j = i + 1; j < snapPoints.Count; j++)
-            {
-                Transform snap2 = snapPoints[j];
-                Vector3 newPt = (snap1.transform.localPosition + snap2.transform.localPosition) / 2;
-                if (newPt != centerPoint)
-                {
-                    pts.Add(newPt);
-                }
-            }
-        }
-
-        gameObject.AddSnapPoints(pts);
-    }
-
-    /// <summary>
-    ///     Add snap points at the midpoint along each edge
-    ///     of the square and in the center of the square.
-    /// </summary>
-    /// <param name="gameObject"></param>
-    internal static void AddSnapPointsToRect2D(GameObject gameObject)
-    {
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
-        var pts = new HashSet<Vector3>();
-
-        // compute center snap point
-        Vector3 centerPoint = GetCenterOfSnapPoints(snapPoints);
-        pts.Add(centerPoint);
-
-        // compute mid points of each edge
-        for (int i = 0; i < snapPoints.Count - 1; i++)
-        {
-            Transform snap1 = snapPoints[i];
-            for (int j = i + 1; j < snapPoints.Count; j++)
-            {
-                Transform snap2 = snapPoints[j];
-                Vector3 newPt = (snap1.transform.localPosition + snap2.transform.localPosition) / 2;
-                if (newPt != centerPoint)
-                {
-                    pts.Add(newPt);
-                }
-            }
-        }
-        gameObject.AddSnapPoints(pts);
-    }
-
+    //TODO: Consider refactoring this to SnapPointCalculator
     /// <summary>
     ///     Add snap points at the midpoint along each edge of the roof top.
     /// </summary>
-    /// <param name="gameObject"></param>
-    internal static void AddSnapPointsToRoofTop(GameObject gameObject)
+    internal static NamedSnapPoint[] GetExtraSnapPointsForRoofTop(List<Transform> snapPoints, string name)
     {
-        List<Transform> snapPoints = gameObject.GetSnapPoints();
         Vector3 minimums = SolveMinimumsOf(snapPoints);
         Vector3 maximums = SolveMaximumsOf(snapPoints);
         Vector3 middles = (minimums + maximums) / 2;
 
         // Get which points are top points and ID of the axis across the front of the V shape.
-        var topPoints = new List<Vector3>();
+        List<Vector3> topPoints = new();
         int frontAxis = -1;
         foreach (Transform snapPoint in snapPoints)
         {
@@ -476,7 +312,7 @@ internal static class ShapeClassifier
                 {
                     if (!Equals(coordinate, middles[i]))
                     {
-                        Log.LogError($"{gameObject.name} is not a RoofTop piece");
+                        Log.LogError($"{name} is not a RoofTop piece");
                     }
                     if (frontAxis == -1)
                     {
@@ -484,8 +320,8 @@ internal static class ShapeClassifier
                     }
                     else if (frontAxis != i)
                     {
-                        Log.LogWarning($"Invalid front axis for RoofTop piece: {gameObject.name}, will not add extra snap points.");
-                        return;
+                        Log.LogWarning($"Invalid front axis for RoofTop piece: {name}, will not add extra snap points.");
+                        return Array.Empty<NamedSnapPoint>();
                     }
                     topPoints.Add(snapPoint.localPosition);
                 }
@@ -493,7 +329,7 @@ internal static class ShapeClassifier
         }
         if (topPoints.Count != 2)
         {
-            Log.LogError($"{gameObject.name} is not a RoofTop piece");
+            Log.LogError($"{name} is not a RoofTop piece");
         }
 
         // Get ID of axis along the roof ridge
@@ -509,8 +345,8 @@ internal static class ShapeClassifier
                 }
                 else if (ridgeAxis != i)
                 {
-                    Log.LogWarning($"Invalid ridge axis for RoofTop piece: {gameObject.name}, will not add extra snap points.");
-                    return;
+                    Log.LogWarning($"Invalid ridge axis for RoofTop piece: {name}, will not add extra snap points.");
+                    return Array.Empty<NamedSnapPoint>();
                 }
             }
         }
@@ -522,7 +358,7 @@ internal static class ShapeClassifier
         Vector3 topCenter = (topPoints[0] + topPoints[1]) / 2;
 
         // Compute side mid-point
-        var mid1 = new Vector3();
+        Vector3 mid1 = new();
         mid1[frontAxis] = minimums[frontAxis];
         mid1[ridgeAxis] = middles[ridgeAxis];
         if (Equals(topPoints[0][vertAxis], maximums[vertAxis]))
@@ -538,20 +374,13 @@ internal static class ShapeClassifier
         Vector3 mid2 = mid1;
         mid2[frontAxis] = maximums[frontAxis];
 
-        gameObject.AddSnapPoints(new[] { topCenter, mid1, mid2 });
-    }
-
-
-    private static Vector3 GetCenterOfSnapPoints(List<Transform> snapPoints)
-    {
-        // compute center snap point
-        Vector3 centerPoint = Vector3.zero;
-        foreach (Transform snapPoint in snapPoints)
+        // TODO: Test if names make sense in game
+        return new NamedSnapPoint[]
         {
-            centerPoint += snapPoint.transform.localPosition;
-        }
-        centerPoint /= snapPoints.Count;
-        return centerPoint;
+            new(topCenter, $"{TOP} {CENTER}"),
+            new(mid1, $"{MID} 1"),
+            new(mid2, $"{MID} 2")
+        };
     }
 
     /// <summary>

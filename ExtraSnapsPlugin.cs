@@ -7,70 +7,64 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
-
-using ExtraSnapPointsMadeEasy.Configs;
-using ExtraSnapPointsMadeEasy.Helpers;
+using ExtraSnapsMadeEasy.Helpers;
+using ExtraSnapsMadeEasy.Configs;
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
-namespace ExtraSnapPointsMadeEasy;
+namespace ExtraSnapsMadeEasy;
 
 [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
+internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
 {
     public const string PluginName = "ExtraSnapPointsMadeEasy";
     public const string Author = "Searica";
     public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
     public const string PluginVersion = "1.4.1";
 
-    internal static ExtraSnapPointsMadeEasy Instance;
+    internal static ExtraSnapsPlugin Instance;
 
-    private static readonly string MainSection = ConfigManager.SetStringPriority("Global", 3);
-    private static readonly string SnapModeSection = ConfigManager.SetStringPriority("ManualSnapping", 2);
-    private static readonly string ExtraSnapsSection = ConfigManager.SetStringPriority("​ExtraSnapPoints", 1);
-    private static readonly string PrefabSnapSettings = "Individual Snap Point Settings";
+    private const string MainSection = "1 - Global";
+    private const string SnapModeSection = "2 - Manual Snapping";
+    private const string ExtraSnapsSection = "3 - ​Extra Snap Points";
+    private const string PrefabSnapSettings = "4 - Individual Snap Point Settings";
 
-    public static ConfigEntry<KeyCode> EnableManualSnap { get; private set; }
-    public static ConfigEntry<KeyCode> EnableManualClosestSnap { get; private set; }
-    public static ConfigEntry<KeyCode> EnableGridSnap { get; private set; }
-    public static ConfigEntry<KeyCode> CycleGridPrecision { get; private set; }
-    public static ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
-    public static ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
-    public static ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
-    public static ConfigEntry<bool> EnableExtraSnapPoints { get; private set; }
-    public static ConfigEntry<bool> EnableLineSnapPoints { get; private set; }
-    public static ConfigEntry<bool> EnableTriangleSnapPoints { get; private set; }
-    public static ConfigEntry<bool> EnableRect2DSnapPoints { get; private set; }
-    public static ConfigEntry<bool> EnableRoofTopSnapPoints { get; private set; }
-    public static ConfigEntry<bool> EnableTerrainOpSnapPoints { get; private set; }
+    public ConfigEntry<bool> VanillaManualSnapEnabled { get; private set; }
+    public ConfigEntry<KeyCode> TogglePreciseSnap { get; private set; }
+    public ConfigEntry<KeyCode> ToggleManualSnap { get; private set; }
+    public ConfigEntry<KeyCode> ToggleGridSnap { get; private set; }
+    public ConfigEntry<KeyCode> CycleGridPrecision { get; private set; }
+    public ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
+    public ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
+    public ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
+    public ConfigEntry<bool> EnableExtraSnapPoints { get; private set; }
+    public ConfigEntry<bool> EnableLineSnapPoints { get; private set; }
+    public ConfigEntry<bool> EnableTriangleSnapPoints { get; private set; }
+    public ConfigEntry<bool> EnableRect2DSnapPoints { get; private set; }
+    public ConfigEntry<bool> EnableRoofTopSnapPoints { get; private set; }
+    public ConfigEntry<bool> EnableTerrainOpSnapPoints { get; private set; }
+    internal ConfigEntry<MessageHud.MessageType> NotificationType { get; private set; }
 
     internal readonly static Dictionary<string, ConfigEntry<bool>> SnapPointSettings = new();
-
-    internal static ConfigEntry<MessageHud.MessageType> NotificationType { get; private set; }
-
-    internal static bool UpdateExtraSnapPoints { get; set; } = false;
-
-
+    internal bool ShouldUpdateExtraSnaps { get; set; } = false;
 
     private void Awake()
     {
         Instance = this;
         Log.Init(Logger);
-        ConfigManager.Init(PluginGUID, Config, false);
-        Initialize();
-        ConfigManager.Save();
+        Config.Init(PluginGUID, false);
+        SetUpConfigEntries();
+        Config.Save();
 
         Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), harmonyInstanceId: PluginGUID);
-
         Game.isModded = true;
 
-        ConfigManager.SetupWatcher();
-        ConfigManager.CheckForConfigManager();
-        ConfigManager.OnConfigWindowClosed += () =>
+        Config.SetupWatcher();
+        ConfigFileManager.CheckForConfigManager();
+        ConfigFileManager.OnConfigWindowClosed += () =>
         {
             ExtraSnapsManager.AddExtraSnapPoints("Config settings changed, re-initializing");
         };
-
-        ConfigManager.OnConfigFileReloaded += () =>
+        ConfigFileManager.OnConfigFileReloaded += () =>
         {
             ExtraSnapsManager.AddExtraSnapPoints("Config settings changed after reloading config file, re-initializing");
         };
@@ -78,12 +72,12 @@ internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
 
     private void OnDestroy()
     {
-        ConfigManager.Save();
+        Config.Save();
     }
 
-    public static void Initialize()
+    public void SetUpConfigEntries()
     {
-        Log.Verbosity = ConfigManager.BindConfig(
+        Log.Verbosity = Config.BindConfig(
             MainSection,
             "Verbosity",
             LogLevel.Low,
@@ -92,101 +86,108 @@ internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
             "it to this without good reason as it will slow down your game."
         );
 
-        EnableManualSnap = ConfigManager.BindConfig(
+        VanillaManualSnapEnabled = Config.BindConfig(
+            MainSection,
+            "Vanilla Manual Snapping",
+            false,
+            "Whether vanilla manual snapping is enabled. If disabled then the vanilla keybinds for manual snapping will have no effect."
+        );
+
+        TogglePreciseSnap = Config.BindConfig(
             SnapModeSection,
-            "ToggleManualSnapMode",
+            "Toggle Precise Snap Mode",
             KeyCode.LeftAlt,
             "This key will enable or disable manual snapping mode."
         );
 
-        EnableManualClosestSnap = ConfigManager.BindConfig(
+        ToggleManualSnap = Config.BindConfig(
             SnapModeSection,
-            "ToggleManualClosestMode",
+            "Toggle Manual Snap Mode",
             KeyCode.CapsLock,
             "This key will enable or disable manual closest snapping mode."
         );
 
-        EnableGridSnap = ConfigManager.BindConfig(
+        ToggleGridSnap = Config.BindConfig(
             SnapModeSection,
-            "ToggleSnapToGridMode",
+            "Toggle Grid Snap Mode",
             KeyCode.F3,
             "This key will enable or disable snap to grid mode."
         );
 
-        CycleGridPrecision = ConfigManager.BindConfig(
+        CycleGridPrecision = Config.BindConfig(
             SnapModeSection,
-            "CycleGridPrecision",
+            "Cycle Grid Snap Precision",
             KeyCode.F4,
             "This key will change the precision of the grid in when in grid mode."
         );
 
-        IterateSourceSnapPoints = ConfigManager.BindConfig(
+        IterateSourceSnapPoints = Config.BindConfig(
             SnapModeSection,
-            "IterateSourceSnapPoints",
+            "Iterate Placing Piece Snap Points",
             KeyCode.LeftControl,
             "This key will cycle through the snap points on the piece you are placing."
         );
 
-        IterateTargetSnapPoints = ConfigManager.BindConfig(
+        IterateTargetSnapPoints = Config.BindConfig(
             SnapModeSection,
-            "IterateTargetSnapPoints",
+            "Iterate Targeted Piece Points",
             KeyCode.LeftShift,
             "This key will cycle through the snap points on the piece you are attaching to."
         );
 
-        ResetSnapsOnNewPiece = ConfigManager.BindConfig(
+        ResetSnapsOnNewPiece = Config.BindConfig(
             SnapModeSection,
-            "ResetSnapsOnNewPiece",
+            "Reset Snaps On New Piece",
             false,
             "Controls if the selected snap point is reset for each placement, defaults to not reset." +
             "This means your selections carry over between placements."
         );
 
-        NotificationType = ConfigManager.BindConfig(
+        NotificationType = Config.BindConfig(
             SnapModeSection,
-            "NotificationType",
+            "Notification Type",
             MessageHud.MessageType.Center,
             "Set the type of notification for when manual snapping mode is changed or selected snap points are changed. \"Center\" will display in the center of the screen in large yellow text. \"TopLeft\" will display under the hotkey bar in small white text."
         );
 
-        EnableExtraSnapPoints = ConfigManager.BindConfig(
+        EnableExtraSnapPoints = Config.BindConfig(
             ExtraSnapsSection,
-            "ExtraSnapPoints",
+            "Extra Snap Points",
             true,
             "Globally enable/disable all extra snap points."
         );
         EnableExtraSnapPoints.SettingChanged += SnapSettingChanged;
 
-        EnableLineSnapPoints = ConfigManager.BindConfig(
+        EnableLineSnapPoints = Config.BindConfig(
             ExtraSnapsSection,
-            "LineSnapPoints",
+            "Extra Snap Points: Line",
             true,
             "Enabled adds extra snap points for all \"Line\" pieces. " +
             "Disabled will prevent extra snap points being added to any \"Line\" pieces."
         );
         EnableLineSnapPoints.SettingChanged += SnapSettingChanged;
 
-        EnableTriangleSnapPoints = ConfigManager.BindConfig(
+        EnableTriangleSnapPoints = Config.BindConfig(
             ExtraSnapsSection,
-            "TriangleSnapPoints",
+            "Extra Snap Points: Triangle",
             true,
             "Enabled adds extra snap points for all \"Triangle\" pieces. " +
             "Disabled will prevent extra snap points being added to any \"Triangle\" pieces."
         );
         EnableTriangleSnapPoints.SettingChanged += SnapSettingChanged;
 
-        EnableRect2DSnapPoints = ConfigManager.BindConfig(
+        EnableRect2DSnapPoints = Config.BindConfig(
             ExtraSnapsSection,
-            "Rect2DSnapPoints",
+            "Extra Snap Points: 2D-Rectangle",
             true,
             "Enabled adds extra snap points for all \"Rect2D\" pieces. " +
             "Disabled will prevent extra snap points being added to any \"Rect2D\" pieces."
         );
         EnableRect2DSnapPoints.SettingChanged += SnapSettingChanged;
 
-        EnableRoofTopSnapPoints = ConfigManager.BindConfig(
+        EnableRoofTopSnapPoints = Config.BindConfig(
            ExtraSnapsSection,
-           "RoofTopSnapPoints",
+           "Extra Snap Points: Roof Top",
            true,
            "Enabled adds extra snap points for all \"RoofTop\" pieces. " +
            "Disabled will prevent extra snap points being added to any \"RoofTop\" pieces."
@@ -194,18 +195,18 @@ internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
         EnableRoofTopSnapPoints.SettingChanged += SnapSettingChanged;
 
 
-        EnableTerrainOpSnapPoints = ConfigManager.BindConfig(
+        EnableTerrainOpSnapPoints = Config.BindConfig(
            ExtraSnapsSection,
-           "TerrainOpSnapPoints",
+           "Extra Snap Points: Terrain",
            false,
            "Enabled adds extra snap points for all \"TerrainOp\" pieces like the level ground tool in the Hoe. Disabled will prevent extra snap points being added to any \"TerrainOp\" pieces."
         );
         EnableTerrainOpSnapPoints.SettingChanged += SnapSettingChanged;
     }
 
-    internal static ConfigEntry<bool> LoadConfig(GameObject gameObject)
+    internal ConfigEntry<bool> LoadConfig(GameObject gameObject)
     {
-        ConfigEntry<bool> prefabConfig = ConfigManager.BindConfig(
+        ConfigEntry<bool> prefabConfig = Config.BindConfig(
             PrefabSnapSettings,
             gameObject.name,
             true,
@@ -216,9 +217,9 @@ internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
         return prefabConfig;
     }
 
-    private static void SnapSettingChanged(object o, EventArgs e)
+    private void SnapSettingChanged(object o, EventArgs e)
     {
-        if (!UpdateExtraSnapPoints) { UpdateExtraSnapPoints = true; }
+        if (!ShouldUpdateExtraSnaps) { ShouldUpdateExtraSnaps = true; }
     }
 
     /// <summary>
@@ -226,10 +227,8 @@ internal sealed class ExtraSnapPointsMadeEasy : BaseUnityPlugin
     ///     extra snap points after dynamically adding/removing pieces
     ///     from piece tables.
     /// </summary>
-    public static void ReInitExtraSnapPoints()
+    public void ReInitExtraSnapPoints()
     {
-        //var pluginInfo = BepInExUtils.GetSourceModMetadata();
-        //var msg = $"{pluginInfo.Name} triggered a re-initialization, adding extra snap points";
         string msg = $"External mod triggered a re-initialization, adding extra snap points";
         ExtraSnapsManager.AddExtraSnapPoints(msg, true);
     }

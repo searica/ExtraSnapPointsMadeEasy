@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace ExtraSnapPointsMadeEasy.Patches;
+namespace ExtraSnapsMadeEasy.Patches;
 
 [HarmonyPatch]
 internal static class KeyHintPatches
@@ -18,8 +18,8 @@ internal static class KeyHintPatches
     };
     internal static readonly Dictionary<string, ConfigEntry<KeyCode>> CycleSnapHintsKeys = new()
     {
-        {"key_bkg/Key", ExtraSnapPointsMadeEasy.IterateSourceSnapPoints},
-        {"key_bkg (1)/Key", ExtraSnapPointsMadeEasy.IterateTargetSnapPoints }
+        {"key_bkg/Key", ExtraSnapsPlugin.Instance.IterateSourceSnapPoints},
+        {"key_bkg (1)/Key", ExtraSnapsPlugin.Instance.IterateTargetSnapPoints }
     };
     internal static GameObject CycleSnapsUI;
 
@@ -31,7 +31,7 @@ internal static class KeyHintPatches
     };
     internal static readonly Dictionary<string, ConfigEntry<KeyCode>> ToggleManualSnapHintKeys = new()
     {
-        {"key_bkg/Key", ExtraSnapPointsMadeEasy.EnableManualSnap }
+        {"key_bkg/Key", ExtraSnapsPlugin.Instance.TogglePreciseSnap }
     };
     internal static GameObject ToggleManualSnapUI;
 
@@ -73,11 +73,11 @@ internal static class KeyHintPatches
             CycleSnapsUI = CreateCycleSnapsUI(keyHints);
         }
         UpdateKeyHintUI(CycleSnapsUI, CycleSnapHintsText, CycleSnapHintsKeys);
-        ExtraSnapPointsMadeEasy.IterateSourceSnapPoints.SettingChanged += (obj, attr) =>
+        ExtraSnapsPlugin.Instance.IterateSourceSnapPoints.SettingChanged += (obj, attr) =>
         {
             UpdateKeyHintUI(CycleSnapsUI, CycleSnapHintsText, CycleSnapHintsKeys);
         };
-        ExtraSnapPointsMadeEasy.IterateTargetSnapPoints.SettingChanged += (obj, attr) =>
+        ExtraSnapsPlugin.Instance.IterateTargetSnapPoints.SettingChanged += (obj, attr) =>
         {
             UpdateKeyHintUI(CycleSnapsUI, CycleSnapHintsText, CycleSnapHintsKeys);
         };
@@ -94,7 +94,7 @@ internal static class KeyHintPatches
             ToggleManualSnapUI = CreateToggleManualSnapHintUI(keyHints);
         }
         UpdateKeyHintUI(ToggleManualSnapUI, ToggleManualSnapHintText, ToggleManualSnapHintKeys);
-        ExtraSnapPointsMadeEasy.IterateSourceSnapPoints.SettingChanged += (obj, attr) =>
+        ExtraSnapsPlugin.Instance.IterateSourceSnapPoints.SettingChanged += (obj, attr) =>
         {
             UpdateKeyHintUI(ToggleManualSnapUI, ToggleManualSnapHintText, ToggleManualSnapHintKeys);
         };

@@ -4,7 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 
-namespace ExtraSnapPointsMadeEasy.Patches;
+namespace ExtraSnapsMadeEasy.Patches;
 
 [HarmonyPatch]
 internal static class DisableVanillaManualSnapPatches

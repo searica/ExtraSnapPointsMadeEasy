@@ -1,4 +1,4 @@
-﻿using ExtraSnapsMadeEasy.Helpers;
+﻿using ExtraSnapsMadeEasy.ExtraSnapPoints;
 using HarmonyLib;
 
 namespace ExtraSnapsMadeEasy.Patches;
@@ -7,10 +7,10 @@ namespace ExtraSnapsMadeEasy.Patches;
 internal class ZoneSystemPatch
 {
     [HarmonyPostfix]
-    [HarmonyPriority(Priority.Low)]
+    [HarmonyPriority(Priority.Last)]
     [HarmonyPatch(nameof(ZoneSystem.Start))]
     public static void Start()
     {
-        ExtraSnapsManager.AddExtraSnapPoints("Adding extra snap points", true);
+        ExtraSnapsAdder.AddExtraSnapPoints("Adding extra snap points", true);
     }
 }

@@ -19,11 +19,11 @@ internal static class DisableVanillaManualSnapPatches
     }
 
     /// <summary>
-    ///     Set Vanilla snapping mode to "Auto"
+    ///     Set Vanilla snapping mode to "Auto" if Vanilla-Manual-Snap is not enabled.
     /// </summary>
     internal static void ResetManualSnapPointToAuto()
     {
-        if (!Player.m_localPlayer)
+        if (ExtraSnapsPlugin.Instance.VanillaManualSnapEnabled.Value || !Player.m_localPlayer)
         {
             return;
         }

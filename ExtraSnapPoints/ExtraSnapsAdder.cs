@@ -5,14 +5,13 @@ using System.Linq;
 using BepInEx.Configuration;
 using ExtraSnapsMadeEasy.Extensions;
 using ExtraSnapsMadeEasy.Models;
-using ExtraSnapsMadeEasy.SnapPoints;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static ExtraSnapsMadeEasy.SnapPoints.SnapPointNames;
+using static ExtraSnapsMadeEasy.Models.SnapPointNames;
 
-namespace ExtraSnapsMadeEasy.Helpers;
+namespace ExtraSnapsMadeEasy.ExtraSnapPoints;
 
-internal class ExtraSnapsManager
+internal class ExtraSnapsAdder
 {
     private static readonly NamedSnapPoint[] Empty = Array.Empty<NamedSnapPoint>();
     private static readonly NamedSnapPoint[] OriginSnapPointArray = new[] { new NamedSnapPoint(Vector3.zero, ORIGIN) };
@@ -21,6 +20,35 @@ internal class ExtraSnapsManager
     {
         "piece_dvergr_spiralstair",
         "piece_dvergr_spiralstair_right",
+    };
+    private static readonly string[] SkipIfStartsWithSubstrings = new[] {"_", "OLD_", "OLD", "vfx_", "sfx_", "fx_" };
+    private static readonly string[] SkipIfHasComponents = new string[] 
+    {
+        nameof(Projectile),
+        nameof(Humanoid),
+        nameof(AnimalAI),
+        nameof(Character),
+        nameof(CreatureSpawner),
+        nameof(SpawnArea),
+        nameof(Fish),
+        nameof(RandomFlyingBird),
+        nameof(MusicLocation),
+        nameof(Aoe),
+        nameof(ItemDrop),
+        nameof(DungeonGenerator),
+        nameof(TerrainModifier),
+        nameof(EventZone),
+        nameof(LocationProxy),
+        nameof(LootSpawner),
+        nameof(Mister),
+        nameof(Ragdoll),
+        nameof(MineRock5),
+        nameof(TombStone),
+        nameof(LiquidVolume),
+        nameof(Gibber),
+        nameof(TimedDestruction),
+        nameof(ShipConstructor),
+        nameof(TriggerSpawner),
     };
 
     internal static void AddExtraSnapPoints(string msg, bool forceUpdate = false)
@@ -92,40 +120,11 @@ internal class ExtraSnapsManager
         }
 
         // Customs filters
-        if (prefab.name.StartsWith("_") ||
-            prefab.name.StartsWith("OLD_") ||
-            prefab.name.EndsWith("OLD") ||
-            prefab.name.StartsWith("vfx_") ||
-            prefab.name.StartsWith("sfx_") ||
-            prefab.name.StartsWith("fx_") ||
-            prefab.GetComponent<Projectile>() ||
-            prefab.GetComponent<Humanoid>() ||
-            prefab.GetComponent<AnimalAI>() ||
-            prefab.GetComponent<Character>() ||
-            prefab.GetComponent<CreatureSpawner>() ||
-            prefab.GetComponent<SpawnArea>() ||
-            prefab.GetComponent<Fish>() ||
-            prefab.GetComponent<RandomFlyingBird>() ||
-            prefab.GetComponent<MusicLocation>() ||
-            prefab.GetComponent<Aoe>() ||
-            prefab.GetComponent<ItemDrop>() ||
-            prefab.GetComponent<DungeonGenerator>() ||
-            prefab.GetComponent<TerrainModifier>() ||
-            prefab.GetComponent<EventZone>() ||
-            prefab.GetComponent<LocationProxy>() ||
-            prefab.GetComponent<LootSpawner>() ||
-            prefab.GetComponent<Mister>() ||
-            prefab.GetComponent<Ragdoll>() ||
-            prefab.GetComponent<MineRock5>() ||
-            prefab.GetComponent<TombStone>() ||
-            prefab.GetComponent<LiquidVolume>() ||
-            prefab.GetComponent<Gibber>() ||
-            prefab.GetComponent<TimedDestruction>() ||
-            prefab.GetComponent<ShipConstructor>() ||
-            prefab.GetComponent<TriggerSpawner>() ||
+        if (prefab.name.StartsWithAny(SkipIfStartsWithSubstrings) ||
+            prefab.HasAnyComponent(SkipIfHasComponents) ||
             prefab.GetComponentInChildren<Ship>() || // ignore ships
             prefab.GetComponentInChildren<Vagon>() || // ignore carts
-            (prefab.TryGetComponent(out Piece piece) && piece.m_repairPiece))
+            prefab.IsRepairPiece())
         {
             return true;
         }
@@ -145,7 +144,7 @@ internal class ExtraSnapsManager
         {
             /* Fences */
             case "wood_fence":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(+1f, -0.2f, 0f),
                     new Vector3(-1f, -0.2f, 0f),
@@ -164,7 +163,7 @@ internal class ExtraSnapsManager
                 }.ApplyZIndexFix());
 
             case "piece_sharpstakes":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(1.12f, -0.2f, 0f),
                     new Vector3(-1.12f, -0.2f, 0f),
@@ -175,7 +174,7 @@ internal class ExtraSnapsManager
                     });
 
             case "piece_dvergr_sharpstakes":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(-0.5f, -0.5f, 2f),
                     new Vector3(-0.5f, -0.5f, -2f),
@@ -187,7 +186,7 @@ internal class ExtraSnapsManager
 
             /* Item Stands */
             case "itemstandh": // itemstandh (horizontal)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3 (0f, -0.0346f, 0f),
                     new Vector3 (0.1f, -0.0346f, 0f),
@@ -197,7 +196,7 @@ internal class ExtraSnapsManager
                 });
 
             case "itemstand":  // itemstand (vertical)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3 (0f, 0f, -0.06f),
                     new Vector3 (0.22f, 0f, -0.06f),
@@ -208,7 +207,7 @@ internal class ExtraSnapsManager
 
             /* Chests */
             case "piece_chest_wood":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.01f, 0.0f),
                     new Vector3(0.8f, -0.01f, 0.37f),
@@ -222,7 +221,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_chest": // (Reinforced Chest)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.01f, 0.0f),
                     new Vector3(0.9f, -0.01f, 0.47f),
@@ -236,7 +235,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_chest_private":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.01f, 0.0f),
                     new Vector3(0.45f, -0.01f, 0.25f),
@@ -250,7 +249,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_chest_blackmetal":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(1.0f, 0.0f, 0.5f),
@@ -265,7 +264,7 @@ internal class ExtraSnapsManager
 
             /* Torches */
             case "piece_walltorch":  // (sconce)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(-0.2f, 0.0f, 0.0f), // black marble snap
                     new Vector3(-0.25f, 0.0f, 0.0f), // stone snap
@@ -274,11 +273,11 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_dvergr_lantern_pole":
-                return NameSnapPoints(new[] { Vector3.zero });
+                return CreateNamedSnapPoints(new[] { Vector3.zero });
 
             /* Furniture */
             case "sign":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(0.0f, 0.0f, -0.05f), // marble & stone
@@ -286,7 +285,7 @@ internal class ExtraSnapsManager
                 });
 
             case "ArmorStand":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.1f, 0.0f),
                     new Vector3(0.5f, -0.1f, 0.0f),
@@ -297,7 +296,7 @@ internal class ExtraSnapsManager
 
             /* Rugs & Carpets */
             case "jute_carpet": // (red jute carpet)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.01f, 0.0f),
                     new Vector3(2.0f, -0.01f, -1.25f),
@@ -307,7 +306,7 @@ internal class ExtraSnapsManager
                 });
 
             case "rug_fur": // (lox rug)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.01f, 0.0f),
                     new Vector3(1.25f, -0.01f, -2.0f),
@@ -320,7 +319,7 @@ internal class ExtraSnapsManager
             case "rug_wolf":
             case "rug_hare": // (scale rug)
             case "jute_carpet_blue": // (round blue jute carpet)
-                return NameSnapPoints(new[] { new Vector3(0.0f, -0.01f, 0.0f) });
+                return CreateNamedSnapPoints(new[] { new Vector3(0.0f, -0.01f, 0.0f) });
 
             /* Thrones, Chairs, Benches */
             case "piece_throne01": // (Raven Throne)
@@ -329,12 +328,12 @@ internal class ExtraSnapsManager
             case "piece_chair": // (stool)
             case "piece_chair02": // (finewood chair)
             case "piece_chair03": // (darkwood chair)
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             case "piece_bench01":
             case "piece_blackmarble_bench":
             case "piece_logbench01": // sitting log
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(-1.0f, 0.0f, 0.0f),
@@ -355,7 +354,7 @@ internal class ExtraSnapsManager
             case "piece_banner10": // (orange)
             case "piece_banner11": // (white)
             case "piece_cloth_hanging_door": // (red jute curtain)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(0.136f, 0.0f, 0.0f), // stone walls
@@ -366,7 +365,7 @@ internal class ExtraSnapsManager
 
             /* Blue Jute Hangings */
             case "piece_cloth_hanging_door_blue2":  // (Blue Jute Curtain)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, 1.5f, 0.0f),
                     new Vector3(0.0f, 1.5f, 2.0f),
@@ -382,7 +381,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_cloth_hanging_door_blue": // (Blue Jute Drape)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, 4.0f, 0.0f), // center
                     new Vector3(0.16f, 4.0f, 0.0f),
@@ -394,10 +393,10 @@ internal class ExtraSnapsManager
             /* Workbench */
             case "piece_workbench":
             case "piece_workbench_ext1": // (Chopping block)
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             case "piece_workbench_ext2": // (Tanning rack)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(1.0f, 0.0f, 0.0f),
@@ -407,7 +406,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_workbench_ext3": // (Adze)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(1.0f, 0.0f, 0.0f),
@@ -415,7 +414,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_workbench_ext4":  // (Tool shelf)
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, 0.0f, -0.1f),
                     new Vector3(1.0f, 0.0f, -0.1f),
@@ -432,34 +431,34 @@ internal class ExtraSnapsManager
             case "forge_ext4": // (Smith's anvil)
             case "forge_ext5": // (Forge cooler)
             case "forge_ext6": // (Forge toolrack)
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             /* Black Forge */
             case "blackforge": // galdr table
             case "blackforge_ext1": // cooler
             case "blackforge_ext2_vise": // vice
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             /* Galdr Table */
             case "piece_magetable": // galdr table
             case "piece_magetable_ext": // rune table
             case "piece_magetable_ext2": // candles
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             /* Cooking Pieces */
             case "piece_cauldron":
             case "cauldron_ext5_mortarandpestle":
             case "fermenter":
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             case "cauldron_ext1_spice":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, 1.25f, 0.0f)
                 });
 
             case "cauldron_ext3_butchertable":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(0.5f, 0.0f, -0.5f),
@@ -469,7 +468,7 @@ internal class ExtraSnapsManager
                 });
 
             case "cauldron_ext4_pots":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(1.0f, 0.0f, 0.0f),
@@ -479,7 +478,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_cookingstation":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(-1.0f, 0.0f, 0.0f),
@@ -487,7 +486,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_cookingstation_iron":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(-2.0f, 0.0f, 0.0f),
@@ -496,7 +495,7 @@ internal class ExtraSnapsManager
 
             /* Fires */
             case "hearth": // already has snappoints but not a center one
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             /* Beams & Poles */
             // Core wood log walls have 4 snap points by default
@@ -511,7 +510,7 @@ internal class ExtraSnapsManager
 
             /* Beds */
             case "bed":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(0.5f, 0.0f, -1.5f),
@@ -521,7 +520,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_bed02":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(1.0f, 0.0f, -1.5f),
@@ -532,7 +531,7 @@ internal class ExtraSnapsManager
 
             /* Tables */
             case "piece_table":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(-1.0f, 0.0f, 0.0f),
@@ -540,7 +539,7 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_blackmarble_table":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(-1.0f, 0.0f, 0.0f),
@@ -548,10 +547,10 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_table_round": // round table
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             case "piece_table_oak": // long heavy table
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(-2.0f, 0.0f, 0.0f),
@@ -560,17 +559,17 @@ internal class ExtraSnapsManager
 
             /* Misc */
             case "piece_bathtub": // has snap points but adding center
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             // TODO: add snaps to these
             case "piece_cartographytable":
             case "piece_spinningwheel":
             case "piece_stonecutter":
             case "piece_artisanstation":
-                return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+                return GetOriginSnapPointIfNeeded(prefab);
 
             case "piece_barber":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(1.0f, 0.0f, -0.75f),
@@ -580,13 +579,13 @@ internal class ExtraSnapsManager
                 });
 
             case "piece_wisplure": // wisp fountain
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.05f, 0.0f)
                 });
 
             case "eitrrefinery":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(2.75f, 0.0f, -1.0f),
@@ -596,7 +595,7 @@ internal class ExtraSnapsManager
                 });
 
             case "windmill":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     new Vector3(0.0f, -0.005f, 0.0f),
                     new Vector3(2.0f, -0.005f, -2.0f),
@@ -606,7 +605,7 @@ internal class ExtraSnapsManager
                 });
 
             case "smelter":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(1.0f, 0.0f, -1.0f),
@@ -616,7 +615,7 @@ internal class ExtraSnapsManager
                 });
 
             case "blastfurnace":
-                return NameSnapPoints(new[]
+                return CreateNamedSnapPoints(new[]
                 {
                     Vector3.zero,
                     new Vector3(2.0f, 0.0f, -1.25f),
@@ -637,6 +636,17 @@ internal class ExtraSnapsManager
         }
     }
 
+
+    private static NamedSnapPoint[] GetOriginSnapPointIfNeeded(GameObject prefab)
+    {
+        return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;
+    }
+
+    /// <summary>
+    ///     Calculate if prfab should have extra snap points added and return them if it should, otherwise return Empty.
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <returns></returns>
     private static NamedSnapPoint[] GetCalculatedSnapPointsOrEmpty(GameObject prefab)
     {
         List<Transform> existingSnapPoints = prefab.GetSnapPoints();
@@ -646,7 +656,7 @@ internal class ExtraSnapsManager
             return Empty;
         }
 
-        if (!ExtraSnapsPlugin.Instance.EnableTerrainOpSnapPoints.Value && prefab.GetComponent<TerrainOp>())
+        if (!ExtraSnapsPlugin.Instance.EnableTerrainOpSnapPoints.Value && prefab.IsTerrainOp())
         {
             return Empty;
         }
@@ -679,32 +689,36 @@ internal class ExtraSnapsManager
                 };
             }
         }
-        else if (ShapeClassifier.FormLine(existingSnapPoints) && ExtraSnapsPlugin.Instance.EnableLineSnapPoints.Value)
+        else if (ExtraSnapsPlugin.Instance.EnableLineSnapPoints.Value && ShapeClassifier.FormsLine(existingSnapPoints))
         {
-            return ExtraSnapPointsCalculator.GetExtraPointsForLine(existingSnapPoints, 1);
+            return ExtraSnapsCalculator.GetExtraPointsForLine(existingSnapPoints, 1);
         }
-        else if (ShapeClassifier.FormTriangle(existingSnapPoints) && ExtraSnapsPlugin.Instance.EnableTriangleSnapPoints.Value)
+        else if (ExtraSnapsPlugin.Instance.EnableTriangleSnapPoints.Value && ShapeClassifier.FormsTriangle(existingSnapPoints))
         {
-            return ExtraSnapPointsCalculator.GetExtraSnapPointsForTriangle(existingSnapPoints);
+            return ExtraSnapsCalculator.GetExtraSnapPointsForTriangle(existingSnapPoints);
         }
-        else if (ShapeClassifier.FormRectangle(existingSnapPoints) && ExtraSnapsPlugin.Instance.EnableRect2DSnapPoints.Value)
+        else if (ExtraSnapsPlugin.Instance.EnableRect2DSnapPoints.Value && ShapeClassifier.FormsRectangle(existingSnapPoints))
         {
-            return ExtraSnapPointsCalculator.GetSnapPointsForRectangle(existingSnapPoints);
+            return ExtraSnapsCalculator.GetSnapPointsForRectangle(existingSnapPoints);
         }
-        else if (prefab.IsRoof() && ShapeClassifier.IsWedge3D(existingSnapPoints) && ExtraSnapsPlugin.Instance.EnableRoofTopSnapPoints.Value)
+        else if (ExtraSnapsPlugin.Instance.EnableRoofTopSnapPoints.Value && prefab.IsRoof() && ShapeClassifier.IsWedge3D(existingSnapPoints))
         {
-            ShapeClassifier.GetExtraSnapPointsForRoofTop(existingSnapPoints, prefab.name);
+            ExtraSnapsCalculator.GetExtraSnapPointsForRoofTop(existingSnapPoints, prefab.name);
         }
-
-        if (!existingSnapPoints.ContainsOriginSnapPoint())
+        else if (!existingSnapPoints.ContainsOriginSnapPoint())
         {
+            // Only return an origin snap point for prefabs that do not have snap points and have not already 
+            // had extra snap points added. This is because sometimes snapping to the origin results in the piece
+            // being unplace-able or breaking the moment it is placed.
+            // So if a piece has already had custom extra snap points added to it, that means that it may need
+            // to not add a snap point at the origin.
             return OriginSnapPointArray;
         }
 
         return Empty;
     }
 
-    private static NamedSnapPoint[] NameSnapPoints(Vector3[] positions, string prefix = EXTRA, int startNumber = 1)
+    private static NamedSnapPoint[] CreateNamedSnapPoints(Vector3[] positions, string prefix = EXTRA, int startNumber = 1)
     {
         NamedSnapPoint[] result = new NamedSnapPoint[positions.Length];
         for (int i = 0; i < result.Length; i++)

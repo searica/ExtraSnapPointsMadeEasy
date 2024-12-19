@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace ExtraSnapsMadeEasy.Extensions;
 
@@ -18,18 +19,57 @@ internal static class GameObjectExtensions
     public static Transform FindDeepChild(
         this GameObject gameObject,
         string childName,
-        global::Utils.IterativeSearchType searchType = global::Utils.IterativeSearchType.BreadthFirst
+        Utils.IterativeSearchType searchType = global::Utils.IterativeSearchType.BreadthFirst
     )
     {
         return gameObject.transform.FindDeepChild(childName, searchType);
     }
+
+    /// <summary>
+    ///     Check if GameObject has any of the specified components.
+    /// </summary>
+    /// <param name="gameObject"></param>
+    /// <param name="components"></param>
+    /// <returns></returns>
+    public static bool HasAnyComponent(this GameObject gameObject, params Type[] components)
+    {
+        foreach (Type compo in components)
+        {
+            if (gameObject.GetComponent(compo))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    ///     Check if GameObject has any of the specified components.
+    /// </summary>
+    /// <param name="gameObject"></param>
+    /// <param name="componentNames"></param>
+    /// <returns></returns>
+    public static bool HasAnyComponent(this GameObject gameObject, params string[] componentNames)
+    {
+        foreach (string name in componentNames)
+        {
+            if (gameObject.GetComponent(name))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
 }
 
 
 /// <summary>
 ///     Convenience methods for Transforms
 /// </summary>
-public static class UnityChildExtensions
+public static class TransformExtensions
 {
     /// <summary>
     ///     Extension method to find nested children by name using either
@@ -42,9 +82,9 @@ public static class UnityChildExtensions
     public static Transform FindDeepChild(
         this Transform transform,
         string childName,
-        global::Utils.IterativeSearchType searchType = global::Utils.IterativeSearchType.BreadthFirst
+        Utils.IterativeSearchType searchType = Utils.IterativeSearchType.BreadthFirst
     )
     {
-        return global::Utils.FindChild(transform, childName, searchType);
+        return Utils.FindChild(transform, childName, searchType);
     }
 }

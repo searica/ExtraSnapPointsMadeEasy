@@ -2,14 +2,14 @@
 using ExtraSnapsMadeEasy.Models;
 using UnityEngine;
 
-namespace ExtraSnapsMadeEasy.SnapPoints;
+namespace ExtraSnapsMadeEasy.ExtraSnapPoints;
 
 /// <summary>
 /// Manage and track all snap points added by this mod, so that they can be deleted/recreated
 /// </summary>
 internal class SnapPointManager
 {
-    private const string SnapPointTag = "snappoint"; //This must match the value in the Valheim assemblies
+    private const string SnapPointTag = SnapPointNames.TAG;  //This must match the value in the Valheim assemblies
 
     internal static SnapPointManager Instance = new();
 
@@ -19,7 +19,7 @@ internal class SnapPointManager
     {
         if (!prefab)
         {
-            Log.LogWarning("GameObject prefab is null. Cannot add snappoints.");
+            Log.LogWarning("GameObject prefab is null. Cannot add snap points.");
             return;
         }
 

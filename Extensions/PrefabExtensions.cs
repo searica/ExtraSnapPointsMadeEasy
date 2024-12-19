@@ -39,6 +39,26 @@ internal static class PrefabExtensions
     }
 
     /// <summary>
+    ///     Checks if this prefab modifies terrain.
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <returns></returns>
+    internal static bool IsTerrainOp(this GameObject prefab)
+    {
+        return prefab.GetComponent<TerrainOp>();
+    }
+
+    /// <summary>
+    ///     Checks if this is a repair piece from a piece table.
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <returns></returns>
+    internal static bool IsRepairPiece(this GameObject prefab)
+    {
+        return prefab.TryGetComponent(out Piece piece) && piece.m_repairPiece;
+    }
+
+    /// <summary>
     ///     
     /// </summary>
     /// <param name="prefab"></param>

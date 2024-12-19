@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using ExtraSnapsMadeEasy.Extensions;
 using ExtraSnapsMadeEasy.Models;
 using UnityEngine;
-using static ExtraSnapsMadeEasy.SnapPoints.SnapPointNames;
+using static ExtraSnapsMadeEasy.Models.SnapPointNames;
 
-namespace ExtraSnapsMadeEasy.SnapPoints;
+namespace ExtraSnapsMadeEasy.ExtraSnapPoints;
 
 /// <summary>
 /// Calculates additional snap points based on existing snap points
 /// </summary>
-internal class ExtraSnapPointsCalculator
+internal class ExtraSnapsCalculator
 {
     /// <summary>
     /// The name of SnapPoints that the Valheim devs did not name yet
     /// (generally because they are supposed to be unavailable to the player)
     /// </summary>
-    private const string DefaultSnapPointName = "_snappoint";
+    private const string DefaultSnapPointName = SnapPointNames.DEFAULT_NAME;
 
     /// <summary>
     /// Add snap points to a line.
@@ -40,7 +40,7 @@ internal class ExtraSnapPointsCalculator
         NamedSnapPoint[] extraSnapPoints = new NamedSnapPoint[nrPointsToAdd];
         for (int i = 0; i < nrPointsToAdd; i++)
         {
-            extraSnapPoints[i] = new NamedSnapPoint(start + (delta * (i + 1)), $"{CENTER} Line {i + 1}/{nrPointsToAdd + 1}");
+            extraSnapPoints[i] = new NamedSnapPoint(start + delta * (i + 1), $"{CENTER} Line {i + 1}/{nrPointsToAdd + 1}");
         }
 
         return extraSnapPoints;
@@ -111,8 +111,8 @@ internal class ExtraSnapPointsCalculator
                     {
                         name = $"{BOTTOM} {CENTER}";
                     }
-                    else if ((pointA.name.StartsWith(TOP) && pointB.name.StartsWith(BOTTOM))
-                        || (pointA.name.StartsWith(BOTTOM) && pointB.name.StartsWith(TOP)))
+                    else if (pointA.name.StartsWith(TOP) && pointB.name.StartsWith(BOTTOM)
+                        || pointA.name.StartsWith(BOTTOM) && pointB.name.StartsWith(TOP))
                     {
                         if (int.TryParse(pointA.name.Substring(pointA.name.IndexOf(' ')), out int number1)
                         && int.TryParse(pointB.name.Substring(pointB.name.IndexOf(' ')), out int number2)
@@ -133,5 +133,97 @@ internal class ExtraSnapPointsCalculator
         result.Add(new NamedSnapPoint(center, CENTER));
 
         return result.ToArray();
+    }
+
+    /// <summary>
+    ///     Add snap points at the midpoint along each edge of the roof top.
+    /// </summary>
+    internal static NamedSnapPoint[] GetExtraSnapPointsForRoofTop(List<Transform> snapPoints, string name)
+    {
+        Vector3 minimums = ShapeClassifier.SolveMinimumsOf(snapPoints);
+        Vector3 maximums = ShapeClassifier.SolveMaximumsOf(snapPoints);
+        Vector3 middles = (minimums + maximums) / 2;
+
+        // Get which points are top points and ID of the axis across the front of the V shape.
+        List<Vector3> topPoints = new();
+        int frontAxis = -1;
+        foreach (Transform snapPoint in snapPoints)
+        {
+            for (int i = 0; i < 3; i++) // loop through vector
+            {
+                float coordinate = snapPoint.localPosition[i];
+                if (!coordinate.Equals(minimums[i]) && !coordinate.Equals(maximums[i]))
+                {
+                    if (!coordinate.Equals(middles[i]))
+                    {
+                        Log.LogError($"{name} is not a RoofTop piece");
+                    }
+                    if (frontAxis == -1)
+                    {
+                        frontAxis = i;
+                    }
+                    else if (frontAxis != i)
+                    {
+                        Log.LogWarning($"Invalid front axis for RoofTop piece: {name}, will not add extra snap points.");
+                        return Array.Empty<NamedSnapPoint>();
+                    }
+                    topPoints.Add(snapPoint.localPosition);
+                }
+            }
+        }
+        if (topPoints.Count != 2)
+        {
+            Log.LogError($"{name} is not a RoofTop piece");
+        }
+
+        // Get ID of axis along the roof ridge
+        Vector3 ridgeVec = (topPoints[1].normalized - topPoints[0].normalized).normalized;
+        int ridgeAxis = -1;
+        for (int i = 0; i < 3; i++)
+        {
+            if (!ridgeVec[i].Equals(0.0f))
+            {
+                if (ridgeAxis == -1)
+                {
+                    ridgeAxis = i;
+                }
+                else if (ridgeAxis != i)
+                {
+                    Log.LogWarning($"Invalid ridge axis for RoofTop piece: {name}, will not add extra snap points.");
+                    return Array.Empty<NamedSnapPoint>();
+                }
+            }
+        }
+
+        // Get ID of the axis up/down the V shape
+        int vertAxis = 3 - ridgeAxis - frontAxis;
+
+        // Compute top mid-point
+        Vector3 topCenter = (topPoints[0] + topPoints[1]) / 2;
+
+        // Compute side mid-point
+        Vector3 mid1 = new();
+        mid1[frontAxis] = minimums[frontAxis];
+        mid1[ridgeAxis] = middles[ridgeAxis];
+        if (topPoints[0][vertAxis].Equals(maximums[vertAxis]))
+        {
+            mid1[vertAxis] = minimums[vertAxis];
+        }
+        else
+        {
+            mid1[vertAxis] = maximums[vertAxis];
+        }
+
+        // Compute side midpoint
+        Vector3 mid2 = mid1;
+        mid2[frontAxis] = maximums[frontAxis];
+
+        // TODO: Test if names make sense in game
+        return new NamedSnapPoint[]
+        {
+            new(topCenter, $"{TOP} {CENTER}"),
+            new(mid1, $"{MID} 1"),
+            new(mid2, $"{MID} 2")
+        };
     }
 }

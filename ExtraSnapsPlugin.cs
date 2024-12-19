@@ -7,8 +7,8 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
-using ExtraSnapsMadeEasy.Helpers;
 using ExtraSnapsMadeEasy.Configs;
+using ExtraSnapsMadeEasy.ExtraSnapPoints;
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
 namespace ExtraSnapsMadeEasy;
@@ -19,7 +19,7 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
     public const string PluginName = "ExtraSnapPointsMadeEasy";
     public const string Author = "Searica";
     public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
-    public const string PluginVersion = "1.4.1";
+    public const string PluginVersion = "2.0.0";
 
     internal static ExtraSnapsPlugin Instance;
 
@@ -62,11 +62,11 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
         ConfigFileManager.CheckForConfigManager();
         ConfigFileManager.OnConfigWindowClosed += () =>
         {
-            ExtraSnapsManager.AddExtraSnapPoints("Config settings changed, re-initializing");
+            ExtraSnapsAdder.AddExtraSnapPoints("Config settings changed, re-initializing");
         };
         ConfigFileManager.OnConfigFileReloaded += () =>
         {
-            ExtraSnapsManager.AddExtraSnapPoints("Config settings changed after reloading config file, re-initializing");
+            ExtraSnapsAdder.AddExtraSnapPoints("Config settings changed after reloading config file, re-initializing");
         };
     }
 
@@ -230,7 +230,7 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
     public void ReInitExtraSnapPoints()
     {
         string msg = $"External mod triggered a re-initialization, adding extra snap points";
-        ExtraSnapsManager.AddExtraSnapPoints(msg, true);
+        ExtraSnapsAdder.AddExtraSnapPoints(msg, true);
     }
 }
 

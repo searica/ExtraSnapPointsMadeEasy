@@ -1,4 +1,4 @@
-﻿namespace ExtraSnapsMadeEasy.SnapPoints;
+﻿namespace ExtraSnapsMadeEasy.Models;
 
 internal static class SnapPointNames
 {
@@ -13,5 +13,15 @@ internal static class SnapPointNames
     public const string SNAPPOINT = "Snappoint";
     public const string ORIGIN = "Origin";
     public const string EXTRA = "Extra";
+
+    /// <summary>
+    ///  The tag that identifies a transform as a snap point.
+    /// </summary>
     public const string TAG = "snappoint";
+
+    /// <summary>
+    /// The name of SnapPoints that the Valheim devs did not name yet
+    /// (generally because they are supposed to be unavailable to the player)
+    /// </summary>
+    public const string DEFAULT_NAME = "_snappoint";
 }

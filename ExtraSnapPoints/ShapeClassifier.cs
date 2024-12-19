@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ExtraSnapsMadeEasy.Extensions;
 using ExtraSnapsMadeEasy.Models;
 using UnityEngine;
-using static ExtraSnapsMadeEasy.SnapPoints.SnapPointNames;
+using static ExtraSnapsMadeEasy.Models.SnapPointNames;
 
 /* In Unity
  * X = left/right
@@ -11,17 +11,16 @@ using static ExtraSnapsMadeEasy.SnapPoints.SnapPointNames;
  * Z = forward/back
  */
 
-namespace ExtraSnapsMadeEasy.Helpers;
+namespace ExtraSnapsMadeEasy.ExtraSnapPoints;
 
 internal static class ShapeClassifier
 {
-    private const float Tolerance = 1e-6f;
 
     /// <summary>
     ///     Check if piece has 2 snap points that form a line.
     /// </summary>
     /// <returns></returns>
-    internal static bool FormLine(List<Transform> snapPoints)
+    internal static bool FormsLine(List<Transform> snapPoints)
     {
         // Any two points that are not in the exact same position form a line
         return snapPoints.Count == 2 && snapPoints[0].localPosition != snapPoints[1].localPosition;
@@ -31,7 +30,7 @@ internal static class ShapeClassifier
     ///     Check if piece has 3 snap points that form a triangle.
     /// </summary>
     /// <returns></returns>
-    internal static bool FormTriangle(List<Transform> snapPoints)
+    internal static bool FormsTriangle(List<Transform> snapPoints)
     {
         // Any 3 points form a triangle, unless they are collinear
         return snapPoints.Count == 3 && !snapPoints.AreCollinear();
@@ -41,7 +40,7 @@ internal static class ShapeClassifier
     ///     Check if piece has 4 snap points that form a rectangle.
     /// </summary>
     /// <returns></returns>
-    internal static bool FormRectangle(List<Transform> snapPoints)
+    internal static bool FormsRectangle(List<Transform> snapPoints)
     {
         // A rectangle should have 4 points on the same plane
         if (snapPoints.Count != 4 || !snapPoints.AreCoplanar())
@@ -176,7 +175,7 @@ internal static class ShapeClassifier
     /// </summary>
     /// <param name="snapPoints"></param>
     /// <returns></returns>
-    private static Vector3 SolveMinimumsOf(List<Transform> snapPoints)
+    internal static Vector3 SolveMinimumsOf(List<Transform> snapPoints)
     {
         float xMin = float.PositiveInfinity;
         float yMin = float.PositiveInfinity;
@@ -197,7 +196,7 @@ internal static class ShapeClassifier
     /// </summary>
     /// <param name="snapPoints"></param>
     /// <returns></returns>
-    private static Vector3 SolveMaximumsOf(List<Transform> snapPoints)
+    internal static Vector3 SolveMaximumsOf(List<Transform> snapPoints)
     {
         float xMax = float.NegativeInfinity;
         float yMax = float.NegativeInfinity;
@@ -227,17 +226,17 @@ internal static class ShapeClassifier
         Vector3 maximums
     )
     {
-        if (!Equals(snapPoint.x, minimums.x) && !Equals(snapPoint.x, maximums.x))
+        if (!snapPoint.x.Equals(minimums.x) && !snapPoint.x.Equals(maximums.x))
         {
             return false;
         }
 
-        if (!Equals(snapPoint.y, minimums.y) && !Equals(snapPoint.y, maximums.y))
+        if (!snapPoint.y.Equals(minimums.y) && !snapPoint.y.Equals(maximums.y))
         {
             return false;
         }
 
-        if (!Equals(snapPoint.z, minimums.z) && !Equals(snapPoint.z, maximums.z))
+        if (!snapPoint.z.Equals(minimums.z) && !snapPoint.z.Equals(maximums.z))
         {
             return false;
         }
@@ -262,17 +261,17 @@ internal static class ShapeClassifier
     {
         // two of the coordinates should be on an extreme
         int extremusCoordinates = 0;
-        if (Equals(snapPoint.x, minimums.x) || Equals(snapPoint.x, maximums.x))
+        if (snapPoint.x.Equals( minimums.x) || snapPoint.x.Equals( maximums.x))
         {
             extremusCoordinates++;
         }
 
-        if (Equals(snapPoint.y, minimums.y) || Equals(snapPoint.y, maximums.y))
+        if (snapPoint.y.Equals( minimums.y) || snapPoint.y.Equals( maximums.y))
         {
             extremusCoordinates++;
         }
 
-        if (Equals(snapPoint.z, minimums.z) || Equals(snapPoint.z, maximums.z))
+        if (snapPoint.z.Equals( minimums.z) || snapPoint.z.Equals( maximums.z))
         {
             extremusCoordinates++;
         }
@@ -282,116 +281,11 @@ internal static class ShapeClassifier
         // one should be in the center of two extremes
         Vector3 middles = (minimums + maximums) / 2;
         int middleCoordinates = 0;
-        if (Equals(snapPoint.x, middles.x)) { middleCoordinates++; }
-        if (Equals(snapPoint.y, middles.y)) { middleCoordinates++; }
-        if (Equals(snapPoint.z, middles.z)) { middleCoordinates++; }
+        if (snapPoint.x.Equals( middles.x)) { middleCoordinates++; }
+        if (snapPoint.y.Equals( middles.y)) { middleCoordinates++; }
+        if (snapPoint.z.Equals( middles.z)) { middleCoordinates++; }
         if (middleCoordinates != 1) { return false; }
 
         return true;
-    }
-
-    //TODO: Consider refactoring this to SnapPointCalculator
-    /// <summary>
-    ///     Add snap points at the midpoint along each edge of the roof top.
-    /// </summary>
-    internal static NamedSnapPoint[] GetExtraSnapPointsForRoofTop(List<Transform> snapPoints, string name)
-    {
-        Vector3 minimums = SolveMinimumsOf(snapPoints);
-        Vector3 maximums = SolveMaximumsOf(snapPoints);
-        Vector3 middles = (minimums + maximums) / 2;
-
-        // Get which points are top points and ID of the axis across the front of the V shape.
-        List<Vector3> topPoints = new();
-        int frontAxis = -1;
-        foreach (Transform snapPoint in snapPoints)
-        {
-            for (int i = 0; i < 3; i++) // loop through vector
-            {
-                float coordinate = snapPoint.localPosition[i];
-                if (!Equals(coordinate, minimums[i]) && !Equals(coordinate, maximums[i]))
-                {
-                    if (!Equals(coordinate, middles[i]))
-                    {
-                        Log.LogError($"{name} is not a RoofTop piece");
-                    }
-                    if (frontAxis == -1)
-                    {
-                        frontAxis = i;
-                    }
-                    else if (frontAxis != i)
-                    {
-                        Log.LogWarning($"Invalid front axis for RoofTop piece: {name}, will not add extra snap points.");
-                        return Array.Empty<NamedSnapPoint>();
-                    }
-                    topPoints.Add(snapPoint.localPosition);
-                }
-            }
-        }
-        if (topPoints.Count != 2)
-        {
-            Log.LogError($"{name} is not a RoofTop piece");
-        }
-
-        // Get ID of axis along the roof ridge
-        Vector3 ridgeVec = (topPoints[1].normalized - topPoints[0].normalized).normalized;
-        int ridgeAxis = -1;
-        for (int i = 0; i < 3; i++)
-        {
-            if (!Equals(ridgeVec[i], 0.0f))
-            {
-                if (ridgeAxis == -1)
-                {
-                    ridgeAxis = i;
-                }
-                else if (ridgeAxis != i)
-                {
-                    Log.LogWarning($"Invalid ridge axis for RoofTop piece: {name}, will not add extra snap points.");
-                    return Array.Empty<NamedSnapPoint>();
-                }
-            }
-        }
-
-        // Get ID of the axis up/down the V shape
-        int vertAxis = 3 - ridgeAxis - frontAxis;
-
-        // Compute top mid-point
-        Vector3 topCenter = (topPoints[0] + topPoints[1]) / 2;
-
-        // Compute side mid-point
-        Vector3 mid1 = new();
-        mid1[frontAxis] = minimums[frontAxis];
-        mid1[ridgeAxis] = middles[ridgeAxis];
-        if (Equals(topPoints[0][vertAxis], maximums[vertAxis]))
-        {
-            mid1[vertAxis] = minimums[vertAxis];
-        }
-        else
-        {
-            mid1[vertAxis] = maximums[vertAxis];
-        }
-
-        // Compute side midpoint
-        Vector3 mid2 = mid1;
-        mid2[frontAxis] = maximums[frontAxis];
-
-        // TODO: Test if names make sense in game
-        return new NamedSnapPoint[]
-        {
-            new(topCenter, $"{TOP} {CENTER}"),
-            new(mid1, $"{MID} 1"),
-            new(mid2, $"{MID} 2")
-        };
-    }
-
-    /// <summary>
-    ///     Checks equality using both relative and absolute tolerance.
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    private static bool Equals(float x, float y)
-    {
-        float diff = Mathf.Abs(x - y);
-        return diff <= Tolerance || diff <= Mathf.Max(Mathf.Abs(x), Mathf.Abs(y)) * Tolerance;
     }
 }

@@ -677,7 +677,7 @@ internal class ExtraSnapsAdder
                 return new[]
                 {
                     new NamedSnapPoint(0.0f, -1.0f, 0.0f, $"Base {CENTER}"),
-                    new NamedSnapPoint(Vector3.zero, ORIGIN) // This worked badly during testing (item could not be placed)
+                    new NamedSnapPoint(0.0f, -0.25f, 0.0f, TOP) // This worked badly during testing (item could not be placed)
                 };
             }
             if (prefab.IsTorch())

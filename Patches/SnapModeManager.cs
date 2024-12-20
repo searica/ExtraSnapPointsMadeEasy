@@ -1,21 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using ExtraSnapsMadeEasy.Extensions;
 using ExtraSnapsMadeEasy.Models;
 using HarmonyLib;
 using UnityEngine;
-namespace ExtraSnapsMadeEasy.Patches;
+using ExtraSnapsMadeEasy.Extensions;
 using static ExtraSnapsMadeEasy.Models.GridSnapping;
 using static ExtraSnapsMadeEasy.Models.SnapModes;
 
-[HarmonyPatch(typeof(Player))]
-internal class PlacementPatches
+namespace ExtraSnapsMadeEasy.Patches;
+
+[HarmonyPatch]
+internal class SnapModeManager
 {
-    private static int currentSourceSnap = 0;
-    private static int currentTargetSnap = 0;
-    internal static SnapMode snapMode;
-    internal static GridPrecision gridPrecision;
-    private static float currentGridPrecision = GridPrecisionMap[GridPrecision.Low];
+    private static int CurrentSourceSnap = 0;
+    private static int CurrentTargetSnap = 0;
+    internal static SnapMode CurrentSnapMode;
+    internal static GridPrecision CurrentGridPrecision;
+    private static float CurrentGridPrecisionValue = GridPrecisionMap[GridPrecision.Low];
+    internal static string CurrentSnapModeName => SnapModeNames[CurrentSnapMode];
 
     private static Transform currentTargetParent;
     private static Transform currentSourceParent;
@@ -32,14 +35,27 @@ internal class PlacementPatches
     /// </summary>
     private static readonly List<Transform> TempTargetSnapPoints = new();
 
-    internal static bool IsAutoSnapMode => snapMode == SnapMode.Auto;
-    internal static bool IsPreciseSnapMode => snapMode == SnapMode.Precise;
-    internal static bool IsManualSnapMode => snapMode == SnapMode.Manual;
-    internal static bool IsGridSnapMode => snapMode == SnapMode.Grid;
-    
+    internal static bool IsAutoSnapMode => CurrentSnapMode == SnapMode.Auto;
+    internal static bool IsPreciseSnapMode => CurrentSnapMode == SnapMode.Precise;
+    internal static bool IsManualSnapMode => CurrentSnapMode == SnapMode.Manual;
+    internal static bool IsGridSnapMode => CurrentSnapMode == SnapMode.Grid;
+
+    /// <summary>
+    ///     Event triggered whenever the snap mode changes.
+    /// </summary>
+    internal static event Action OnSnapModeChanged;
+
+    /// <summary>
+    ///     Safely invoke the <see cref="OnSnapModeChanged"/> event
+    /// </summary>
+    private static void InvokeOnSnapModeChanged()
+    {
+        OnSnapModeChanged?.SafeInvoke();
+    }
+
 
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(Player.UpdatePlacementGhost))]
+    [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
     private static void UpdatePlacementGhostPostfix(Player __instance)
     {
         if (!__instance || !__instance.InPlaceMode() || __instance.IsDead())
@@ -47,26 +63,27 @@ internal class PlacementPatches
             return;
         }
 
-        SnapMode prevSnapMode = snapMode;
+        SnapMode prevSnapMode = CurrentSnapMode;
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.TogglePreciseSnap.Value))
         {
-            snapMode = !IsPreciseSnapMode ? SnapMode.Precise : SnapMode.Auto;
+            CurrentSnapMode = !IsPreciseSnapMode ? SnapMode.Precise : SnapMode.Auto;
         }
         else if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.ToggleManualSnap.Value))
         {
-            snapMode = !IsManualSnapMode ? SnapMode.Manual : SnapMode.Auto;
+            CurrentSnapMode = !IsManualSnapMode ? SnapMode.Manual : SnapMode.Auto;
         }
         else if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.ToggleGridSnap.Value))
         {
-            snapMode = !IsGridSnapMode ? SnapMode.Grid : SnapMode.Auto;
+            CurrentSnapMode = !IsGridSnapMode ? SnapMode.Grid : SnapMode.Auto;
         }
 
-        if (snapMode != prevSnapMode)
+        if (CurrentSnapMode != prevSnapMode)
         {
-            __instance.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, SnapModeMsg[snapMode]);
+            InvokeOnSnapModeChanged();
+            __instance.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Snap Mode: {CurrentSnapModeName}");
         }
 
-        if (!__instance.m_placementGhost || snapMode == SnapMode.Auto)
+        if (!__instance.m_placementGhost || CurrentSnapMode == SnapMode.Auto)
         {
             return;
         }
@@ -91,15 +108,15 @@ internal class PlacementPatches
 
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.CycleGridPrecision.Value))
         {
-            if (gridPrecision == GridPrecision.Low) { gridPrecision = GridPrecision.High; }
-            else { gridPrecision = GridPrecision.Low; }
-            currentGridPrecision = GridPrecisionMap[gridPrecision];
-            player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Grid Precision: {currentGridPrecision}");
+            if (CurrentGridPrecision == GridPrecision.Low) { CurrentGridPrecision = GridPrecision.High; }
+            else { CurrentGridPrecision = GridPrecision.Low; }
+            CurrentGridPrecisionValue = GridPrecisionMap[CurrentGridPrecision];
+            player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Grid Precision: {CurrentGridPrecisionValue}");
         }
 
         Vector3 position = player.m_placementGhost.transform.position;
-        position.x = position.x.RoundToNearest(currentGridPrecision);
-        position.z = position.z.RoundToNearest(currentGridPrecision);
+        position.x = position.x.RoundToNearest(CurrentGridPrecisionValue);
+        position.z = position.z.RoundToNearest(CurrentGridPrecisionValue);
         player.m_placementGhost.transform.position = position;
     }
 
@@ -116,66 +133,55 @@ internal class PlacementPatches
             return;
         }
 
-        Log.LogInfo("Snapping Manually!");
-
         if (currentSourceParent != sourcePiece.transform)
         {
-            if (ExtraSnapsPlugin.Instance.ResetSnapsOnNewPiece.Value || currentSourceSnap < 0)
+            if (ExtraSnapsPlugin.Instance.ResetSnapsOnNewPiece.Value || CurrentSourceSnap < 0)
             {
-                currentSourceSnap = 0;
+                CurrentSourceSnap = 0;
             }
             currentSourceParent = sourcePiece.transform;
         }
-
-
         if (currentTargetParent != targetPiece.transform)
         {
-            if (ExtraSnapsPlugin.Instance.ResetSnapsOnNewPiece.Value || currentTargetSnap < 0)
+            if (ExtraSnapsPlugin.Instance.ResetSnapsOnNewPiece.Value || CurrentTargetSnap < 0)
             {
-                currentTargetSnap = 0;
+                CurrentTargetSnap = 0;
             }
             currentTargetParent = targetPiece.transform;
         }
 
-        
-
-        Log.LogInfo("Point A");
-        int prevSourceSnap = currentSourceSnap;
+        int prevSourceSnap = CurrentSourceSnap;
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.IterateSourceSnapPoints.Value))
         {
-            currentSourceSnap++;
+            CurrentSourceSnap++;
         }
 
-        int prevTargetSnap = currentTargetSnap;
+        int prevTargetSnap = CurrentTargetSnap;
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.IterateTargetSnapPoints.Value))
         {
-            currentTargetSnap++;
+            CurrentTargetSnap++;
         }
-        Log.LogInfo("Point B");
 
         TempSourceSnapPoints.Clear();
         sourcePiece.GetSnapPoints(TempSourceSnapPoints);
         TempTargetSnapPoints.Clear();
         targetPiece.GetSnapPoints(TempTargetSnapPoints);
 
-        Log.LogInfo("Point C");
         if (TempSourceSnapPoints.Count == 0 || TempTargetSnapPoints.Count == 0)
         {
             Log.LogInfo("No snap points!");
             return;
         }
 
-        if (currentSourceSnap >= TempSourceSnapPoints.Count) { currentSourceSnap = 0; }
-        if (currentTargetSnap >= TempTargetSnapPoints.Count) { currentTargetSnap = 0; }
+        if (CurrentSourceSnap >= TempSourceSnapPoints.Count) { CurrentSourceSnap = 0; }
+        if (CurrentTargetSnap >= TempTargetSnapPoints.Count) { CurrentTargetSnap = 0; }
 
-        Log.LogInfo("Point D");
-
-        Transform sourceSnap = TempSourceSnapPoints[currentSourceSnap];
+        Transform sourceSnap = TempSourceSnapPoints[CurrentSourceSnap];
         Transform targetSnap;
-        switch (snapMode)
+        switch (CurrentSnapMode)
         {
             case SnapMode.Precise:
-                targetSnap = TempTargetSnapPoints[currentTargetSnap];
+                targetSnap = TempTargetSnapPoints[CurrentTargetSnap];
                 break;
 
             case SnapMode.Manual:
@@ -187,22 +193,19 @@ internal class PlacementPatches
             default:
                 return;
         }
-        Log.LogInfo("Point E");
 
-        if (prevSourceSnap != currentSourceSnap)
+        if (prevSourceSnap != CurrentSourceSnap)
         {
-            string name = HasFriendlySnapName(sourceSnap) ? sourceSnap.name : $"Point {currentSourceSnap + 1}";
-            player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Source Snap Point: {name}");
+            string name = HasFriendlySnapName(sourceSnap) ? sourceSnap.name : $"Point {CurrentSourceSnap + 1}";
+            player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Placing Snap Point: {name}");
         }
 
-        Log.LogInfo("Point F");
-        if (IsPreciseSnapMode && prevTargetSnap != currentTargetSnap)
+        if (IsPreciseSnapMode && prevTargetSnap != CurrentTargetSnap)
         {
-            string name = HasFriendlySnapName(targetSnap) ? targetSnap.name : $"Point {currentTargetSnap + 1}";
+            string name = HasFriendlySnapName(targetSnap) ? targetSnap.name : $"Point {CurrentTargetSnap + 1}";
             player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Target Snap Point: {name}");
         }
 
-        Log.LogInfo("Point G");
         // adjust placement ghost position based on the difference between sourceSnap and targetSnap
         player.m_placementGhost.transform.position += targetSnap.position - sourceSnap.position;
     }
@@ -212,14 +215,6 @@ internal class PlacementPatches
         bool water = placementGhostPiece.m_waterPiece || placementGhostPiece.m_noInWater;
         player.PieceRayTest(out _, out _, out targetPiece, out _, out _, water);
         return targetPiece;
-    }
-
-    private static Piece RayTest(Player player, GameObject placementGhost)
-    {
-        Piece placementGhostPiece = placementGhost.GetComponent<Piece>();
-        bool water = placementGhostPiece.m_waterPiece || placementGhostPiece.m_noInWater;
-        player.PieceRayTest(out _, out _, out Piece piece, out _, out _, water);
-        return piece;
     }
 
     private static bool HasFriendlySnapName(Transform snapPoint)

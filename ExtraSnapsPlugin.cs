@@ -95,7 +95,7 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
 
         TogglePreciseSnap = Config.BindConfig(
             SnapModeSection,
-            "Toggle Precise Snap Mode",
+            "Toggle Manual+ Snap Mode",
             KeyCode.LeftAlt,
             "This key will enable or disable manual snapping mode."
         );
@@ -124,14 +124,14 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
         IterateSourceSnapPoints = Config.BindConfig(
             SnapModeSection,
             "Iterate Placing Piece Snap Points",
-            KeyCode.LeftControl,
+            KeyCode.Q,
             "This key will cycle through the snap points on the piece you are placing."
         );
 
         IterateTargetSnapPoints = Config.BindConfig(
             SnapModeSection,
             "Iterate Targeted Piece Points",
-            KeyCode.LeftShift,
+            KeyCode.E,
             "This key will cycle through the snap points on the piece you are attaching to."
         );
 

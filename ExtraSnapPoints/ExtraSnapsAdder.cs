@@ -687,7 +687,7 @@ internal class ExtraSnapsAdder
                     new NamedSnapPoint(Vector3.zero, ORIGIN), // This worked badly during testing (item could not be placed)
                     new NamedSnapPoint(0.0f, -0.7f, 0.0f, EXTRA),
                 };
-            }
+            }            
         }
         else if (ExtraSnapsPlugin.Instance.EnableLineSnapPoints.Value && ShapeClassifier.FormsLine(existingSnapPoints))
         {
@@ -703,13 +703,14 @@ internal class ExtraSnapsAdder
         }
         else if (ExtraSnapsPlugin.Instance.EnableRoofTopSnapPoints.Value && prefab.IsRoof() && ShapeClassifier.IsWedge3D(existingSnapPoints))
         {
-            ExtraSnapsCalculator.GetExtraSnapPointsForRoofTop(existingSnapPoints, prefab.name);
+            return ExtraSnapsCalculator.GetExtraSnapPointsForRoofTop(existingSnapPoints, prefab.name);
         }
-        else if (!existingSnapPoints.ContainsOriginSnapPoint())
+        
+        if (!existingSnapPoints.ContainsOriginSnapPoint())
         {
-            // Only return an origin snap point for prefabs that do not have snap points and have not already 
-            // had extra snap points added. This is because sometimes snapping to the origin results in the piece
-            // being unplace-able or breaking the moment it is placed.
+            // Only return an origin snap point for prefabs that have not already had extra snap points added.
+            // This is because sometimes snapping to the origin results in the piece being unplace-able or
+            // breaking the moment it is placed.
             // So if a piece has already had custom extra snap points added to it, that means that it may need
             // to not add a snap point at the origin.
             return OriginSnapPointArray;

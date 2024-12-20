@@ -5,12 +5,16 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
-			<td align="center">1.4.1</td>
+			<td align="center">2.0.0</td>
 			<td align="left">
 				<ul>
-					<li>Disabled Vanilla manual snapping and snap point cycling.</li>
-					<li>Added key hints for cycling source/target snap points.</li>
-					<li>Added key hints for toggling manual snapping mode.</li>
+					<li>Added support for named snap points (huge thanks to flo123333 for contributing a ton to that!).</li>
+					<li>Added config option to disable Vanilla manual snapping so you don't need to rebind the default cycle snap points keys (disabled by default now).</li>
+					<li>Added key hints for cycling placing & target snap points.</li>
+					<li>Added key hints for toggling snapping modes.</li>
+					<li>Hide key hint regarding using `Shift` to toggle snapping when not in `Auto` snap mode.</li>
+					<li>Renamed snapping modes to align with Vanilla snapping mode names.</li>
+					<li>Optimized and refactored a lot of code (thanks to flo123333 again for contributing to that as well).</li>
 				</ul>
 			</td>
 		</tr>

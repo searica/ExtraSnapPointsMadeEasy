@@ -630,6 +630,11 @@ internal class ExtraSnapsAdder
                     new NamedSnapPoint(0.0f, 0.75f, 0.0f, $"{CENTER}"),
                     new NamedSnapPoint(0.0f, 0.5f, 0.0f, $"Floor Height {CENTER}")
                 };
+            case "portal_wood":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, -0.05f, 0.0f, $"{ORIGIN}")
+                };
 
             default:
                 return GetCalculatedSnapPointsOrEmpty(prefab);

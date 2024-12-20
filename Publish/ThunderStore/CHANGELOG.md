@@ -5,6 +5,15 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.0.1</td>
+			<td align="left">
+				<ul>
+					<li>Fixed missing origin snap points on pieces.</li>
+					<li>Adjust snap point on portal to reduce clipping with wood floors.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.0.0</td>
 			<td align="left">
 				<ul>

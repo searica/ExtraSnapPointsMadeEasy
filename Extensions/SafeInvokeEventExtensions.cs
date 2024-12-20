@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ExtraSnapsMadeEasy.Configs;
+namespace ExtraSnapsMadeEasy.Extensions;
 
 /// <summary>
 ///     Helper class for C# Events.
 /// </summary>
-internal static class SafeInvokeEvents
+internal static class SafeInvokeEventExtensions
 {
     /// <summary>
     ///     try/catch the delegate chain so that it doesn't break on the first failing Delegate.

@@ -5,6 +5,7 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
+using ExtraSnapsMadeEasy.Extensions;
 using UnityEngine;
 using UnityEngine.Rendering;
 

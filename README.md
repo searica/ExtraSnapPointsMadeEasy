@@ -102,7 +102,7 @@ If you like this mod you might like some of my other ones.
 #### Gameplay Mods
 - [CameraTweaks](https://thunderstore.io/c/valheim/p/Searica/CameraTweaks/)
 - [DodgeShortcut](https://thunderstore.io/c/valheim/p/Searica/DodgeShortcut/)
-- [DiscoveryPins](https://thunderstore.io/c/valheim/p/Searica/DiscoveryPins/versions/)
+- [DiscoveryPins](https://thunderstore.io/c/valheim/p/Searica/DiscoveryPins/)
 - [FortifySkillsRedux](https://thunderstore.io/c/valheim/p/Searica/FortifySkillsRedux/)
 - [ProjectileTweaks](https://thunderstore.io/c/valheim/p/Searica/ProjectileTweaks/)
 - [SkilledCarryWeight](https://thunderstore.io/c/valheim/p/Searica/SkilledCarryWeight/)

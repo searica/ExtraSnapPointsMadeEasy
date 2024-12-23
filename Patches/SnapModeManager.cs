@@ -169,6 +169,7 @@ internal class SnapModeManager
 
         if (TempSourceSnapPoints.Count == 0 || TempTargetSnapPoints.Count == 0)
         {
+            // Set this to LogLevel High
             Log.LogInfo("No snap points!");
             return;
         }

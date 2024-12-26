@@ -658,7 +658,6 @@ internal class ExtraSnapsAdder
         }
     }
 
-
     private static NamedSnapPoint[] GetOriginSnapPointIfNeeded(GameObject prefab)
     {
         return prefab.HasOriginSnapPoint() ? Empty : OriginSnapPointArray;

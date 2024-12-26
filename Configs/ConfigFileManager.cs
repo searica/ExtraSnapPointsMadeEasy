@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using BepInEx;
-using BepInEx.Bootstrap;
 using BepInEx.Configuration;
-using ExtraSnapsMadeEasy.Extensions;
+using BepInEx.Bootstrap;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
-
-namespace ExtraSnapsMadeEasy.Configs;
+using Logging;
 
 
 /// <summary>
 ///     Extends ConfigFile with a convenience method to bind config entries with less boilerplate code 
-///     and explicitly expose commonly used configuration manager attributes. Also adds an event when
-///     config manager display window closes and can set up a file watcher.
+///     and explicitly expose commonly used configuration manager attributes.
 /// </summary>
 public static class ConfigFileManager
 {
@@ -23,24 +21,84 @@ public static class ConfigFileManager
     internal static string ConfigFileFullPath;
     internal static DateTime lastRead = DateTime.MinValue;
 
-    private static readonly List<string> ConfigManagerGUIDs = new()
+    private static readonly Dictionary<string, int> _sectionToSectionNumber = [];
+
+    /// <summary>
+    ///     Formats section name as "{sectionNumber} - {section}" based on how
+    ///     many sections have been bound to this config.
+    /// </summary>
+    /// <param name="section"></param>
+    /// <returns></returns>
+    private static string GetOrderedSectionName(string section)
+    {
+        if (!_sectionToSectionNumber.TryGetValue(section, out int number))
+        {
+            number = _sectionToSectionNumber.Count + 1;
+            _sectionToSectionNumber[section] = number;
+        }
+        return $"{number} - {section}";
+    }
+    private static readonly Dictionary<string, int> _sectionToSettingOrder = [];
+
+    /// <summary>
+    ///     Orders settings within a section.
+    /// </summary>
+    /// <param name="section"></param>
+    /// <returns></returns>
+    private static int GetSettingOrder(string section)
+    {
+        if (!_sectionToSettingOrder.TryGetValue(section, out int order))
+        {
+            order = 0;
+        }
+
+        _sectionToSettingOrder[section] = order - 1;
+        return order;
+    }
+
+    private static readonly List<string> ConfigManagerGUIDs = new List<string>()
     {
         "_shudnal.ConfigurationManager",
         "com.bepis.bepinex.configurationmanager"
     };
-
     private static BaseUnityPlugin _configManager = null;
-    private static BaseUnityPlugin ConfigManager => _configManager ??= GetConfigManager();
-    private static BaseUnityPlugin GetConfigManager()
+
+    /// <summary>
+    ///     Gets and caches a reference to the in-game config manager if one is installed.
+    /// </summary>
+    private static BaseUnityPlugin ConfigManager
     {
-        foreach (string GUID in ConfigManagerGUIDs)
+        get
         {
-            if (Chainloader.PluginInfos.TryGetValue(GUID, out PluginInfo configManagerInfo) && configManagerInfo.Instance)
+            if (_configManager == null)
             {
-                return configManagerInfo.Instance;
+                foreach (var GUID in ConfigManagerGUIDs)
+                {
+                    if (Chainloader.PluginInfos.TryGetValue(GUID, out PluginInfo configManagerInfo) && configManagerInfo.Instance)
+                    {
+                        _configManager = configManagerInfo.Instance;
+                        break;
+                    }
+                }
             }
+            return _configManager;
         }
-        return null;
+    }
+
+    private const string WindowChangedEventName = "DisplayingWindowChanged";
+    private const string DisplayingWindowName = "DisplayingWindow";
+    private static PropertyInfo _dispWindowInfo = null;
+
+    /// <summary>
+    ///     Caches the PropertyInfo for ConfigManager.DisplayingWindow
+    /// </summary>
+    private static PropertyInfo DisplayWindowInfo
+    {
+        get
+        {
+            _dispWindowInfo ??= ConfigManager.GetType().GetProperty(DisplayingWindowName);
+            return _dispWindowInfo;   
+        }
     }
 
     /// <summary>
@@ -69,18 +127,14 @@ public static class ConfigFileManager
         OnConfigWindowClosed?.SafeInvoke();
     }
 
-    /// <summary>
-    ///     Initialize Config file with saveOnConfig setting and get filepath for config file watcher.
-    /// </summary>
-    /// <param name="configFile"></param>
-    /// <param name="GUID"></param>
-    /// <param name="saveOnConfigSet"></param>
+
     public static void Init(this ConfigFile configFile, string GUID, bool saveOnConfigSet = false)
     {
         configFile.SaveOnConfigSet = saveOnConfigSet;
         ConfigFileName = GUID + ".cfg";
         ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
     }
+
 
     /// <summary>
     ///     Sets SaveOnConfigSet to false and returns
@@ -94,6 +148,7 @@ public static class ConfigFileManager
         return val;
     }
 
+
     /// <summary>
     ///     Bind a new config entry to the config file and modify description to state whether the config entry is synced or not.
     /// </summary>
@@ -105,7 +160,44 @@ public static class ConfigFileManager
     /// <param name="description">Plain text description of the config entry to display as hover text in configuration manager.</param>
     /// <param name="acceptVals">Acceptable values for config entry as an AcceptableValueRange, AcceptableValueList, or custom subclass.</param>
     /// <param name="synced">Whether the config entry IsAdminOnly and should be synced with server.</param>
-    /// <param name="order">Order of the setting on the settings list relative to other settings in a category. 0 by default, higher number is higher on the list.</param>
+    /// <param name="sectionOrder">Whether to number the section names based on the order they are bound to the config.</param>
+    /// <param name="settingOrder">Whether to order the settings in each section based on the order they are bound to the config.</param>
+    /// <param name="drawer">Custom setting editor (OnGUI code that replaces the default editor provided by ConfigurationManager).</param>
+    /// <param name="configAttributes">Optional config manager attributes for additional user specified functionality. Any optional fields specified by the arguments of BindConfig will be overwritten by the parameters passed to BindConfig.</param>
+    /// <returns>ConfigEntry bound to the config file.</returns>
+    public static ConfigEntry<T> BindConfigInOrder<T>(
+        this ConfigFile configFile,
+        string section,
+        string name,
+        T value,
+        string description,
+        AcceptableValueBase acceptVals = null,
+        bool synced = true,
+        bool sectionOrder = true,
+        bool settingOrder = true,
+        Action<ConfigEntryBase> drawer = null,
+        ConfigurationManagerAttributes configAttributes = null
+    )
+    {
+        section = sectionOrder ? GetOrderedSectionName(section) : section;
+        int order = settingOrder ? GetSettingOrder(section) : 0;
+        configAttributes ??= new ConfigurationManagerAttributes();
+        configAttributes.Order = order;
+        return configFile.BindConfig(section, name, value, description, acceptVals, synced, drawer, configAttributes);
+
+    }
+
+    /// <summary>
+    ///     Bind a new config entry to the config file and modify description to state whether the config entry is synced or not.
+    /// </summary>
+    /// <typeparam name="T">Type of the value the config entry holds.</typeparam>
+    /// <param name="configFile">Configuration file to bind the config entry to.</param>
+    /// <param name="section">Configuration file section to list the config entry in.</param>
+    /// <param name="name">Display name of the config entry.</param>
+    /// <param name="value">Default value of the config entry.</param>
+    /// <param name="description">Plain text description of the config entry to display as hover text in configuration manager.</param>
+    /// <param name="acceptVals">Acceptable values for config entry as an AcceptableValueRange, AcceptableValueList, or custom subclass.</param>
+    /// <param name="synced">Whether the config entry IsAdminOnly and should be synced with server.</param>
     /// <param name="drawer">Custom setting editor (OnGUI code that replaces the default editor provided by ConfigurationManager).</param>
     /// <param name="configAttributes">Optional config manager attributes for additional user specified functionality. Any optional fields specified by the arguments of BindConfig will be overwritten by the parameters passed to BindConfig.</param>
     /// <returns>ConfigEntry bound to the config file.</returns>
@@ -116,41 +208,31 @@ public static class ConfigFileManager
         T value,
         string description,
         AcceptableValueBase acceptVals = null,
-        int order = 0,
-        int sectionOrder = 0,
+        bool synced = true,
         Action<ConfigEntryBase> drawer = null,
         ConfigurationManagerAttributes configAttributes = null
     )
     {
-        string orderedSectionName = GetOrderedSectionName(section, sectionOrder);
+        string extendedDescription = GetExtendedDescription(description, synced);
 
         configAttributes ??= new ConfigurationManagerAttributes();
-        configAttributes.Order = order;
+        configAttributes.IsAdminOnly = synced;
         if (drawer != null)
         {
             configAttributes.CustomDrawer = drawer;
         }
 
         ConfigEntry<T> configEntry = configFile.Bind(
-            orderedSectionName,
+            section,
             name,
             value,
             new ConfigDescription(
-                description,
+                extendedDescription,
                 acceptVals,
                 configAttributes
             )
         );
         return configEntry;
-    }
-
-    internal static string GetOrderedSectionName(string section, int sectionOrder)
-    {
-        if (sectionOrder > 0)
-        {
-            return $"{sectionOrder} - {section}";
-        }
-        return section;
     }
 
     internal static string GetExtendedDescription(string description, bool synchronizedSetting)
@@ -159,6 +241,11 @@ public static class ConfigFileManager
         return description + (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]");
     }
 
+    /// <summary>
+    ///     Create a file watcher to triger reloads of the config file when 
+    ///     it is chaned, created, or renamed.
+    /// </summary>
+    /// <param name="configFile"></param>
     internal static void SetupWatcher(this ConfigFile configFile)
     {
         var watcher = new FileSystemWatcher(Paths.ConfigPath, ConfigFileName);
@@ -170,8 +257,15 @@ public static class ConfigFileManager
         watcher.EnableRaisingEvents = true;
     }
 
+    /// <summary>
+    ///     Reloads config file if and only if the last write time difers from the last read time.
+    /// </summary>
+    /// <param name="configFile"></param>
+    /// <param name="sender"></param>
+    /// <param name="eventArgs"></param>
     internal static void ReloadConfigFile(this ConfigFile configFile, object sender, FileSystemEventArgs eventArgs)
     {
+
         if (!File.Exists(ConfigFileFullPath))
         {
             return;
@@ -200,44 +294,80 @@ public static class ConfigFileManager
 
     /// <summary>
     ///     Checks for in-game configuration manager and
-    ///     sets up OnConfigWindowClosed event if it is present.
+    ///     sets Up OnConfigWindowClosed event if it is present
     /// </summary>
-    internal static void CheckForConfigManager()
+    internal static void CheckForConfigManager(this ConfigFile config
+        )
     {
         if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
         {
             return;
         }
 
-        if (ConfigManager != null)
+        if (ConfigManager == null)
         {
-            Log.LogDebug("Configuration manager found, hooking DisplayingWindowChanged");
-
-            EventInfo eventinfo = ConfigManager.GetType().GetEvent("DisplayingWindowChanged");
-
-            if (eventinfo != null)
-            {
-                Action<object, object> local = new(OnConfigManagerDisplayingWindowChanged);
-                Delegate converted = Delegate.CreateDelegate(
-                    eventinfo.EventHandlerType,
-                    local.Target,
-                    local.Method
-                );
-                eventinfo.AddEventHandler(ConfigManager, converted);
-            }
+            return;
         }
+        Log.LogDebug($"Configuration manager found, hooking {WindowChangedEventName}");
+
+        EventInfo eventinfo = ConfigManager.GetType().GetEvent(WindowChangedEventName);
+        if (eventinfo == null)
+        {
+            return;
+        }
+
+        Action<object, object> local = new(OnConfigManagerDisplayingWindowChanged);
+        Delegate converted = Delegate.CreateDelegate(
+            eventinfo.EventHandlerType,
+            local.Target,
+            local.Method
+        );
+        eventinfo.AddEventHandler(ConfigManager, converted);
     }
 
+    /// <summary>
+    ///     Invokes OnConfigWindowClosed if window has changed.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private static void OnConfigManagerDisplayingWindowChanged(object sender, object e)
     {
-        PropertyInfo pi = ConfigManager.GetType().GetProperty("DisplayingWindow");
-        bool ConfigurationManagerWindowShown = (bool)pi.GetValue(ConfigManager, null);
+        if (DisplayWindowInfo == null)
+        {
+            return;
+        }
+
+        bool ConfigurationManagerWindowShown = (bool)DisplayWindowInfo.GetValue(ConfigManager, null);
         if (!ConfigurationManagerWindowShown)
         {
             InvokeOnConfigWindowClosed();
         }
     }
+
+    /// <summary>
+    ///     try/catch the delegate chain so that it doesn't break on the first failing Delegate.
+    /// </summary>
+    /// <param name="events"></param>
+    private static void SafeInvoke(this Action events)
+    {
+        if (events == null)
+        {
+            return;
+        }
+
+        foreach (Action @event in events.GetInvocationList())
+        {
+            try
+            {
+                @event();
+            }
+            catch (Exception e)
+            {
+                Log.LogWarning(
+                    $"Exception thrown at event {new StackFrame(1).GetMethod().Name}"
+                    + $" in {@event.Method.DeclaringType.Name}.{@event.Method.Name}:\n{e}"
+                );
+            }
+        }
+    }
 }
-
-
-

@@ -146,4 +146,18 @@ public sealed class ConfigurationManagerAttributes
     /// Custom converter from string to setting type for the built-in editor textboxes.
     /// </summary>
     public System.Func<string, object> StrToObj;
+
+    /// <summary>
+    ///     Whether a config is only writable by admins and gets overwritten on connecting clients
+    /// </summary>
+    public bool IsAdminOnly
+    {
+        get => isAdminOnly;
+        set
+        {
+            isAdminOnly = value;
+        }
+    }
+
+    private bool isAdminOnly;
 }

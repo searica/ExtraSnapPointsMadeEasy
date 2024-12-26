@@ -46,7 +46,7 @@ internal class SnapPointManager
         AddedSnapPoints.Add(newSnapPoint);
         newSnapPoint.transform.parent = prefab.transform;
         newSnapPoint.transform.localPosition = snapPointLocalPosition;
-        newSnapPoint.tag = SnapPointTag;
+        newSnapPoint.tag = SnapPointNames.TAG;
         newSnapPoint.SetActive(false);
     }
 }

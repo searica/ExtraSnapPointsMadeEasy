@@ -5,6 +5,15 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.0.3</td>
+			<td align="left">
+				<ul>
+					<li>Fix torch classification bugs.</li>
+					<li>Refactoring.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.0.2</td>
 			<td align="left">
 				<ul>

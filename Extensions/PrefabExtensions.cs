@@ -136,8 +136,6 @@ internal static class PrefabExtensions
     {
         bool isTorch = prefab.IsTorch();
         castleKit = isTorch && prefab.name.ToLower().Contains("castlekit");
-        Logging.Log.LogInfo($"Is Torch: {isTorch}");
-        Logging.Log.LogInfo($"Is CastleKit: {castleKit}");
         return isTorch;
     }
 
@@ -150,10 +148,8 @@ internal static class PrefabExtensions
     /// </remarks>
     internal static bool IsTorch(this GameObject prefab)
     {
-        Logging.Log.LogInfo($"Check if is torch: {prefab.name}");
         if (TorchPrefabNames.Contains(prefab.name))
         {
-            Logging.Log.LogInfo($"Is Torch by Name: {prefab.name}");
             return true;
         }
 
@@ -162,12 +158,10 @@ internal static class PrefabExtensions
             return false;
         }
 
-        Logging.Log.LogInfo($"Could be a torch: {prefab.name}");
         foreach (string name in TorchChildNames)
         {
             if (prefab.FindDeepChild(name))
             {
-                Logging.Log.LogInfo($"Has deep child: {name}");
                 return true;
             }
         }

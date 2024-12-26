@@ -702,21 +702,22 @@ internal class ExtraSnapsAdder
                     new NamedSnapPoint(0.0f, -0.25f, 0.0f, TOP) // This worked badly during testing (item could not be placed)
                 };
             }
+
             if (prefab.IsTorch(out bool castleKit))
             {
                 if (castleKit)
                 {
-                    return new[]
-                    {
+                    return
+                    [
                         new NamedSnapPoint(Vector3.zero, BOTTOM), 
                         new NamedSnapPoint(0.0f, 0.7f, 0.0f, ORIGIN),
-                    };
+                    ];
                 }
-                return new[]
-                {
+                return 
+                [
                     new NamedSnapPoint(Vector3.zero, ORIGIN), 
                     new NamedSnapPoint(0.0f, -0.7f, 0.0f, BOTTOM),
-                };
+                ];
             }            
         }
         else if (ExtraSnapsPlugin.Instance.EnableLineSnapPoints.Value && ShapeClassifier.FormsLine(existingSnapPoints))

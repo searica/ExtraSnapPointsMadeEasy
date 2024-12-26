@@ -18,10 +18,14 @@ internal static class PrefabExtensions
         "fx_Torch_Basic",
         "fx_Torch_Blue",
         "fx_Torch_Green",
+        "demister_ball",
         "demister_ball (1)"
     };
     private static readonly HashSet<string> TorchPrefabNames = new()
     {
+        "piece_groundtorch",
+        "piece_groundtorch_green",
+        "piece_groundtorch_blue",
         "piece_groundtorch_mist",
         "CastleKit_groundtorch_green",
         "CastleKit_groundtorch_blue",
@@ -131,8 +135,10 @@ internal static class PrefabExtensions
     internal static bool IsTorch(this GameObject prefab, out bool castleKit)
     {
         bool isTorch = prefab.IsTorch();
-        castleKit = isTorch ? prefab.name.ToLower().Contains("castlekit") : false;
-        return isTorch && !castleKit;
+        castleKit = isTorch && prefab.name.ToLower().Contains("castlekit");
+        Logging.Log.LogInfo($"Is Torch: {isTorch}");
+        Logging.Log.LogInfo($"Is CastleKit: {castleKit}");
+        return isTorch;
     }
 
     /// <summary>
@@ -144,24 +150,29 @@ internal static class PrefabExtensions
     /// </remarks>
     internal static bool IsTorch(this GameObject prefab)
     {
+        Logging.Log.LogInfo($"Check if is torch: {prefab.name}");
         if (TorchPrefabNames.Contains(prefab.name))
         {
+            Logging.Log.LogInfo($"Is Torch by Name: {prefab.name}");
             return true;
         }
 
-        if (!prefab.IsDemister())
+        if (!prefab.name.ToLower().ContainsAny(TorchNameSubstrings))
         {
-            foreach (string name in TorchChildNames)
-            {
-                if (prefab.FindDeepChild(name))
-                {
-                    break;
-                }
-            }
             return false;
         }
 
-        return prefab.name.ToLower().ContainsAny(TorchNameSubstrings);
+        Logging.Log.LogInfo($"Could be a torch: {prefab.name}");
+        foreach (string name in TorchChildNames)
+        {
+            if (prefab.FindDeepChild(name))
+            {
+                Logging.Log.LogInfo($"Has deep child: {name}");
+                return true;
+            }
+        }
+
+        return false;        
     }
 
     /// <summary>

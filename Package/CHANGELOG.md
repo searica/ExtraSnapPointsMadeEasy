@@ -5,6 +5,17 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.0.2</td>
+			<td align="left">
+				<ul>
+					<li>Adjust snap points on torches in dungeons and those added by MVBP.</li>
+					<li>Adjust snap points on rugs to reduce clipping with wood floors.</li>
+					<li>Removed unneeded log messages.</li>
+					<li>Added support for shudnal's config manager.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.0.1</td>
 			<td align="left">
 				<ul>

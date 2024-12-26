@@ -23,6 +23,8 @@ internal static class PrefabExtensions
     private static readonly HashSet<string> TorchPrefabNames = new()
     {
         "piece_groundtorch_mist",
+        "CastleKit_groundtorch_green",
+        "CastleKit_groundtorch_blue",
         "dverger_demister",
         "dverger_demister_large",
     };
@@ -117,6 +119,20 @@ internal static class PrefabExtensions
     {
         return prefab.name.Contains("brazier")
             && prefab.name.Contains("ceiling");
+    }
+
+    /// <summary>
+    ///     Checks if game object is a torch and flags if it is a castlekit torch.
+    /// </summary>
+    /// <remarks>
+    /// Matches: piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green,
+    ///          piece_groundtorch_blue, piece_groundtorch_mist, etc.
+    /// </remarks>
+    internal static bool IsTorch(this GameObject prefab, out bool castleKit)
+    {
+        bool isTorch = prefab.IsTorch();
+        castleKit = isTorch ? prefab.name.ToLower().Contains("castlekit") : false;
+        return isTorch && !castleKit;
     }
 
     /// <summary>

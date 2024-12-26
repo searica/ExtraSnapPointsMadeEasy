@@ -9,7 +9,7 @@ internal static class SnapModes
     {
         Auto,
         Manual,
-        Precise,
+        ManualPlus,
         Grid
     }
 
@@ -17,7 +17,7 @@ internal static class SnapModes
     {
         {SnapMode.Auto,  "Auto"},
         {SnapMode.Manual, "Manual"},
-        {SnapMode.Precise, "Manual+"},
+        {SnapMode.ManualPlus, "Manual+"},
         {SnapMode.Grid, "Grid"}
     };
     private static string AutoModeName => SnapModeNames[SnapMode.Auto];

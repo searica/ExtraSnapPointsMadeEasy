@@ -37,7 +37,7 @@ internal class SnapModeManager
     private static readonly List<Transform> TempTargetSnapPoints = new();
 
     internal static bool IsAutoSnapMode => CurrentSnapMode == SnapMode.Auto;
-    internal static bool IsPreciseSnapMode => CurrentSnapMode == SnapMode.Precise;
+    internal static bool IsManualPlusSnapMode => CurrentSnapMode == SnapMode.ManualPlus;
     internal static bool IsManualSnapMode => CurrentSnapMode == SnapMode.Manual;
     internal static bool IsGridSnapMode => CurrentSnapMode == SnapMode.Grid;
 
@@ -67,7 +67,7 @@ internal class SnapModeManager
         SnapMode prevSnapMode = CurrentSnapMode;
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.TogglePreciseSnap.Value))
         {
-            CurrentSnapMode = !IsPreciseSnapMode ? SnapMode.Precise : SnapMode.Auto;
+            CurrentSnapMode = !IsManualPlusSnapMode ? SnapMode.ManualPlus : SnapMode.Auto;
         }
         else if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.ToggleManualSnap.Value))
         {
@@ -89,7 +89,7 @@ internal class SnapModeManager
             return;
         }
 
-        if (IsPreciseSnapMode || IsManualSnapMode)
+        if (IsManualPlusSnapMode || IsManualSnapMode)
         {
             SnapManually(ref __instance);
         }
@@ -182,7 +182,7 @@ internal class SnapModeManager
         Transform targetSnap;
         switch (CurrentSnapMode)
         {
-            case SnapMode.Precise:
+            case SnapMode.ManualPlus:
                 targetSnap = TempTargetSnapPoints[CurrentTargetSnap];
                 break;
 
@@ -202,7 +202,7 @@ internal class SnapModeManager
             player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Placing Snap Point: {name}");
         }
 
-        if (IsPreciseSnapMode && prevTargetSnap != CurrentTargetSnap)
+        if (IsManualPlusSnapMode && prevTargetSnap != CurrentTargetSnap)
         {
             string name = HasFriendlySnapName(targetSnap) ? targetSnap.name : $"Point {CurrentTargetSnap + 1}";
             player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Target Snap Point: {name}");

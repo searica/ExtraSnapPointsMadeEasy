@@ -303,6 +303,12 @@ internal class ExtraSnapsAdder
                     new Vector3(2.0f, -0.01f, 1.25f),
                     new Vector3(-2.0f, -0.01f, -1.25f),
                     new Vector3(-2.0f, -0.01f, 1.25f),
+
+                    new Vector3(0.0f, -0.05f, 0.0f),
+                    new Vector3(2.0f, -0.05f, -1.25f),
+                    new Vector3(2.0f, -0.05f, 1.25f),
+                    new Vector3(-2.0f, -0.05f, -1.25f),
+                    new Vector3(-2.0f, -0.05f, 1.25f),
                 });
 
             case "rug_fur": // (lox rug)
@@ -313,13 +319,24 @@ internal class ExtraSnapsAdder
                     new Vector3(1.25f, -0.01f, 2.0f),
                     new Vector3(-1.25f, -0.01f, -2.0f),
                     new Vector3(-1.25f, -0.01f, 2.0f),
+
+                    new Vector3(0.0f, -0.05f, 0.0f),
+                    new Vector3(1.25f, -0.05f, -2.0f),
+                    new Vector3(1.25f, -0.05f, 2.0f),
+                    new Vector3(-1.25f, -0.05f, -2.0f),
+                    new Vector3(-1.25f, -0.05f, 2.0f),
                 });
 
             case "rug_deer":
             case "rug_wolf":
             case "rug_hare": // (scale rug)
             case "jute_carpet_blue": // (round blue jute carpet)
-                return CreateNamedSnapPoints(new[] { new Vector3(0.0f, -0.01f, 0.0f) });
+                return CreateNamedSnapPoints(
+                    new[] {
+                        new Vector3(0.0f, -0.01f, 0.0f),
+                        new Vector3(0.0f, -0.05f, 0.0f) 
+                    }
+                );
 
             /* Thrones, Chairs, Benches */
             case "piece_throne01": // (Raven Throne)

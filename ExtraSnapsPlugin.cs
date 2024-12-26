@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
-using ExtraSnapsMadeEasy.Configs;
+using Configs;
+using Logging;
 using ExtraSnapsMadeEasy.ExtraSnapPoints;
+
 
 // TODO: Look into checking collider values and just using those to dictate snap points for furniture
 namespace ExtraSnapsMadeEasy;
@@ -80,7 +81,7 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
         Log.Verbosity = Config.BindConfigInOrder(
             MainSection,
             "Verbosity",
-            LogLevel.Low,
+            Log.InfoLevel.Low,
             "Low will log basic information about the mod. Medium will log information that " +
             "is useful for troubleshooting. High will log a lot of information, do not set " +
             "it to this without good reason as it will slow down your game."
@@ -232,108 +233,4 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
         string msg = $"External mod triggered a re-initialization, adding extra snap points";
         ExtraSnapsAdder.AddExtraSnapPoints(msg, true);
     }
-}
-
-/// <summary>
-///     Log level to control output to BepInEx log
-/// </summary>
-internal enum LogLevel
-{
-    Low = 0,
-    Medium = 1,
-    High = 2,
-}
-
-/// <summary>
-///     Helper class for properly logging from static contexts.
-/// </summary>
-internal static class Log
-{
-    #region Verbosity
-
-    internal static ConfigEntry<LogLevel> Verbosity { get; set; }
-    internal static LogLevel VerbosityLevel => Verbosity.Value;
-
-    internal static bool IsVerbosityLow => Verbosity.Value >= LogLevel.Low;
-    internal static bool IsVerbosityMedium => Verbosity.Value >= LogLevel.Medium;
-    internal static bool IsVerbosityHigh => Verbosity.Value >= LogLevel.High;
-
-    #endregion Verbosity
-
-    internal static ManualLogSource _logSource;
-
-    private const BindingFlags AllBindings =
-        BindingFlags.Public
-        | BindingFlags.NonPublic
-        | BindingFlags.Instance
-        | BindingFlags.Static
-        | BindingFlags.GetField
-        | BindingFlags.SetField
-        | BindingFlags.GetProperty
-        | BindingFlags.SetProperty;
-
-    internal static void Init(ManualLogSource logSource)
-    {
-        _logSource = logSource;
-    }
-
-    internal static void LogDebug(object data) => _logSource.LogDebug(data);
-
-    internal static void LogError(object data) => _logSource.LogError(data);
-
-    internal static void LogFatal(object data) => _logSource.LogFatal(data);
-
-    internal static void LogInfo(object data, LogLevel level = LogLevel.Low)
-    {
-        if (Verbosity is null || VerbosityLevel >= level)
-        {
-            _logSource.LogInfo(data);
-        }
-    }
-
-    internal static void LogMessage(object data) => _logSource.LogMessage(data);
-
-    internal static void LogWarning(object data) => _logSource.LogWarning(data);
-
-    #region Logging Unity Objects
-
-    internal static void LogGameObject(GameObject prefab, bool includeChildren = false)
-    {
-        LogInfo("***** " + prefab.name + " *****");
-        foreach (Component compo in prefab.GetComponents<Component>())
-        {
-            LogComponent(compo);
-        }
-
-        if (!includeChildren) { return; }
-
-        LogInfo("***** " + prefab.name + " (children) *****");
-        foreach (Transform child in prefab.transform)
-        {
-            LogInfo($" - {child.gameObject.name}");
-            foreach (Component compo in child.gameObject.GetComponents<Component>())
-            {
-                LogComponent(compo);
-            }
-        }
-    }
-
-    internal static void LogComponent(Component compo)
-    {
-        LogInfo($"--- {compo.GetType().Name}: {compo.name} ---");
-
-        PropertyInfo[] properties = compo.GetType().GetProperties(AllBindings);
-        foreach (PropertyInfo property in properties)
-        {
-            LogInfo($" - {property.Name} = {property.GetValue(compo)}");
-        }
-
-        FieldInfo[] fields = compo.GetType().GetFields(AllBindings);
-        foreach (FieldInfo field in fields)
-        {
-            LogInfo($" - {field.Name} = {field.GetValue(compo)}");
-        }
-    }
-
-    #endregion Logging Unity Objects
 }

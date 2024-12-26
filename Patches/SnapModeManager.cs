@@ -4,6 +4,7 @@ using System.Linq;
 using ExtraSnapsMadeEasy.Models;
 using HarmonyLib;
 using UnityEngine;
+using Logging;
 using ExtraSnapsMadeEasy.Extensions;
 using static ExtraSnapsMadeEasy.Models.GridSnapping;
 using static ExtraSnapsMadeEasy.Models.SnapModes;

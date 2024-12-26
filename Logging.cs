@@ -16,7 +16,7 @@ internal static class Log
     /// <summary>
     ///     Log level to control output to BepInEx log
     /// </summary>
-    internal enum LogLevel
+    internal enum InfoLevel
     {
         Low = 0,
         Medium = 1,
@@ -25,11 +25,11 @@ internal static class Log
 
     #region Verbosity
 
-    internal static ConfigEntry<LogLevel> Verbosity { get; set; }
-    internal static LogLevel VerbosityLevel => Verbosity.Value;
-    internal static bool IsVerbosityLow => Verbosity.Value >= LogLevel.Low;
-    internal static bool IsVerbosityMedium => Verbosity.Value >= LogLevel.Medium;
-    internal static bool IsVerbosityHigh => Verbosity.Value >= LogLevel.High;
+    internal static ConfigEntry<InfoLevel> Verbosity { get; set; }
+    internal static InfoLevel VerbosityLevel => Verbosity.Value;
+    internal static bool IsVerbosityLow => Verbosity.Value >= InfoLevel.Low;
+    internal static bool IsVerbosityMedium => Verbosity.Value >= InfoLevel.Medium;
+    internal static bool IsVerbosityHigh => Verbosity.Value >= InfoLevel.High;
 
     #endregion Verbosity
 
@@ -50,7 +50,7 @@ internal static class Log
 
     internal static void LogWarning(object data) => logSource.LogWarning(data);
 
-    internal static void LogInfo(object data, LogLevel level = LogLevel.Low)
+    internal static void LogInfo(object data, InfoLevel level = InfoLevel.Low)
     {
         if (Verbosity is null || VerbosityLevel >= level)
         {

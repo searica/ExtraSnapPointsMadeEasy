@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Logging;
 
+namespace Configs;
 
 /// <summary>
 ///     Extends ConfigFile with a convenience method to bind config entries with less boilerplate code 

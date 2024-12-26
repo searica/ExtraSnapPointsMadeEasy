@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ExtraSnapsMadeEasy.Extensions;
 using ExtraSnapsMadeEasy.Models;
 using UnityEngine;
+using Logging;
 using static ExtraSnapsMadeEasy.Models.SnapPointNames;
 
 namespace ExtraSnapsMadeEasy.ExtraSnapPoints;

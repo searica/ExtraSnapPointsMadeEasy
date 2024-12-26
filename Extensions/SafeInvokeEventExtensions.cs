@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Logging;
 
 namespace ExtraSnapsMadeEasy.Extensions;
 

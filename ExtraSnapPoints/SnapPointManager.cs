@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using ExtraSnapsMadeEasy.Models;
 using UnityEngine;
+using ExtraSnapsMadeEasy.Models;
+using Logging;
 
 namespace ExtraSnapsMadeEasy.ExtraSnapPoints;
 
@@ -31,7 +32,7 @@ internal class SnapPointManager
 
     public void ClearAddedSnapPoints()
     {
-        Log.LogInfo($"Clearing {AddedSnapPoints.Count} snap points", LogLevel.Medium);
+        Log.LogInfo($"Clearing {AddedSnapPoints.Count} snap points", Log.InfoLevel.Medium);
         foreach (GameObject snapPoint in AddedSnapPoints)
         {
             Object.DestroyImmediate(snapPoint);

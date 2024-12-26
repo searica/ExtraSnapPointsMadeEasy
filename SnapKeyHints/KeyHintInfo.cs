@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using BepInEx.Configuration;
 using UnityEngine.UI;
+using Logging;
 
 namespace ExtraSnapsMadeEasy.SnapKeyHints;
 internal sealed class KeyHintInfo
@@ -257,3 +258,4 @@ internal sealed class KeyHintInfo
         }
     }
 }
+

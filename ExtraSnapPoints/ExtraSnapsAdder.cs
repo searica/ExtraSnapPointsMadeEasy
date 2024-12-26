@@ -7,6 +7,7 @@ using ExtraSnapsMadeEasy.Extensions;
 using ExtraSnapsMadeEasy.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Logging;
 using static ExtraSnapsMadeEasy.Models.SnapPointNames;
 
 namespace ExtraSnapsMadeEasy.ExtraSnapPoints;

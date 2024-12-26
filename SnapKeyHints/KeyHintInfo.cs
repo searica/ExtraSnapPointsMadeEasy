@@ -162,8 +162,6 @@ internal sealed class KeyHintInfo
                 keyHintParent.gameObject.SetActive(keyHintConfig.ShouldShow);
             }
         }
-
-        Log.LogInfo($"Updated {BoundObject.name} key hint");
     }
 
     /// <summary>

@@ -5,6 +5,14 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.0.4</td>
+			<td align="left">
+				<ul>
+					<li>Reduced logging.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.0.3</td>
 			<td align="left">
 				<ul>

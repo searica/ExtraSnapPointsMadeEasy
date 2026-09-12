@@ -19,13 +19,13 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
     public const string PluginName = "ExtraSnapPointsMadeEasy";
     public const string Author = "Searica";
     public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
-    public const string PluginVersion = "2.0.5";
+    public const string PluginVersion = "2.0.6";
 
     internal static ExtraSnapsPlugin Instance;
 
     private const string MainSection = "Global";
     private const string SnapModeSection = "Manual Snapping";
-    private const string ExtraSnapsSection = "​Extra Snap Points";
+    private const string ExtraSnapsSection = "Extra Snap Points";
     private const string PrefabSnapSettings = "Individual Snap Point Settings";
 
     public ConfigEntry<bool> VanillaManualSnapEnabled { get; private set; }

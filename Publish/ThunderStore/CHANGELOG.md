@@ -5,6 +5,14 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.0.6</td>
+			<td align="left">
+				<ul>
+					<li>Built against BepInEx 5.4.2350 and Jotunn 2.30.0 for compatibility with Valheim 1.0.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.0.5</td>
 			<td align="left">
 				<ul>

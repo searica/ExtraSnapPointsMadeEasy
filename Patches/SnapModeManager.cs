@@ -109,8 +109,18 @@ internal class SnapModeManager
 
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.CycleGridPrecision.Value))
         {
-            if (CurrentGridPrecision == GridPrecision.Low) { CurrentGridPrecision = GridPrecision.High; }
-            else { CurrentGridPrecision = GridPrecision.Low; }
+            switch (CurrentGridPrecision)
+            {
+                case GridPrecision.Low:
+                    CurrentGridPrecision = GridPrecision.High;
+                    break;
+                case GridPrecision.High:
+                    CurrentGridPrecision = GridPrecision.VeryHigh;
+                    break;
+                case GridPrecision.VeryHigh:
+                    CurrentGridPrecision = GridPrecision.Low;
+                    break;
+            }
             CurrentGridPrecisionValue = GridPrecisionMap[CurrentGridPrecision];
             player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Grid Precision: {CurrentGridPrecisionValue}");
         }
@@ -123,8 +133,8 @@ internal class SnapModeManager
 
     private static void SnapManually(ref Player player)
     {
-        
-        if (!player || !player.m_placementGhost || !player.m_placementGhost.TryGetComponent(out Piece sourcePiece) && sourcePiece) 
+
+        if (!player || !player.m_placementGhost || !player.m_placementGhost.TryGetComponent(out Piece sourcePiece) && sourcePiece)
         {
             return;
         }

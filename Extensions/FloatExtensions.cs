@@ -26,19 +26,9 @@ internal static class FloatExtensions
     /// <returns></returns>
     internal static float RoundToNearest(this float x, float precision)
     {
-        if (precision <= 0) { return x; }
-        float sign = Mathf.Sign(x);
-
-        int val = (int)Mathf.Abs(x * 1000f);
-        int whole = val / 1000;
-        int fraction = val % 1000;
-
-        int midPoint = (int)(precision * 1000f / 2f);
-
-        if (fraction < midPoint)
-        {
-            return sign * whole;
-        }
-        return sign * (whole + precision);
+        return (precision != 0.0)
+            ? Mathf.Sign(x) * Mathf.Floor((Mathf.Abs(x) / precision) + 0.5f) * precision
+            : x
+        ;
     }
 }

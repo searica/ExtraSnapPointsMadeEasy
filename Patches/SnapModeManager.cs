@@ -109,8 +109,12 @@ internal class SnapModeManager
 
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.CycleGridPrecision.Value))
         {
-            if (CurrentGridPrecision == GridPrecision.Low) { CurrentGridPrecision = GridPrecision.High; }
-            else { CurrentGridPrecision = GridPrecision.Low; }
+            if (CurrentGridPrecision == GridPrecision.Low) { 
+                CurrentGridPrecision = GridPrecision.High; 
+            }
+            else { 
+                CurrentGridPrecision = GridPrecision.Low; 
+            }
             CurrentGridPrecisionValue = GridPrecisionMap[CurrentGridPrecision];
             player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Grid Precision: {CurrentGridPrecisionValue}");
         }

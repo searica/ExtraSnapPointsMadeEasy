@@ -187,103 +187,136 @@ internal class ExtraSnapsAdder
 
             /* Item Stands */
             case "itemstandh": // itemstandh (horizontal)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3 (0f, -0.0346f, 0f),
-                    new Vector3 (0.1f, -0.0346f, 0f),
-                    new Vector3 (-0.1f, -0.0346f, 0f),
-                    new Vector3 (0.0f, -0.0346f, 0.1f),
-                    new Vector3 (0.0f, -0.0346f, -0.1f),
-                });
+                    new NamedSnapPoint(0f, -0.0346f, 0f, $"{CENTER} 1"),
+                    new NamedSnapPoint(0f, -0.1346f, 0f, $"{CENTER} 2"),
+                    new NamedSnapPoint(0f, -0.2346f, 0f, $"{CENTER} 3"),
+                };
+                //return CreateNamedSnapPoints(new[]
+                //{
+                //    new Vector3 (0f, -0.0346f, 0f),
+                //    new Vector3 (0.1f, -0.0346f, 0f),
+                //    new Vector3 (-0.1f, -0.0346f, 0f),
+                //    new Vector3 (0.0f, -0.0346f, 0.1f),
+                //    new Vector3 (0.0f, -0.0346f, -0.1f),
+                //});
 
             case "itemstand":  // itemstand (vertical)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3 (0f, 0f, -0.06f),
-                    new Vector3 (0.22f, 0f, -0.06f),
-                    new Vector3 (-0.22f, 0f, -0.06f),
-                    new Vector3 (0.0f, 0.22f, -0.06f),
-                    new Vector3 (0.0f, -0.22f, -0.06f),
-                 });
+                    new NamedSnapPoint(0.0f, 0.0f, -0.06f, $"{CENTER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.16f, $"{CENTER} 2"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.26f, $"{CENTER} 3"),
+                };
+                //return CreateNamedSnapPoints(new[]
+                //{
+                //    new Vector3 (0f, 0f, -0.06f),
+                //    new Vector3 (0.22f, 0f, -0.06f),
+                //    new Vector3 (-0.22f, 0f, -0.06f),
+                //    new Vector3 (0.0f, 0.22f, -0.06f),
+                //    new Vector3 (0.0f, -0.22f, -0.06f),
+                // });
 
             /* Chests */
             case "piece_chest_wood":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3(0.0f, -0.01f, 0.0f),
-                    new Vector3(0.8f, -0.01f, 0.37f),
-                    new Vector3(0.8f, -0.01f, -0.37f),
-                    new Vector3(-0.8f, -0.01f, 0.37f),
-                    new Vector3(-0.8f, -0.01f, -0.37f),
-                    new Vector3(0.65f, 0.8f, 0.35f),
-                    new Vector3(0.65f, 0.8f, -0.35f),
-                    new Vector3(-0.65f, 0.8f, 0.35f),
-                    new Vector3(-0.65f, 0.8f, -0.35f)
-                });
+                    new NamedSnapPoint(0.0f, -0.025f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.8f, -0.025f, 0.37f, $"{BOTTOM} {CORNER} 1"),
+                    new NamedSnapPoint(0.8f, -0.025f, -0.37f, $"{BOTTOM} {CORNER} 2"),
+                    new NamedSnapPoint(-0.8f, -0.025f, 0.37f, $"{BOTTOM} {CORNER} 3"),
+                    new NamedSnapPoint(-0.8f, -0.025f, -0.37f, $"{BOTTOM} {CORNER} 4"),
+                    new NamedSnapPoint(0.65f, 0.8f, 0.35f, $"{TOP} {CORNER} 1"),
+                    new NamedSnapPoint(0.65f, 0.8f, -0.35f, $"{TOP} {CORNER} 2"),
+                    new NamedSnapPoint(-0.65f, 0.8f, 0.35f, $"{TOP} {CORNER} 3"),
+                    new NamedSnapPoint(-0.65f, 0.8f, -0.35f, $"{TOP} {CORNER} 4"),
+                };
+
 
             case "piece_chest": // (Reinforced Chest)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3(0.0f, -0.01f, 0.0f),
-                    new Vector3(0.9f, -0.01f, 0.47f),
-                    new Vector3(0.9f, -0.01f, -0.47f),
-                    new Vector3(-0.9f, -0.01f, 0.47f),
-                    new Vector3(-0.9f, -0.01f, -0.47f),
-                    new Vector3(0.7f, 0.99f, 0.47f),
-                    new Vector3(0.7f, 0.99f, -0.47f),
-                    new Vector3(-0.7f, 0.99f, 0.47f),
-                    new Vector3(-0.7f, 0.99f, -0.47f)
-                });
+                    new NamedSnapPoint(0.0f, -0.01f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.9f, -0.01f, 0.47f, $"{BOTTOM} {CORNER} 1"),
+                    new NamedSnapPoint(0.9f, -0.01f, -0.47f, $"{BOTTOM} {CORNER} 2"),
+                    new NamedSnapPoint(-0.9f, -0.01f, 0.47f, $"{BOTTOM} {CORNER} 3"),
+                    new NamedSnapPoint(-0.9f, -0.01f, -0.47f, $"{BOTTOM} {CORNER} 4"),
+                    new NamedSnapPoint(0.7f, 0.99f, 0.47f, $"{TOP} {CORNER} 1"),
+                    new NamedSnapPoint(0.7f, 0.99f, -0.47f, $"{TOP} {CORNER} 2"),
+                    new NamedSnapPoint(-0.7f, 0.99f, 0.47f, $"{TOP} {CORNER} 3"),
+                    new NamedSnapPoint(-0.7f, 0.99f, -0.47f, $"{TOP} {CORNER} 4"),
+                };
 
+ 
             case "piece_chest_private":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3(0.0f, -0.01f, 0.0f),
-                    new Vector3(0.45f, -0.01f, 0.25f),
-                    new Vector3(0.45f, -0.01f, -0.25f),
-                    new Vector3(-0.45f, -0.01f, 0.25f),
-                    new Vector3(-0.45f, -0.01f, -0.25f),
-                    new Vector3(0.36f, 0.55f, 0.23f),
-                    new Vector3(0.36f, 0.55f, -0.23f),
-                    new Vector3(-0.36f, 0.55f, 0.23f),
-                    new Vector3(-0.36f, 0.55f, -0.23f)
-                });
+                    new NamedSnapPoint(0.0f, -0.01f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.45f, -0.01f, 0.25f, $"{BOTTOM} {CORNER} 1"),
+                    new NamedSnapPoint(0.45f, -0.01f, -0.25f, $"{BOTTOM} {CORNER} 2"),
+                    new NamedSnapPoint(-0.45f, -0.01f, 0.25f, $"{BOTTOM} {CORNER} 3"),
+                    new NamedSnapPoint(-0.45f, -0.01f, -0.25f, $"{BOTTOM} {CORNER} 4"),
+                    new NamedSnapPoint(0.36f, 0.55f, 0.23f, $"{TOP} {CORNER} 1"),
+                    new NamedSnapPoint(0.36f, 0.55f, -0.23f, $"{TOP} {CORNER} 2"),
+                    new NamedSnapPoint(-0.36f, 0.55f, 0.23f, $"{TOP} {CORNER} 3"),
+                    new NamedSnapPoint(-0.36f, 0.55f, -0.23f, $"{TOP} {CORNER} 4"),
+                };
 
             case "piece_chest_blackmetal":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(1.0f, 0.0f, 0.5f),
-                    new Vector3(1.0f, 0.0f, -0.5f),
-                    new Vector3(-1.0f, 0.0f, 0.5f),
-                    new Vector3(-1.0f, 0.0f, -0.5f),
-                    new Vector3(0.85f, 1.0f, 0.5f),
-                    new Vector3(0.85f, 1.0f, -0.5f),
-                    new Vector3(-0.85f, 1.0f, 0.5f),
-                    new Vector3(-0.85f, 1.0f, -0.5f)
-                });
+                    new NamedSnapPoint(0.0f, -0.01f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.5f, $"{BOTTOM} {CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, -0.5f, $"{BOTTOM} {CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.5f, $"{BOTTOM} {CORNER} 3"),
+                    new NamedSnapPoint(1.0f, 0.0f, -0.5f, $"{BOTTOM} {CORNER} 4"),
+                    new NamedSnapPoint(0.85f, 1.0f, 0.5f, $"{TOP} {CORNER} 1"),
+                    new NamedSnapPoint(0.85f, 1.0f, -0.5f, $"{TOP} {CORNER} 2"),
+                    new NamedSnapPoint(-0.85f, 1.0f, 0.5f, $"{TOP} {CORNER} 3"),
+                    new NamedSnapPoint(-0.85f, 1.0f, -0.5f, $"{TOP} {CORNER} 4"),
+                };
 
-            /* Torches */
+            /* Torches and lights */
             case "piece_walltorch":  // (sconce)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3(-0.2f, 0.0f, 0.0f), // black marble snap
-                    new Vector3(-0.25f, 0.0f, 0.0f), // stone snap
-                    new Vector3(-0.35f, 0.0f, 0.0f),  // wood snap
-                    // Vector3.zero,
-                });
+                    new NamedSnapPoint(-0.2f, 0.0f, 0.0f, $"{CENTER} 1"),
+                    new NamedSnapPoint(-0.25f, 0.0f, 0.0f, $"{CENTER} 2"),
+                    new NamedSnapPoint(-0.35f, 0.0f, 0.0f, $"{CENTER} 3"),
+                };
+
+
+            case "piece_dvergr_lantern":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER} 1"),
+                    new NamedSnapPoint(0.05f, 0.0f, 0.0f, $"{CENTER} 2"),
+                    new NamedSnapPoint(0.1f, 0.0f, 0.0f, $"{CENTER} 3"),
+                };
 
             case "piece_dvergr_lantern_pole":
-                return CreateNamedSnapPoints(new[] { Vector3.zero });
+                return new[]
+                {
+                    new NamedSnapPoint(-0.15f, -3.0f, 0.0f, $"{BOTTOM} {CENTER}"),
+                    new NamedSnapPoint(0.1f, -3.0f, -0.25f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.1f, -3.0f, 0.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.35f, -3.0f, -0.25f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.35f, -3.0f, 0.25f, $"{CORNER} 4"),
+                    new NamedSnapPoint(-0.15f, 0.5f, 0.0f, $"{TOP}"),
+                };
 
             /* Furniture */
             case "sign":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(0.0f, 0.0f, -0.05f), // marble & stone
-                    new Vector3(0.0f, 0.0f, -0.20f), // wood
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.05f, $"{CENTER} 2"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.1f, $"{CENTER} 3"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.2f, $"{CENTER} 4"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.25f, $"{CENTER} 5"),
+                    //new NamedSnapPoint(0.0f, 0.0f, -0.35f, $"{CENTER} 4"),
+                };
 
             case "ArmorStand":
                 return CreateNamedSnapPoints(new[]
@@ -335,7 +368,8 @@ internal class ExtraSnapsAdder
                 return CreateNamedSnapPoints(
                     new[] {
                         new Vector3(0.0f, -0.01f, 0.0f),
-                        new Vector3(0.0f, -0.05f, 0.0f) 
+                        new Vector3(0.0f, -0.05f, 0.0f),
+                        new Vector3(0.0f, -0.1f, 0.0f)
                     }
                 );
 
@@ -351,15 +385,16 @@ internal class ExtraSnapsAdder
             case "piece_bench01":
             case "piece_blackmarble_bench":
             case "piece_logbench01": // sitting log
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(-1.0f, 0.0f, 0.0f),
-                    new Vector3(1.0f, 0.0f, 0.0f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.0f, $"{EDGE} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.0f, $"{EDGE} 1"),
+          
+                };
 
             /* Banners */
-            // Banners are about 1.25m wide up top
+            // Banners are 1.4m wide up top
             case "piece_banner01": // (black)
             case "piece_banner02": // (blue)
             case "piece_banner03": // (white & red)
@@ -372,14 +407,21 @@ internal class ExtraSnapsAdder
             case "piece_banner10": // (orange)
             case "piece_banner11": // (white)
             case "piece_cloth_hanging_door": // (red jute curtain)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(0.136f, 0.0f, 0.0f), // stone walls
-                    new Vector3(-0.136f, 0.0f, 0.0f), // stone walls
-                    new Vector3(0.236f, 0.0f, 0.0f), // wood walls
-                    new Vector3(-0.236f, 0.0f, 0.0f), // wood walls
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.0f, 0.1f, 0.0f, $"{TOP} {CENTER}"),
+
+                    new NamedSnapPoint(0.136f, 0.0f, 0.0f, $"{FRONT} {CENTER} 1"), // stone wall
+                    new NamedSnapPoint(-0.136f, 0.0f, 0.0f, $"{BACK} {CENTER} 1"),
+                    new NamedSnapPoint(0.136f, 0.1f, 0.0f, $"{TOP} {FRONT} {CENTER} 1"),
+                    new NamedSnapPoint(-0.136f, 0.1f, 0.0f, $"{TOP} {BACK} {CENTER} 1"),
+
+                    new NamedSnapPoint(0.236f, 0.0f, 0.0f, $"{FRONT} {CENTER} 2"), // wood wall
+                    new NamedSnapPoint(-0.236f, 0.0f, 0.0f, $"{BACK} {CENTER} 2"),
+                    new NamedSnapPoint(0.236f, 0.1f, 0.0f, $"{TOP} {FRONT} {CENTER} 2"),
+                    new NamedSnapPoint(-0.236f, 0.1f, 0.0f, $"{TOP} {BACK} {CENTER} 2"),
+                };
 
             /* Blue Jute Hangings */
             case "piece_cloth_hanging_door_blue2":  // (Blue Jute Curtain)
@@ -410,106 +452,266 @@ internal class ExtraSnapsAdder
 
             /* Workbench */
             case "piece_workbench":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.25f, 0.0f, -0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.25f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.25f, 0.0f, -0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.25f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+
             case "piece_workbench_ext1": // (Chopping block)
-                return GetOriginSnapPointIfNeeded(prefab);
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.25f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.25f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(0.0f, 0.0f, 0.25f, $"{CORNER} 4"),
+                };
 
             case "piece_workbench_ext2": // (Tanning rack)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(1.0f, 0.0f, 0.0f),
-                    new Vector3(-1.0f, 0.0f, 0.0f),
-                    new Vector3(1.0f, 0.0f, -1.0f),
-                    new Vector3(-1.0f, 0.0f, -1.0f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, -1.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -1.0f, $"{CORNER} 4"),
+                };
 
             case "piece_workbench_ext3": // (Adze)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(1.0f, 0.0f, 0.0f),
-                    new Vector3(-1.0f, 0.0f, 0.0f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, -0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -0.5f, $"{CORNER} 4"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.0f, $"{EDGE} 1"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.0f, $"{EDGE} 2"),
+                };
 
             case "piece_workbench_ext4":  // (Tool shelf)
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3(0.0f, 0.0f, -0.1f),
-                    new Vector3(1.0f, 0.0f, -0.1f),
-                    new Vector3(-1.0f, 0.0f, -0.1f),
-                    new Vector3(1.0f, 1.0f, -0.1f),
-                    new Vector3(-1.0f, 1.0f, -0.1f),
-                });
+                    new NamedSnapPoint(0.0f, 0.25f, -0.125f, $"{CENTER}"),
+                    new NamedSnapPoint(0.75f, 0.25f, -0.125f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.75f, 1.25f, -0.125f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.75f, 0.25f, -0.125f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.75f, 1.25f, -0.125f, $"{CORNER} 4"),
+                };
+
 
             /* Forge */
             case "forge": // (Forge)
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, -0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+
             case "forge_ext1": // (Forge bellows)
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.5f, 0.0f, -0.75f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.5f, 0.0f, 0.75f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.5f, 0.0f, -0.75f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.5f, 0.0f, 0.75f, $"{CORNER} 4"),
+                };
+
             case "forge_ext2": // (Anvils)
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.25f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.25f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(0.0f, 0.0f, 0.25f, $"{CORNER} 4"),
+                };
+
             case "forge_ext3": // (Grinding wheel)
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.25f, 0.0f, -0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.25f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.25f, 0.0f, -0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.25f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+
             case "forge_ext4": // (Smith's anvil)
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.5f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.5f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(0.0f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+
             case "forge_ext5": // (Forge cooler)
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.5f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.5f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(0.0f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+
             case "forge_ext6": // (Forge toolrack)
-                return GetOriginSnapPointIfNeeded(prefab);
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, -0.125f, $"{CENTER}"),
+                    new NamedSnapPoint(1.25f, 0.0f, -0.125f, $"{EDGE} 1"),
+                    new NamedSnapPoint(-1.25f, 0.0f, -0.125f, $"{EDGE} 2"),
+                };
 
             /* Black Forge */
             case "blackforge": // galdr table
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.5f, 0.0f, -0.25f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.5f, 0.0f, 0.75f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.5f, 0.0f, -0.25f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.5f, 0.0f, 0.75f, $"{CORNER} 4"),
+                    new NamedSnapPoint(0.0f, 0.0f, -0.75f, $"{BACK}"),
+                };
+
             case "blackforge_ext1": // cooler
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.75f, 0.0f, -0.25f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.75f, 0.0f, 0.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.75f, 0.0f, -0.25f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.75f, 0.0f, 0.25f, $"{CORNER} 4"),
+                };
+
             case "blackforge_ext2_vise": // vice
-                return GetOriginSnapPointIfNeeded(prefab);
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.25f, 0.0f, -0.25f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.25f, 0.0f, 0.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.25f, 0.0f, -0.25f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.25f, 0.0f, 0.25f, $"{CORNER} 4"),
+                };
 
             /* Galdr Table */
             case "piece_magetable": // galdr table
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, -1.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, 1.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -1.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 1.0f, $"{CORNER} 4"),
+                    new NamedSnapPoint(0.0f, 0.0f, -1.25f, $"{BACK}"),
+                };
+
             case "piece_magetable_ext": // rune table
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.5f, 0.0f, -0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.5f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.5f, 0.0f, -0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.5f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+
             case "piece_magetable_ext2": // candles
-                return GetOriginSnapPointIfNeeded(prefab);
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.25f, 0.0f, -0.25f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.25f, 0.0f, 0.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.25f, 0.0f, -0.25f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.25f, 0.0f, 0.25f, $"{CORNER} 4"),
+                };
 
             /* Cooking Pieces */
             case "piece_cauldron":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.5f, 0.0f, -0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.5f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.5f, 0.0f, -0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.5f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+            case "cauldron_ext1_spice":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 1.25f, 0.0f, $"{TOP} {CENTER}"),
+                    new NamedSnapPoint(0.0f, 0.75f, -0.05f, $"{BACK} {CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.75f, -0.05f, $"{BACK} {EDGE} 1"),
+                    new NamedSnapPoint(-1.0f, 0.75f, -0.05f, $"{BACK} {EDGE} 2"),
+                };
+;
+            case "cauldron_ext3_butchertable":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.5f, 0.0f, -0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.5f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.5f, 0.0f, -0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.5f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
+
+            case "cauldron_ext4_pots":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.5f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.75f, 0.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.75f, 0.0f, $"{CORNER} 4"),
+                };
+
             case "cauldron_ext5_mortarandpestle":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.6f, 0.0f, -0.3f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.6f, 0.0f, 0.3f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.6f, 0.0f, -0.3f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.6f, 0.0f, 0.3f, $"{CORNER} 4"),
+                };
             case "fermenter":
                 return GetOriginSnapPointIfNeeded(prefab);
 
-            case "cauldron_ext1_spice":
-                return CreateNamedSnapPoints(new[]
-                {
-                    new Vector3(0.0f, 1.25f, 0.0f)
-                });
-
-            case "cauldron_ext3_butchertable":
-                return CreateNamedSnapPoints(new[]
-                {
-                    Vector3.zero,
-                    new Vector3(0.5f, 0.0f, -0.5f),
-                    new Vector3(0.5f, 0.0f, 0.5f),
-                    new Vector3(-0.5f, 0.0f, -0.5f),
-                    new Vector3(-0.5f, 0.0f, 0.5f),
-                });
-
-            case "cauldron_ext4_pots":
-                return CreateNamedSnapPoints(new[]
-                {
-                    Vector3.zero,
-                    new Vector3(1.0f, 0.0f, 0.0f),
-                    new Vector3(1.0f, 1.0f, 0.0f),
-                    new Vector3(-1.0f, 0.0f, 0.0f),
-                    new Vector3(-1.0f, 1.0f, 0.0f),
-                });
 
             case "piece_cookingstation":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(-1.0f, 0.0f, 0.0f),
-                    new Vector3(1.0f, 0.0f, 0.0f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, -0.25f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -0.25f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.25f, $"{CORNER} 4"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.0f, $"{MID} {EDGE} 1"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.0f, $"{MID} {EDGE} 2"),
+                };
 
             case "piece_cookingstation_iron":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(-2.0f, 0.0f, 0.0f),
-                    new Vector3(2.0f, 0.0f, 0.0f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(2.0f, 0.0f, -0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(2.0f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-2.0f, 0.0f, -0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-2.0f, 0.0f, 0.5f, $"{CORNER} 4"),
+                    new NamedSnapPoint(2.0f, 0.0f, 0.0f, $"{MID} {EDGE} 1"),
+                    new NamedSnapPoint(-2.0f, 0.0f, 0.0f, $"{MID} {EDGE} 2"),
+                };
 
             /* Fires */
             case "hearth": // already has snappoints but not a center one
@@ -538,24 +740,24 @@ internal class ExtraSnapsAdder
 
             /* Beds */
             case "bed":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(0.5f, 0.0f, -1.5f),
-                    new Vector3(0.5f, 0.0f, 1.5f),
-                    new Vector3(-0.5f, 0.0f, -1.5f),
-                    new Vector3(-0.5f, 0.0f, 1.5f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.5f, 0.0f, -1.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.5f, 0.0f, 1.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-0.5f, 0.0f, -1.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-0.5f, 0.0f, 1.5f, $"{CORNER} 4"),
+                };
 
             case "piece_bed02":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(1.0f, 0.0f, -1.5f),
-                    new Vector3(1.0f, 0.0f, 1.5f),
-                    new Vector3(-1.0f, 0.0f, -1.5f),
-                    new Vector3(-1.0f, 0.0f, 1.5f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, -1.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, 1.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -1.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 1.5f, $"{CORNER} 4"),
+                };
 
             /* Tables */
             case "piece_table":
@@ -575,82 +777,130 @@ internal class ExtraSnapsAdder
                 });
 
             case "piece_table_round": // round table
-                return GetOriginSnapPointIfNeeded(prefab);
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.25f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -1.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.25f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(0.0f, 0.0f, 1.25f, $"{CORNER} 4"),
+                };
 
             case "piece_table_oak": // long heavy table
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(-2.0f, 0.0f, 0.0f),
-                    new Vector3(2.0f, 0.0f, 0.0f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(3.0f, 0.0f, 0.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(3.0f, 0.0f, -0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-3.0f, 0.0f, 0.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-3.0f, 0.0f, -0.5f, $"{CORNER} 4"),
+                };
 
             /* Misc */
             case "piece_bathtub": // has snap points but adding center
-                return GetOriginSnapPointIfNeeded(prefab);
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.5f, 0.0f, 0.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.0f, 0.0f, -1.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.5f, 0.0f, 0.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(0.0f, 0.0f, 1.5f, $"{CORNER} 4"),
+                };
 
             // TODO: add snaps to these
             case "piece_cartographytable":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.5f, 0.0f, -1.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.5f, 0.0f, 1.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.5f, 0.0f, -1.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.5f, 0.0f, 1.0f, $"{CORNER} 4"),
+                };
             case "piece_spinningwheel":
+                return new[] 
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, -1.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, 1.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -1.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 1.0f, $"{CORNER} 4"),
+                };
+
             case "piece_stonecutter":
+                return new[] 
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(0.7f, 0.0f, -0.4f, $"{CORNER} 1"),
+                    new NamedSnapPoint(0.7f, 0.0f, 0.4f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.5f, 0.0f, -0.6f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.5f, 0.0f, 0.6f, $"{CORNER} 4"),
+                };
             case "piece_artisanstation":
-                return GetOriginSnapPointIfNeeded(prefab);
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.25f, 0.0f, -0.75f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.25f, 0.0f, 0.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.25f, 0.0f, -0.75f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.25f, 0.0f, 0.5f, $"{CORNER} 4"),
+                };
 
             case "piece_barber":
-                return CreateNamedSnapPoints(new[]
+                return new[] 
                 {
-                    Vector3.zero,
-                    new Vector3(1.0f, 0.0f, -0.75f),
-                    new Vector3(1.0f, 0.0f, 0.75f),
-                    new Vector3(-1.0f, 0.0f, -0.75f),
-                    new Vector3(-1.0f, 0.0f, 0.75f),
-                });
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, 0.0f, -0.75f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, 0.0f, 0.75f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, 0.0f, -0.75f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, 0.0f, 0.75f, $"{CORNER} 4"),
+                };
 
             case "piece_wisplure": // wisp fountain
-                return CreateNamedSnapPoints(new[]
+                return new[] 
                 {
-                    new Vector3(0.0f, -0.05f, 0.0f)
-                });
+                    new NamedSnapPoint(0.0f, -0.05f, 0.0f, $"{ORIGIN}"),
+                };
 
             case "eitrrefinery":
-                return CreateNamedSnapPoints(new[]
+                return new[] // may want to go back to y = 0
                 {
-                    Vector3.zero,
-                    new Vector3(2.75f, 0.0f, -1.0f),
-                    new Vector3(2.75f, 0.0f, 1.0f),
-                    new Vector3(-2.75f, 0.0f, -1.0f),
-                    new Vector3(-2.75f, 0.0f, 1.0f),
-                });
+                    new NamedSnapPoint(0.0f, -0.005f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(2.75f, -0.005f, -1.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(2.75f, -0.005f, 1.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-2.75f, -0.005f, -1.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-2.75f, -0.005f, 1.0f, $"{CORNER} 4"),
+                };
 
             case "windmill":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    new Vector3(0.0f, -0.005f, 0.0f),
-                    new Vector3(2.0f, -0.005f, -2.0f),
-                    new Vector3(2.0f, -0.005f, 2.0f),
-                    new Vector3(-2.0f, -0.005f, -2.0f),
-                    new Vector3(-2.0f, -0.005f, 2.0f),
-                });
+                    new NamedSnapPoint(0.0f, -0.005f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(2.0f, -0.005f, -2.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(2.0f, -0.005f, 2.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-2.0f, -0.005f, -2.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-2.0f, -0.005f, 2.0f, $"{CORNER} 4"),
+                };
 
             case "smelter":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(1.0f, 0.0f, -1.0f),
-                    new Vector3(1.0f, 0.0f, 1.0f),
-                    new Vector3(-1.0f, 0.0f, -1.0f),
-                    new Vector3(-1.0f, 0.0f, 1.0f),
-                });
+                    new NamedSnapPoint(0.0f, -0.05f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.0f, -0.05f, -1.0f, $"{CORNER} 1"),
+                    new NamedSnapPoint(1.0f, -0.05f, 1.0f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.0f, -0.05f, -1.0f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.0f, -0.05f, 1.0f, $"{CORNER} 4"),
+                };
 
             case "blastfurnace":
-                return CreateNamedSnapPoints(new[]
+                return new[]
                 {
-                    Vector3.zero,
-                    new Vector3(2.0f, 0.0f, -1.25f),
-                    new Vector3(2.0f, 0.0f, 1.25f),
-                    new Vector3(-1.75f, 0.0f, -1.25f),
-                    new Vector3(-1.75f, 0.0f, 1.25f),
-                });
+                    new NamedSnapPoint(0.0f, -0.05f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(2.0f, -0.05f, -1.25f, $"{CORNER} 1"),
+                    new NamedSnapPoint(2.0f, -0.05f, 1.25f, $"{CORNER} 2"),
+                    new NamedSnapPoint(-1.75f, -0.05f, -1.25f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.75f, -0.05f, 1.25f, $"{CORNER} 4"),
+                }; 
 
             case "Piece_grausten_pillarbase_tapered":
                 return new[]
@@ -658,11 +908,55 @@ internal class ExtraSnapsAdder
                     new NamedSnapPoint(0.0f, 0.75f, 0.0f, $"{CENTER}"),
                     new NamedSnapPoint(0.0f, 0.5f, 0.0f, $"Floor Height {CENTER}")
                 };
+
+            /* Portals */
             case "portal_wood":
                 return new[]
                 {
-                    new NamedSnapPoint(0.0f, -0.05f, 0.0f, $"{ORIGIN}")
+                    new NamedSnapPoint(0.0f, -0.05f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.5f, -0.05f, 0.0f, $"{EDGE} 1"),
+                    new NamedSnapPoint(-1.5f, -0.05f, 0.0f, $"{EDGE} 2")
                 };
+
+            case "portal_stone":
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, -0.25f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(3.5f, -0.25f, 0.0f, $"{EDGE} 1"),
+                    new NamedSnapPoint(-3.5f, -0.25f, 0.0f, $"{EDGE} 2"),
+                    new NamedSnapPoint(1.5f, -0.25f, 1.5f, $"{INNER} {CORNER} 1"),
+                    new NamedSnapPoint(-1.5f, -0.25f, 1.5f, $"{INNER} {CORNER} 2"),
+                    new NamedSnapPoint(1.5f, -0.25f, -1.5f, $"{INNER} {CORNER} 3"),
+                    new NamedSnapPoint(-1.5f, -0.25f, -1.5f, $"{INNER} {CORNER} 4"),
+                };
+
+            case "portal":  // enabled by MVBP
+                return new[]
+                {
+                    new NamedSnapPoint(0.0f, -0.25f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.5f, -0.25f, 0.0f, $"{EDGE} 1"),
+                    new NamedSnapPoint(-1.5f, -0.25f, 0.0f, $"{EDGE} 2"),
+                    new NamedSnapPoint(1.5f, -0.25f, 1.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(-1.5f, -0.25f, 1.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(1.5f, -0.25f, -1.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.5f, -0.25f, -1.5f, $"{CORNER} 4"),
+                };
+
+            /* MVBP */
+            case "Grausten_Floor_4x4":
+                List<Vector3> pts = new();
+                for (float y = -0.5f; y <= 0.5f; y += 1)
+                {
+                    for (int x = -2; x <= 2; x += 1)
+                    {
+                        for (int z = -2; z <= 2; z += 1)
+                        {   
+                            pts.Add(new Vector3(x, y, z));
+                        }
+                    }
+                }
+                return CreateNamedSnapPoints(pts);
+      
 
             default:
                 return GetCalculatedSnapPointsOrEmpty(prefab);
@@ -766,6 +1060,16 @@ internal class ExtraSnapsAdder
         for (int i = 0; i < result.Length; i++)
         {
             result[i] = new NamedSnapPoint(positions[i], $"{prefix} {startNumber + i}");
+        }
+        return result;
+    }
+
+    private static NamedSnapPoint[] CreateNamedSnapPoints(IEnumerable<Vector3> positions, string prefix = EXTRA, int startNumber = 1)
+    {
+        NamedSnapPoint[] result = new NamedSnapPoint[positions.Count()];
+        for (int i = 0; i < result.Length; i++)
+        {
+            result[i] = new NamedSnapPoint(positions.ElementAt(i), $"{prefix} {startNumber + i}");
         }
         return result;
     }

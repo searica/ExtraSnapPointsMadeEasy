@@ -5,6 +5,17 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.1.1</td>
+			<td align="left">
+				<ul>
+					<li>Added custom snap points to all portals.</li>
+					<li>Added custom snap points to the bathtub, map table, spinning wheel, stonecutter, artisan table, lanterns, etc.</li>
+					<li>Added custom snap points to most crafting pieces, have not done deep north extensions since I have yet to play through the deep north.</li>
+					<li>Updated custom snap point names on many pieces (signs, banners, lanterns, etc.) to improve snapping and placement to prevent clipping.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.1.0</td>
 			<td align="left">
 				<ul>

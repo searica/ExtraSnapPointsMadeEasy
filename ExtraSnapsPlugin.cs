@@ -19,7 +19,7 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
     public const string PluginName = "ExtraSnapPointsMadeEasy";
     public const string Author = "Searica";
     public const string PluginGUID = $"{Author}.Valheim.{PluginName}";
-    public const string PluginVersion = "2.1.0";
+    public const string PluginVersion = "2.1.1";
 
     internal static ExtraSnapsPlugin Instance;
 

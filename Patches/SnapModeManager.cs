@@ -18,6 +18,7 @@ internal class SnapModeManager
     private static int CurrentTargetSnap = 0;
     internal static SnapMode CurrentSnapMode;
     internal static GridPrecision CurrentGridPrecision;
+    internal static int CurrentGridPrecisionFromCustomList = 0;
     private static float CurrentGridPrecisionValue = GridPrecisionMap[GridPrecision.Low];
     internal static string CurrentSnapModeName => SnapModeNames[CurrentSnapMode];
 
@@ -109,13 +110,72 @@ internal class SnapModeManager
 
         if (Input.GetKeyDown(ExtraSnapsPlugin.Instance.CycleGridPrecision.Value))
         {
-            if (CurrentGridPrecision == GridPrecision.Low) { 
-                CurrentGridPrecision = GridPrecision.High; 
+            CurrentGridPrecisionValue = 1.0f;
+
+            List<float> customPrecisionList = new List<float>();
+            string customPrecisionListStringRaw = ((string)ExtraSnapsPlugin.Instance.GridPrecisionList.Value).Trim();
+
+            if (customPrecisionListStringRaw.Length >= 1)
+            {
+                string[] customPrecisionListStrings = customPrecisionListStringRaw.Split(
+                    [',', ';'],
+                    System.StringSplitOptions.RemoveEmptyEntries
+                );
+
+                for (int i = 0; i < customPrecisionListStrings.Length; i++)
+                {
+                    if (float.TryParse(customPrecisionListStrings[i].Trim(), out float p) && p > 0.0f)
+                    {
+                        customPrecisionList.Add(p);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Invalid custom grid snap precision: '{customPrecisionListStrings[i]}'");
+                    }
+                }
             }
-            else { 
-                CurrentGridPrecision = GridPrecision.Low; 
+
+            if (customPrecisionList.Count() >= 1)
+            {
+                CurrentGridPrecisionValue = customPrecisionList[0];
+
+                if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+                {
+                    if (++CurrentGridPrecisionFromCustomList >= customPrecisionList.Count())
+                    {
+                        CurrentGridPrecisionFromCustomList = 0;
+                    }
+                }
+                else
+                {
+                    if (--CurrentGridPrecisionFromCustomList < 0)
+                    {
+                        CurrentGridPrecisionFromCustomList = customPrecisionList.Count() - 1;
+                    }
+                }
+
+                CurrentGridPrecisionValue = customPrecisionList[CurrentGridPrecisionFromCustomList];
             }
-            CurrentGridPrecisionValue = GridPrecisionMap[CurrentGridPrecision];
+            else
+            {
+                switch (CurrentGridPrecision)
+                {
+                    case GridPrecision.Low:
+                        CurrentGridPrecision = GridPrecision.High;
+                        break;
+
+                    case GridPrecision.High:
+                        CurrentGridPrecision = GridPrecision.Low;
+                        break;
+
+                    default:
+                        CurrentGridPrecision = GridPrecision.Low;
+                        break;
+                }
+
+                CurrentGridPrecisionValue = GridPrecisionMap[CurrentGridPrecision];
+            }
+
             player.Message(ExtraSnapsPlugin.Instance.NotificationType.Value, $"Grid Precision: {CurrentGridPrecisionValue}");
         }
 
@@ -127,8 +187,8 @@ internal class SnapModeManager
 
     private static void SnapManually(ref Player player)
     {
-        
-        if (!player || !player.m_placementGhost || !player.m_placementGhost.TryGetComponent(out Piece sourcePiece) && sourcePiece) 
+
+        if (!player || !player.m_placementGhost || !player.m_placementGhost.TryGetComponent(out Piece sourcePiece) && sourcePiece)
         {
             return;
         }

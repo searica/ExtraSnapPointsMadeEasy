@@ -33,6 +33,7 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
     public ConfigEntry<KeyCode> ToggleManualSnap { get; private set; }
     public ConfigEntry<KeyCode> ToggleGridSnap { get; private set; }
     public ConfigEntry<KeyCode> CycleGridPrecision { get; private set; }
+    public ConfigEntry<string> GridPrecisionList {get; private set; }
     public ConfigEntry<KeyCode> IterateSourceSnapPoints { get; private set; }
     public ConfigEntry<KeyCode> IterateTargetSnapPoints { get; private set; }
     public ConfigEntry<bool> ResetSnapsOnNewPiece { get; private set; }
@@ -119,6 +120,14 @@ internal sealed class ExtraSnapsPlugin : BaseUnityPlugin
             "Cycle Grid Snap Precision",
             KeyCode.F4,
             "This key will change the precision of the grid in when in grid mode."
+        );
+
+        GridPrecisionList = Config.BindConfigInOrder(
+            SnapModeSection,
+            "Custom Grid Snap Precision List",
+            "",
+            "Comma or semi-colon separated list of grid precisions to cycle through in grid snap mode, for example \"1.0,0.5,0.25,0.125\". " +
+            "Leave empty to use the standard 1.0 and 0.5 grid precisions."
         );
 
         IterateSourceSnapPoints = Config.BindConfigInOrder(

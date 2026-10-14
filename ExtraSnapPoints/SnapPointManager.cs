@@ -10,8 +10,6 @@ namespace ExtraSnapsMadeEasy.ExtraSnapPoints;
 /// </summary>
 internal class SnapPointManager
 {
-    private const string SnapPointTag = SnapPointNames.TAG;  //This must match the value in the Valheim assemblies
-
     internal static SnapPointManager Instance = new();
 
     private readonly List<GameObject> AddedSnapPoints = new();

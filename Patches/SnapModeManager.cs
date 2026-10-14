@@ -91,7 +91,7 @@ internal class SnapModeManager
 
         if (IsManualPlusSnapMode || IsManualSnapMode)
         {
-            SnapManually(ref __instance);
+            SnapManually(ref __instance, IsManualPlusSnapMode);
         }
 
         if (IsGridSnapMode)
@@ -125,7 +125,7 @@ internal class SnapModeManager
         player.m_placementGhost.transform.position = position;
     }
 
-    private static void SnapManually(ref Player player)
+    private static void SnapManually(ref Player player, bool plusMode)
     {
         
         if (!player || !player.m_placementGhost || !player.m_placementGhost.TryGetComponent(out Piece sourcePiece) && sourcePiece) 

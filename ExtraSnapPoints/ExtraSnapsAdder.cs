@@ -933,13 +933,13 @@ internal class ExtraSnapsAdder
             case "portal":  // enabled by MVBP
                 return new[]
                 {
-                    new NamedSnapPoint(0.0f, -0.25f, 0.0f, $"{CENTER}"),
-                    new NamedSnapPoint(1.5f, -0.25f, 0.0f, $"{EDGE} 1"),
-                    new NamedSnapPoint(-1.5f, -0.25f, 0.0f, $"{EDGE} 2"),
-                    new NamedSnapPoint(1.5f, -0.25f, 1.5f, $"{CORNER} 1"),
-                    new NamedSnapPoint(-1.5f, -0.25f, 1.5f, $"{CORNER} 2"),
-                    new NamedSnapPoint(1.5f, -0.25f, -1.5f, $"{CORNER} 3"),
-                    new NamedSnapPoint(-1.5f, -0.25f, -1.5f, $"{CORNER} 4"),
+                    new NamedSnapPoint(0.0f, 0.0f, 0.0f, $"{CENTER}"),
+                    new NamedSnapPoint(1.5f, 0.0f, 0.0f, $"{EDGE} 1"),
+                    new NamedSnapPoint(-1.5f, 0.0f, 0.0f, $"{EDGE} 2"),
+                    new NamedSnapPoint(1.5f, 0.0f, 1.5f, $"{CORNER} 1"),
+                    new NamedSnapPoint(-1.5f, 0.0f, 1.5f, $"{CORNER} 2"),
+                    new NamedSnapPoint(1.5f, 0.0f, -1.5f, $"{CORNER} 3"),
+                    new NamedSnapPoint(-1.5f, 0.0f, -1.5f, $"{CORNER} 4"),
                 };
 
             /* MVBP */

@@ -5,6 +5,14 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.1.2</td>
+			<td align="left">
+				<ul>
+					<li>Tweaked snap points for the portal prefab to align better with the placement adjustments made in MoreVanillaBuildPrefabs.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.1.1</td>
 			<td align="left">
 				<ul>

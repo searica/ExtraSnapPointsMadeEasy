@@ -33,9 +33,9 @@ internal sealed class KeyHintInfo
         internal string TransformPath;
 
         /// <summary>
-        ///     ConfigEntry that this key binding bound to.
+        ///     ConfigEntry that this key binding is bound to.
         /// </summary>
-        internal ConfigEntry<KeyCode> KeyConfig;
+        internal ConfigEntry<KeyCode> KeyCodeConfig;
 
         /// <summary>
         ///     Raw string to use instead of KeyConfig if KeyConfig is null.
@@ -57,7 +57,7 @@ internal sealed class KeyHintInfo
         )
         {
             TransformPath = transformPath;
-            KeyConfig = keyConfig;
+            KeyCodeConfig = keyConfig;
             RawKeyText = rawKeyText;
             Visibility = visibility;
         }
@@ -69,7 +69,7 @@ internal sealed class KeyHintInfo
         /// <summary>
         ///     Get Key hint text from either KeyConfig or RawKeyText as a fall back.
         /// </summary>
-        public string KeyText => KeyConfig != null ? KeyConfig.Value.ToString() : RawKeyText;
+        public string KeyText => KeyCodeConfig != null ? KeyCodeConfig.Value.ToString() : RawKeyText;
 
     }
 
@@ -90,13 +90,13 @@ internal sealed class KeyHintInfo
 
     public void SetParentObject(KeyHints keyHints)
     {
-        Transform parentTransform = keyHints.transform.Find(TransformPath);
-        if (parentTransform == null)
+        Transform targetTransform = keyHints.transform.Find(TransformPath);
+        if (targetTransform == null)
         {
             Log.LogWarning($"{TransformPath} is no longer valid, could not find Snap key hint");
             return;
         }
-        BoundObject = parentTransform.gameObject;
+        BoundObject = targetTransform.gameObject;
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ internal sealed class KeyHintInfo
 
         foreach (KeyHintConfig keyHintConfig in KeyHintConfigs)
         {
-            keyHintConfig.KeyConfig.SettingChanged += (obj, attr) =>
+            keyHintConfig.KeyCodeConfig.SettingChanged += (obj, attr) =>
             {
                 UpdateKeyHintUI();
             };

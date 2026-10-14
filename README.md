@@ -8,8 +8,11 @@ If you are updating from any version before 2.0.0 you may need to regenerate you
 - Allows for manual selection of snap points on only the piece being placed.
 - Disables the vanilla manual snapping by default (you can re-enable it) as this mod already added manual snapping.
 - Allows for manual selection of snap points for both the piece you are placing and the piece you are snapping to.
+    - Configurable key to reverse the order that you cycle through snap points on either piece.
 - Allows snapping pieces to the world grid.
+    - You can even set custom grid precision levels now! (Thanks Adambean!)   
 - Shows key hints for all of the snapping functionality and key binds added by the mod.
+    - Shows current snap mode and grid precision level if in grid snap mode
 - Provides notifications of which snapping mode is active and the snap points selected. The location of these notifications can be set in the mod configuration.
 - Automatically determines the type of each build piece and adds extra snap points accordingly. 
 - Dynamically updates from configuration setting changes while in-game.
@@ -36,12 +39,13 @@ Press a key to toggle Grid Snapping Mode, which snaps pieces to the world grid. 
 The key-binds for manual snapping are configurable via editing of the configuration file at Valheim/BepInEx/config/searica.valheim.extrasnappointsmadeeasy.cfg or via an in-game configuration manager (live updates, no restart required).
 
 The default key-bindings are:
-- Toggle Manual Snapping Mode: Caps-Lock
-- Toggle Manual+ Snapping Mode: Left-Alt
+- Toggle Manual Snapping Mode: F3
+- Toggle Manual+ Snapping Mode: Caps-Lock
+- Toggle Grid Snapping Mode: F4
 - Cycle Snap Points on the piece you are placing: Q
 - Cycle Snap Points on the piece you are snapping to: E
-- Toggle Grid Snapping Mode: F3
-- Cycle Grid precision: F4
+- Cycle Grid Precision: Q
+- Reverse Cylcing Direction: Left-Shift
 
 ### Usage
 Grab a hammer and select a piece to place. Hit Left-Alt to enable Manual Snapping Mode, a notification will then appear in the center of your screen indicating whether the snapping mode is set to Auto or Manual. Point your piece at the piece you want to snap to and hit Left-Control to cycle through the snap points on the piece you're holding. Use Left-Shift to cycle through destination snap points. For example you can snap a horizontal pillar to the middle of the vertical pillar by cycling both to their midpoint snap points. While cycling through snap points you will also receive notifications indicating which snap point is currently selected on each piece. Alternatively press Caps-Lock to enable Manual (Closest) snapping mode which will snap to the closest snap point on the target piece while still allowing you to manually select the snap point of the piece you are placing.

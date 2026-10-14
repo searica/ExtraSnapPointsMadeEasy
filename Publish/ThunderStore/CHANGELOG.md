@@ -5,6 +5,20 @@
 			<th align="center">Notes</th>
 		</tr>
 		<tr>
+			<td align="center">2.2.0</td>
+			<td align="left">
+				<ul>
+					<li>Added config option for custom grid snapping precision levels (many thanks to Adambean for the PR on github!).</li>
+					<li>Added new key for reversing the direction that you cycle through snap points or grid precision levels. Default is LeftShift but it can be configured to whatever you like.</li>
+					<li>Updated key hints in build menu to reflect the new reverse cycling key.</li>
+					<li>Updated key hints to switch to cycle snapping key hint to cycle precision when in grid snap mode.</li>
+					<li>Added new key hint that shows the current grid precision when in grid snap mode.</li>
+					<li>Changed default keybinds to reduce conflicts with other building mods like AdvancedTerrainModifiers and ComfyGizmo.</li>
+					<li>Tweaked snap points on the portal prefab again and adjusted patch priority to enforce stable interactions with placement changes made by MVBP.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
 			<td align="center">2.1.2</td>
 			<td align="left">
 				<ul>

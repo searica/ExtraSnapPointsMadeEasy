@@ -14,7 +14,7 @@
 					<li>Updated key hints to switch to cycle snapping key hint to cycle precision when in grid snap mode.</li>
 					<li>Added new key hint that shows the current grid precision when in grid snap mode.</li>
 					<li>Changed default keybinds to reduce conflicts with other building mods like AdvancedTerrainModifiers and ComfyGizmo.</li>
-					<li>Tweaked snap points on the portal prefab again.</li>
+					<li>Tweaked snap points on the portal prefab again and adjusted patch priority to enforce stable interactions with placement changes made by MVBP.</li>
 				</ul>
 			</td>
 		</tr>

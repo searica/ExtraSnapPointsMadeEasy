@@ -120,6 +120,7 @@ internal class SnapModeManager
     }
 
     [HarmonyPostfix]
+    [HarmonyAfter("Searica.Valheim.MoreVanillaBuildPrefabs")]
     [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
     private static void UpdatePlacementGhostPostfix(Player __instance)
     {
